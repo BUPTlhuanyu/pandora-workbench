@@ -1,0 +1,23 @@
+{
+  "name": "workbench-electron",
+  "version": "0.0.0",
+  "description": "workbench-electron",
+  "private": true,
+  "main": "./dist/app.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack && electron ./dist/app.js",
+    "build": "cross-env NODE_ENV=production webpack --mode production --progress --hide-modules"
+  },
+  "dependencies": {
+    "core": "^0.0.0",
+    "electron": "^11.2.0",
+    "shared": "^0.0.0"
+  },
+  "author": "lhuanyu <lhuanyutot@163.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^4.43.0",
+    "cross-env": "^7.0.3",
+    "webpack-cli": "^4.3.1"
+  }
+}

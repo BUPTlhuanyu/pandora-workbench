@@ -1,0 +1,11 @@
+{
+    "name": "shared",
+    "version": "0.0.0",
+    "description": "shared",
+    "private": true,
+    "scripts": {
+        "start": ""
+    },
+    "author": "lhuanyu <lhuanyutot@163.com>",
+    "license": "MIT"
+}

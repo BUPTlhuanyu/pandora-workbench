@@ -1,0 +1,14 @@
+{
+    "name": "core",
+    "version": "0.0.0",
+    "description": "core",
+    "private": true,
+    "scripts": {
+        "start": ""
+    },
+    "dependencies": {
+        "shared":"^0.0.0"
+    },
+    "author": "lhuanyu <lhuanyutot@163.com>",
+    "license": "MIT"
+}

@@ -1,0 +1,23 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "rootDir": ".",
+        "target": "esnext",
+        "module": "esnext",
+        "lib": ["dom", "esnext"],
+        "outDir": "dist",
+        "strict": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": "./",
+        "paths": {
+            "@backend/*": ["packages/core/src/*"],
+            "@shared/*": ["packages/shared/src/*"]
+        }
+    },
+    "exclude": ["node_modules", "dist", "docs", "__tests__", "**/*.test*", "**/*.spec*", "**/mock"],
+    "include": ["src", "packages", "node_modules/san/types/index.d.ts", "postcss.config.js"]
+}

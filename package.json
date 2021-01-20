@@ -1,0 +1,62 @@
+{
+    "name": "taotie-workbench",
+    "version": "1.0.0",
+    "description": "The workbench for coder",
+    "private": true,
+    "scripts": {
+        "start": "yarn workspace workbench-electron start"
+    },
+    "workspaces": [
+        "packages/*"
+    ],
+    "files": [
+        "packages"
+    ],
+    "devDependencies": {
+        "lint-staged": "^9.2.5",
+        "husky": "^4.0.0",
+        "typescript": "^3.9.7",
+        "autoprefixer": "^9.8.0",
+        "@typescript-eslint/parser": "2.34.0",
+        "@typescript-eslint/eslint-plugin": "2.34.0",
+        "@babel/core": "^7.9.6",
+        "babel-cli": "^6.26.0",
+        "babel-eslint": "^10.1.0",
+        "babel-plugin-import": "^1.13.0",
+        "@babel/plugin-proposal-class-properties": "^7.8.3",
+        "@babel/plugin-proposal-export-default-from": "^7.8.3",
+        "@babel/plugin-proposal-optional-chaining": "^7.10.1",
+        "@babel/plugin-transform-modules-commonjs": "^7.10.1",
+        "@babel/preset-env": "^7.9.6",
+        "@babel/preset-typescript": "^7.9.0",
+        "@ecomfe/eslint-config": "^3.2.0",
+        "@commitlint/cli": "^8.3.4",
+        "@commitlint/core": "^8.3.4",
+        "@commitlint/travis-cli": "^8.3.5",
+        "commitizen": "^4.0.3",
+        "eslint": "^6.8.0",
+        "eslint-plugin-babel": "^5.3.0"
+    },
+    "lint-staged": {
+        "!(example|dist|output|__mocks__)/**/*.(ts|js)": [
+            "eslint"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged",
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+        }
+    },
+    "config": {
+        "commitizen": {
+          "path": "./node_modules/cz-conventional-changelog"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/BUPTlhuanyu/taotie-workbench"
+    },
+    "author": "lhuanyu <lhuanyutot@163.com>",
+    "license": "MIT"
+}

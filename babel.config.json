@@ -1,0 +1,26 @@
+{
+    "babelrcRoots": [
+        ".",
+        "packages/*"
+    ],
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": {"esmodules": true},
+                "modules": false
+            }
+        ]
+    ],
+    "plugins": [
+        "@babel/plugin-proposal-export-default-from",
+        "@babel/plugin-transform-modules-commonjs",
+        "@babel/plugin-proposal-optional-chaining",
+        [
+            "@babel/plugin-proposal-class-properties",
+            {
+                "loose": true
+            }
+        ]
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "name": "views",
+    "version": "0.0.0",
+    "description": "views",
+    "private": true,
+    "scripts": {
+        "start": ""
+    },
+    "author": "lhuanyu <lhuanyutot@163.com>",
+    "license": "MIT"
+}
