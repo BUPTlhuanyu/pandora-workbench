@@ -9,6 +9,9 @@
         "plugin:jest/recommended"
     ],
     "rules": {
+        "@typescript-eslint/camelcase": "off",
+        "@typescript-eslint/class-name-casing": "off",
+        "@typescript-eslint/generic-type-naming": "off",
         "react/no-array-index-key": "off",
         "comma-dangle": "off",
         "no-use-before-define": [0],

@@ -33,11 +33,7 @@ const baseConfig = {
     mode: isProd ? 'production' : 'development',
     resolve: {
         extensions: ['.js', '.san', '.json', '.ts'],
-        alias: {
-            '@backend': resolve('backend/src/'),
-            '@shared': resolve('shared/src/'),
-            '@frontend': resolve('frontend/src/')
-        }
+        alias: {}
     },
     externals: {
         electron: 'require("electron")'
@@ -60,8 +56,7 @@ const baseConfig = {
                                 '@babel/plugin-proposal-export-default-from',
                                 '@babel/plugin-transform-modules-commonjs',
                                 '@babel/plugin-proposal-optional-chaining',
-                                require.resolve('@babel/plugin-proposal-class-properties'),
-                                require.resolve('san-hot-loader/lib/babel-plugin')
+                                require.resolve('@babel/plugin-proposal-class-properties')
                             ],
                             presets: [
                                 require.resolve('@babel/preset-env'),
@@ -82,11 +77,6 @@ const baseConfig = {
                         }
                     }
                 ]
-            },
-            {
-                test: /\.js$/,
-                use: resolve('build-tools/icons-loader.js'),
-                include: /node_modules[\\/]@ant-design[\\/]/
             },
             {
                 oneOf: [
@@ -151,10 +141,6 @@ const baseConfig = {
                 ]
             },
             {
-                test: /\.san$/,
-                use: 'san-loader'
-            },
-            {
                 test: /\.html$/,
                 use: [
                     {
@@ -187,7 +173,6 @@ const baseConfig = {
         new NamedModulesPlugin(),
         new DefinePlugin({
             __DEBUG__: !isProd,
-            SAN_DEVTOOL: JSON.stringify('__san_devtool__'),
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         })
     ]
@@ -197,27 +182,7 @@ if (isProd) {
     baseConfig.plugins.push(new MiniCssExportPlugin(), new CleanWebpackPlugin());
     baseConfig.optimization = {
         splitChunks: {
-            cacheGroups: {
-                santd: {
-                    test(module, chunks) {
-                        const test = /[\\/]node_modules[\\/]santd/;
-                        if (module.nameForCondition && test.test(module.nameForCondition())) {
-                            return module.type === 'javascript/auto';
-                        }
-                        for (const chunk of module.chunksIterable) {
-                            if (chunk.name && test.test(chunk.name)) {
-                                return module.type === 'javascript/auto';
-                            }
-                        }
-                        return false;
-                    },
-                    name: 'santd',
-                    chunks(chunk) {
-                        // exclude index chunk, 这个 chunk 用于外部直接使用 frontend
-                        return chunk.name !== 'index';
-                    }
-                }
-            }
+            cacheGroups: {}
         },
         minimizer: [
             new TerserPlugin({
