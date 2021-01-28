@@ -2,6 +2,7 @@
   "name": "workbench-electron",
   "version": "0.0.0",
   "description": "workbench-electron",
+  "productName": "Taotie Workbench",
   "private": true,
   "main": "./dist/app.js",
   "scripts": {

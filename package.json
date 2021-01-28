@@ -14,16 +14,10 @@
         "packages"
     ],
     "devDependencies": {
-        "lint-staged": "^9.2.5",
-        "husky": "^4.0.0",
-        "babel-cli": "^6.26.0",
-        "babel-eslint": "^10.1.0",
-        "babel-plugin-import": "^1.13.0",
-        "@ecomfe/eslint-config": "^3.2.0",
         "@commitlint/cli": "^8.3.4",
         "@commitlint/core": "^8.3.4",
         "@commitlint/travis-cli": "^8.3.5",
-        "commitizen": "^4.0.3",
+        "@ecomfe/eslint-config": "^3.2.0",
         "@testing-library/jest-dom": "^5.11.4",
         "@testing-library/react": "^11.1.0",
         "@testing-library/user-event": "^12.1.10",
@@ -31,6 +25,13 @@
         "@types/node": "^12.0.0",
         "@types/react": "^16.9.53",
         "@types/react-dom": "^16.9.8",
+        "babel-cli": "^6.26.0",
+        "babel-eslint": "^10.1.0",
+        "babel-plugin-import": "^1.13.0",
+        "commitizen": "^4.0.3",
+        "eslint-plugin-babel": "^5.3.1",
+        "husky": "^4.0.0",
+        "lint-staged": "^9.2.5",
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "react-scripts": "4.0.1",
@@ -49,7 +50,7 @@
     },
     "config": {
         "commitizen": {
-          "path": "./node_modules/cz-conventional-changelog"
+            "path": "./node_modules/cz-conventional-changelog"
         }
     },
     "repository": {
@@ -57,5 +58,8 @@
         "url": "git://github.com/BUPTlhuanyu/taotie-workbench"
     },
     "author": "lhuanyu <lhuanyutot@163.com>",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "@commitlint/config-conventional": "^11.0.0"
+    }
 }

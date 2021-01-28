@@ -12,6 +12,7 @@
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
         "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
         "baseUrl": "./",
         "paths": {
             "@backend/*": ["packages/core/src/*"],

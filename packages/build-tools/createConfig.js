@@ -9,7 +9,6 @@
 
 const path = require('path');
 const {merge} = require('webpack-merge');
-const SanLoaderPlugin = require('san-loader/lib/plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const MiniCssExportPlugin = require('mini-css-extract-plugin');
@@ -141,6 +140,17 @@ const baseConfig = {
                 ]
             },
             {
+                test: /\.(png|jpg|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            limit: 100000000
+                        }
+                    }
+                ]
+            },
+            {
                 test: /\.html$/,
                 use: [
                     {
@@ -154,11 +164,6 @@ const baseConfig = {
                                         tag: 'img',
                                         attribute: 'src',
                                         type: 'src'
-                                    },
-                                    {
-                                        tag: 'san-avatar',
-                                        attribute: 'src',
-                                        type: 'src'
                                     }
                                 ]
                             }
@@ -169,7 +174,6 @@ const baseConfig = {
         ]
     },
     plugins: [
-        new SanLoaderPlugin(),
         new NamedModulesPlugin(),
         new DefinePlugin({
             __DEBUG__: !isProd,
