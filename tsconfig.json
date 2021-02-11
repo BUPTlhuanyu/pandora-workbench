@@ -15,8 +15,7 @@
         "resolveJsonModule": true,
         "baseUrl": "./",
         "paths": {
-            "@backend/*": ["packages/core/src/*"],
-            "@shared/*": ["packages/shared/src/*"]
+            "@core/*": ["packages/core/src/*"]
         }
     },
     "exclude": ["node_modules", "dist", "docs", "__tests__", "**/*.test*", "**/*.spec*", "**/mock"],

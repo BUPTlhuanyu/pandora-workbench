@@ -1,0 +1,27 @@
+.taotie-message-wrapper {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    background: #595959;
+    font-size: 12px;
+    z-index: 999;
+    transform: translate3d(-50%, 0, 0);
+}
+
+.taotie-message-animation-begin {
+    border-radius: 4px;
+    padding: 1px 4px;
+    animation: fadeOut .8s cubic-bezier(1,.02,1,.19) forwards;
+}
+
+@keyframes fadeOut {
+    0% {
+        transform: translate3d(-50%, 0, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(-50%, -50px, 0);
+        opacity: 0;
+        display: none;
+    }
+}

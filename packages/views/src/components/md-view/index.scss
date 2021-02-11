@@ -1,0 +1,55 @@
+$--side-bar-bg-color: #ffffff;
+$--control-text-color: #777777;
+$--select-text-bg-color: #faa295;
+$--active-file-text-color: #262626;
+$--active-file-border-color: #f22f27;
+/* --active-file-bg-color: #fff3f0; */
+$--primary-color: #f22f27;
+$--mid-0:#253238;
+$--mid-1: #ffffff;
+$--mid-2: #fafafa;
+$--mid-3: #f5f5f5;
+$--mid-4: #f0f0f0;
+$--mid-5: #d9d9d9;
+$--mid-6: #bfbfbf;
+$--mid-7: #8c8c8c;
+$--mid-8: #595959;
+$--mid-9: #434343;
+$--mid-10: #262626;
+$--mid-11: #1f1f1f;
+$--mid-12: #141414;
+$--mid-13: #000000;
+$--main-1: #fff3f0;
+$--main-2: #ffd4cc;
+$--main-3: #ffafa3;
+$--main-4: #ff887a;
+$--main-5: #ff5d52;
+$--main-6: #f22f27;
+$--main-7: #cc1616;
+$--main-8: #a60a0f;
+$--main-9: #80010a;
+$--main-10: #590009;
+
+.md-view-wrapper {
+    word-break: break-all;
+    font-size: 14px;
+    word-spacing: 0.05rem;
+    code {
+        padding: 2px 4px 1px;
+        margin: 0 2px;
+        font-size: 0.92em;
+        color: $--main-5;
+        background-color: $--main-1;
+        border-radius: 3px;
+    }
+    pre {
+        code {
+            padding: 2px 4px 1px;
+            margin: 0 2px;
+            font-size: 0.92em;
+            color: $--mid-1;
+            background-color: $--mid-0;
+            border-radius: 3px;
+        }
+    }
+}

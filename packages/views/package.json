@@ -4,14 +4,18 @@
     "description": "views",
     "private": true,
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "start": "react-app-rewired start",
+        "build": "react-app-rewired build",
+        "test": "react-app-rewired test",
+        "eject": "react-app-rewired eject"
     },
     "dependencies": {
+        "core": "0.0.0",
         "ahooks": "^2.9.4",
+        "clipboard": "^2.0.6",
         "codemirror": "^5.59.2",
+        "markdown-it": "^12.0.4",
+        "react-split-pane": "^0.1.92",
         "web-vitals": "^0.2.4"
     },
     "browserslist": {
@@ -29,6 +33,9 @@
     "author": "lhuanyu <lhuanyutot@163.com>",
     "license": "MIT",
     "devDependencies": {
-        "@types/codemirror": "^0.0.107"
+        "@types/clipboard": "^2.0.1",
+        "@types/codemirror": "^0.0.107",
+        "@types/markdown-it": "^12.0.1",
+        "node-sass": "4.14.1"
     }
 }

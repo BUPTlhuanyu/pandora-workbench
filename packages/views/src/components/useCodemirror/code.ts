@@ -91,7 +91,7 @@ function isEmpty(cm: any) {
     return cm.lineCount() === 1 && cm.getLine(0) === '';
 }
 
-export default function (ele: any) {
+export function createCodemirror(ele: any) {
     return codemirror(ele, {
         value: '',
         mode: 'markdown',
@@ -108,8 +108,8 @@ export default function (ele: any) {
         // keyMap: 'default',
         // extraKeys: object,
         // configureMouse: fn,
-        // lineWrapping: false,
-        lineNumbers: true,
+        lineWrapping: true,
+        // lineNumbers: true,
         firstLineNumber: 1,
         // lineNumberFormatter: num => `custom-${num}`, // 行数改成自定义字符
         // gutters: [{className: 'fffff', style: 'width: 100px'}], // 数字左侧的gutter样式与类名
@@ -118,3 +118,5 @@ export default function (ele: any) {
         pollInterval: 100 // 检测多久捕获一下onchange
     });
 }
+
+export default codemirror;
