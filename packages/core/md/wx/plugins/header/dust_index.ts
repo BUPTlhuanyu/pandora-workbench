@@ -1,10 +1,8 @@
 /**
  * @file
  */
-// const themeColor = '#ffb11b';
-
-const themeColor = '#f22f27';
-const grayColor = '#8c8c8c';
+import {getStyleStr} from '../../../utils';
+import {themeColor} from '../../common/constant';
 
 const HEAD_ONE: Record<string, any> = {
     openType: 'head1_open',
@@ -17,22 +15,6 @@ const HEAD_TWO: Record<string, any> = {
     closeType: 'head2_close',
     tag: 'span'
 };
-
-const BLOCK_QUOTE: Record<string, any> = {
-    type: 'block_before',
-    tag: 'span'
-};
-
-function getStyleStr(style: Record<string, any>) {
-    return Object.entries(style).reduce((prev: string, cur: [string, string]) => {
-        let key = cur[0];
-        let value = cur[1];
-        let kebabCaseKey: string = key.replace(/([A-Z])/g, (up: string) => {
-            return `-${up.toLowerCase()}`;
-        });
-        return prev + `${kebabCaseKey}: ${value};`;
-    }, '');
-}
 
 // 插入子节点
 function createHeader1(TokenCtr: any) {
@@ -51,14 +33,11 @@ function createHeader2(TokenCtr: any) {
     return [tokenOpen, tokenClose];
 }
 
-function createBlockQuoteBefore(TokenCtr: any) {
-    let {type, tag} = BLOCK_QUOTE;
-    // let arr = [];
-    let tokenBefore = new TokenCtr(type, tag, 1);
-    return tokenBefore;
-}
-
-// 修改h标签样式
+/**
+ * 修改h1的样式
+ * @param token h1 对应的token
+ * @returns 返回修改后的token,style会作为h1的内联样式
+ */
 function addHeader1Style(token: any) {
     let header1Style = {
         margin: '32px 0 24px',
@@ -74,8 +53,13 @@ function addHeader1Style(token: any) {
     return token;
 }
 
+/**
+ * 修改h2的样式
+ * @param token h2 对应的token
+ * @returns 返回修改后的token,style会作为h2的内联样式
+ */
 function addHeader2Style(token: any) {
-    let header1Style = {
+    let header2Style = {
         margin: '28px auto 20px',
         position: 'relative',
         fontSize: '1.5em',
@@ -83,13 +67,13 @@ function addHeader2Style(token: any) {
         fontWeight: 'bold',
         fontFamily: 'Optima-Regular'
     };
-    let header1StyleStr = getStyleStr(header1Style);
+    let header1StyleStr = getStyleStr(header2Style);
     token.attrPush(['style', header1StyleStr]);
     return token;
 }
 
 function addHeader3Style(token: any) {
-    let header2Style = {
+    let header3Style = {
         borderLeft: `2px solid ${themeColor}`,
         paddingLeft: '16px',
         margin: '24px auto 16px',
@@ -98,27 +82,8 @@ function addHeader3Style(token: any) {
         fontWeight: 'bold',
         fontFamily: 'Optima-Regular'
     };
-    let header2StyleStr = getStyleStr(header2Style);
+    let header2StyleStr = getStyleStr(header3Style);
     token.attrPush(['style', header2StyleStr]);
-    return token;
-}
-
-function addBlockQuoteStyle(token: any) {
-    let quoteStyle = {
-        background: 'rgb(255, 245, 227)',
-        position: 'relative',
-        padding: '24px 16px 12px',
-        margin: '24px 0 36px',
-        fontSize: '14px',
-        lineHeight: 1,
-        color: grayColor,
-        textIndent: 0,
-        border: 'none',
-        borderLeft: `2px solid ${themeColor}`,
-        letterSpacing: '1px'
-    };
-    let quoteStyleStr = getStyleStr(quoteStyle);
-    token.attrPush(['style', quoteStyleStr]);
     return token;
 }
 
@@ -132,9 +97,6 @@ function plugin() {
         let openType: string = '';
         let newTokens: any[] = [];
         tokens.reduce((prev, cur) => {
-            if (cur.tag === 'p') {
-                cur.attrPush(['style', 'line-height: 1.8']);
-            }
             if (opening && cur.type === 'inline') {
                 switch (openType) {
                     case 'h1': {
@@ -160,7 +122,6 @@ function plugin() {
                     }
                 }
             }
-            // cur.attrs = [['class', 'test-head']];
             if (cur.type === 'heading_open') {
                 openType = cur.tag;
                 opening = true;
@@ -188,90 +149,12 @@ function plugin() {
                 openType = cur.tag;
                 opening = false;
             }
-            else if (cur.type === 'blockquote_open') {
-                openType = cur.tag;
-                opening = true;
-                let blockquote = addBlockQuoteStyle(cur);
-                prev.push(blockquote);
-                return prev;
-            }
-            else if (cur.type === 'blockquote_close') {
-                openType = cur.tag;
-                opening = false;
-            }
-            else if (opening && cur.type === 'paragraph_open') {
-                let paragraphInBlockQuoteStyle = {
-                    margin: '0',
-                    lineHeight: '1.5'
-                };
-                let paragraphInBlockQuoteStyleStr = getStyleStr(paragraphInBlockQuoteStyle);
-                cur.attrPush(['style', paragraphInBlockQuoteStyleStr]);
-                let tokenBefore = createBlockQuoteBefore(state.Token);
-                prev.push(tokenBefore, cur);
-                return prev;
-            }
 
             prev.push(cur);
             return prev;
         }, newTokens);
         state.tokens = newTokens;
     };
-}
-
-function codeHandler(tokens: any, index: number) {
-    const codeBeforeStyle = {
-        display: 'flex',
-        position: 'relative',
-        height: '30px',
-        marginBottom: '-10px',
-        borderRadius: '5px',
-        background: '#253238',
-        paddingLeft: '8px',
-        boxSizing: 'border-box',
-        justifyContent: 'start',
-        alignItems: 'center'
-    };
-    const codeBeforeStyleStr = getStyleStr(codeBeforeStyle);
-    const codePreStyle = {
-        fontSize: 0,
-        margin: '10px 4px',
-        borderRadius: '5px',
-        boxShadow: 'rgba(0, 0, 0, 0.55) 0px 1px 5px'
-    };
-    const codePreStyleStr = getStyleStr(codePreStyle);
-    const codeStyle = {
-        overflowX: 'auto',
-        padding: '16px',
-        color: '#abb2bf',
-        display: '-webkit-box',
-        fontSize: '12px',
-        WebkitOverflowScrolling: 'touch',
-        paddingTop: '15px',
-        background: '#253238',
-        borderRadius: '5px',
-        boxSizing: 'border-box',
-        margin: 0
-    };
-    const codeStyleStr = getStyleStr(codeStyle);
-    const svgStyle = {
-        position: 'absolute',
-        left: '8px',
-        top: '9px'
-    };
-    const svgStyleStr = getStyleStr(svgStyle);
-    const codeContent = tokens[index].content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return `<pre style="${codePreStyleStr}">
-        <span style="${codeBeforeStyleStr}">
-            <svg style="${svgStyleStr}" xmlns="http://www.w3.org/2000/svg" width="54" height="14" viewBox="0 0 54 14">
-                <g fill="none" fill-rule="evenodd" transform="translate(1 1)">
-                    <circle cx="6" cy="6" r="6" fill="#FF5F56" stroke="#E0443E" stroke-width=".5"></circle>
-                    <circle cx="26" cy="6" r="6" fill="#FFBD2E" stroke="#DEA123" stroke-width=".5"></circle>
-                    <circle cx="46" cy="6" r="6" fill="#27C93F" stroke="#1AAB29" stroke-width=".5"></circle>
-                </g>
-            </svg>
-        </span>
-        <code style="${codeStyleStr}">${codeContent}</code>
-    </pre>`;
 }
 
 export default function (md: any) {
@@ -312,22 +195,5 @@ export default function (md: any) {
     md.renderer.rules[HEAD_TWO.closeType] = function () {
         return '</span>';
     };
-    md.renderer.rules[BLOCK_QUOTE.type] = function () {
-        const style = {
-            position: 'absolute',
-            top: '0',
-            left: '12px',
-            fontSize: '2em',
-            fontWeight: '700',
-            lineHeight: '1em',
-            fontFamily: 'Arial, serif',
-            color: themeColor
-        };
-        let styleStr = getStyleStr(style);
-        return `<span style="${styleStr}">“</span>`;
-    };
-    md.renderer.rules.fence = codeHandler;
-    md.renderer.rules.code_block = codeHandler;
     md.core.ruler.push('wx', plugin());
 }
-

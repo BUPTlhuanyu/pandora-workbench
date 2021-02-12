@@ -9,12 +9,33 @@ interface CodemirrorObj {
         scrollHeight: number;
     };
     editor: codemirror.Editor | null;
+    count: number;
+}
+
+function wordCount(data: string) {
+    // eslint-disable-next-line
+    const pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]/g;
+    const m = data.match(pattern);
+    let count = 0;
+    if (m === null) {
+        return count;
+    }
+    for (let item of m) {
+        if (item.charCodeAt(0) >= 0x4E00) {
+            count += item.length;
+        }
+        else {
+            count += 1;
+        }
+    }
+    return count;
 }
 
 export default function useCodemirror(): CodemirrorObj {
     const isMounted = useRef(false);
     const [ele, setCodemirrorEle] = useState<Element | null>(null);
     const [code, setCode] = useState<string>('');
+    const [count, setCount] = useState<number>(0);
     const [scroll, setScroll] = useState<any>({
         scrollTop: 0,
         scrollHeight: 0
@@ -27,7 +48,10 @@ export default function useCodemirror(): CodemirrorObj {
         else {
             let editor = createCodemirror(ele);
             editor.on('change', () => {
-                setCode(editor.getValue());
+                let code = editor.getValue();
+                let count = wordCount(code);
+                setCode(code);
+                setCount(count);
             });
             editor.on('scroll', (editor: any) => {
                 let scrollTop = editor.doc.scrollTop;
@@ -41,5 +65,5 @@ export default function useCodemirror(): CodemirrorObj {
         }
     }, [ele]);
 
-    return {code, setCodemirrorEle, scroll, editor};
+    return {code, setCodemirrorEle, scroll, editor, count};
 }

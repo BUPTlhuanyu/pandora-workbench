@@ -3,12 +3,13 @@
     "version": "0.0.0",
     "description": "core",
     "private": true,
-    "scripts": {
-        "start": ""
-    },
     "dependencies": {
-        "shared":"^0.0.0"
+        "highlight.js": "^10.6.0",
+        "shared": "^0.0.0"
     },
     "author": "lhuanyu <lhuanyutot@163.com>",
-    "license": "MIT"
+    "license": "MIT",
+    "devDependencies": {
+        "@types/highlightjs": "^10.1.0"
+    }
 }

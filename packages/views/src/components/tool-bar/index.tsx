@@ -27,8 +27,22 @@ export default function () {
     }, []);
     return (
         <div className="tool-bar-wrapper">
-            <div ref={copyBtn} title="复制">
-                <Icon type="copy" style={{fontSize: '20px'}} />
+            <div className="tool-bar-content">
+                <div className="tool-bar-title">Taotie Markdown</div>
+                <div className="tool-bar-icon-group">
+                    <div className="tool-bar-icon" ref={copyBtn} title="复制">
+                        <Icon type="copy" style={{fontSize: '20px'}} />
+                    </div>
+                    <div className="tool-bar-icon" title="undo">
+                        <Icon type="undo" style={{fontSize: '20px'}} />
+                    </div>
+                    <div className="tool-bar-icon" title="redo">
+                        <Icon type="redo" style={{fontSize: '20px'}} />
+                    </div>
+                    <div className="tool-bar-icon" title="side bar">
+                        <Icon type="sideBar" style={{fontSize: '20px'}} />
+                    </div>
+                </div>
             </div>
             <Message message={messageOption} />
         </div>

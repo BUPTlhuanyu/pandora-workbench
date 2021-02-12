@@ -150,8 +150,7 @@ function createWindow() {
         ? `file://${path.resolve(app.getAppPath(), './dist/index.html')}`
         : `http://localhost:${DEVELOP_PORT}/index.html`;
     const win = new BrowserWindow({
-        width: 1080,
-        height: 960,
+        fullscreen: true,
         webPreferences: {
             nodeIntegration: true
         }

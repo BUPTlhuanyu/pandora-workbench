@@ -1,9 +1,6 @@
 /**
  * @file
  */
-/**
- * @file
- */
 import {getStyleStr} from '../../../utils';
 import {grayColor, themeColor} from '../../common/constant';
 
@@ -20,9 +17,9 @@ function createBlockQuoteBefore(TokenCtr: any) {
 
 function addBlockQuoteStyle(token: any) {
     let quoteStyle = {
-        background: 'rgb(255, 245, 227)',
+        background: '#fff5e3',
         position: 'relative',
-        padding: '24px 16px 12px',
+        padding: '16px 16px 12px',
         margin: '24px 0 36px',
         fontSize: '14px',
         lineHeight: 1,
@@ -46,7 +43,6 @@ function plugin() {
         let opening: boolean = false;
         let newTokens: any[] = [];
         tokens.reduce((prev, cur) => {
-            // cur.attrs = [['class', 'test-head']];
             if (cur.type === 'blockquote_open') {
                 opening = true;
                 let blockquote = addBlockQuoteStyle(cur);

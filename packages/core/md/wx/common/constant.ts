@@ -1,7 +1,7 @@
 /**
  * @file
  */
-const themeColor = '#f22f27';
+const themeColor = '#ffb11b';
 const grayColor = '#8c8c8c';
 
 export {

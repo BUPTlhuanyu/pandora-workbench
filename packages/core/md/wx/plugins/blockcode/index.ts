@@ -1,7 +1,8 @@
 /**
  * @file
  */
-import {getStyleStr} from '../../../utils';
+import {getStyleStr, highlight} from '../../../utils';
+import {classMap, classPrefix} from './class2style';
 
 /**
  * 渲染特定type的token节点时，该函数返回的字符串将作为dom结构来处理，这里注意xss
@@ -13,8 +14,9 @@ function codeHandler(tokens: any, index: number) {
         display: 'flex',
         position: 'relative',
         height: '30px',
-        marginBottom: '-10px',
-        borderRadius: '5px',
+        marginBottom: '-5px',
+        borderTopLeftRadius: '5px',
+        borderTopRightRadius: '5px',
         background: '#253238',
         paddingLeft: '8px',
         boxSizing: 'border-box',
@@ -33,12 +35,13 @@ function codeHandler(tokens: any, index: number) {
         overflowX: 'auto',
         padding: '16px',
         color: '#abb2bf',
-        display: '-webkit-box',
+        display: 'block',
         fontSize: '12px',
         WebkitOverflowScrolling: 'touch',
         paddingTop: '15px',
         background: '#253238',
-        borderRadius: '5px',
+        borderBottomRightRadius: '5px',
+        borderBottomLeftRadius: '5px',
         boxSizing: 'border-box',
         margin: 0
     };
@@ -49,7 +52,15 @@ function codeHandler(tokens: any, index: number) {
         top: '9px'
     };
     const svgStyleStr = getStyleStr(svgStyle);
-    const codeContent = tokens[index].content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    let codeContent = highlight(tokens[index].content, {lang: 'javascript', classPrefix});
+    if (!Array.isArray(codeContent)) {
+        codeContent = codeContent.replace(/\&amp;(lt;|gt;)/g, '&$1');
+        // 替换class名称为style
+        Object.entries(classMap).forEach(([key, value]: any[]) => {
+            let keyReg = new RegExp(`(<.*)(class="${key}")(.*>)`, 'g');
+            codeContent = (codeContent as string).replace(keyReg, `$1style="${value}"$3`);
+        });
+    }
     return `<pre style="${codePreStyleStr}">
         <span style="${codeBeforeStyleStr}">
             <svg style="${svgStyleStr}" xmlns="http://www.w3.org/2000/svg" width="54" height="14" viewBox="0 0 54 14">
@@ -71,4 +82,3 @@ export default function (md: any) {
     md.renderer.rules.code_block = codeHandler;
     return md;
 }
-

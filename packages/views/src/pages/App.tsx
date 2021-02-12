@@ -9,10 +9,11 @@ import {useMount} from 'ahooks';
 
 import MdView from '../components/md-view';
 import ToolBar from '../components/tool-bar';
+import Footer from '../components/footer';
 
 function App() {
     const editorRef: React.RefObject<HTMLDivElement> = useRef(null);
-    let {code, setCodemirrorEle, scroll: coScroll, editor} = useCodemirror();
+    let {code, setCodemirrorEle, scroll: coScroll, editor, count} = useCodemirror();
     const mdRef = useRef<HTMLDivElement | null>(null);
     const scrollTarget = useRef<number>(-1);
     const containerHeight = useRef<number>(0);
@@ -94,6 +95,7 @@ function App() {
                     </Pane>
                 </SplitPane>
             </div>
+            <Footer count={count} />
         </div>
     );
 }
