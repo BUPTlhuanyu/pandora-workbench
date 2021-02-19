@@ -42,6 +42,9 @@ export default function () {
                     <div className="tool-bar-icon" title="side bar">
                         <Icon type="sideBar" style={{fontSize: '20px'}} />
                     </div>
+                    <div className="tool-bar-icon" title="file">
+                        <Icon type="file" style={{fontSize: '20px'}} />
+                    </div>
                 </div>
             </div>
             <Message message={messageOption} />
