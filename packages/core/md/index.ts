@@ -7,7 +7,8 @@ import {
     blockcode,
     blockquote,
     header,
-    commonstyle
+    commonstyle,
+    reference
 } from './wx/plugins';
 
 type TransformType = 'wx' | 'zhihu';
@@ -20,7 +21,11 @@ export function getMd(type: TransformType, mdOpt: MdOptInterface = {}) {
     switch (type) {
         case 'wx': {
             let md: any = new MarkdownIt('default', options);
-            return md.use(blockcode).use(blockquote).use(header).use(commonstyle);
+            return md.use(blockcode)
+                    .use(blockquote)
+                    .use(header)
+                    .use(commonstyle)
+                    .use(reference);
         }
         case 'zhihu': {
             let md: any = new MarkdownIt('default', options);
@@ -31,5 +36,4 @@ export function getMd(type: TransformType, mdOpt: MdOptInterface = {}) {
             return md;
         }
     }
-
 }
