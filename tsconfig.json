@@ -13,10 +13,7 @@
         "skipLibCheck": true,
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "baseUrl": "./",
-        "paths": {
-            "@core/*": ["packages/core/src/*"]
-        }
+        "baseUrl": "./"
     },
     "exclude": ["node_modules", "dist", "docs", "__tests__", "**/*.test*", "**/*.spec*", "**/mock"],
     "include": ["src", "packages", "node_modules/san/types/index.d.ts", "postcss.config.js"]

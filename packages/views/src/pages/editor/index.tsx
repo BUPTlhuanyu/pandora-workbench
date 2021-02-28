@@ -1,26 +1,33 @@
-import React, {useRef, useEffect, useCallback, useState} from 'react';
+import './index.scss';
 
-import './app.scss';
+import React, {useRef, useEffect, useCallback, useState, useContext} from 'react';
+import {useMount} from 'ahooks';
+import useCodemirror from '../../components/useCodemirror';
+import {EditorContext} from './editor-store';
 
 import SplitPane, {Pane} from 'react-split-pane';
+import Sider from './components/sider';
+import MdView from '../../components/md-view';
+import ToolBar from './components/tool-bar';
+import Footer from './components/footer';
 
-import useCodemirror from '../components/useCodemirror';
-import {useMount} from 'ahooks';
-
-import MdView from '../components/md-view';
-import ToolBar from '../components/tool-bar';
-import Footer from '../components/footer';
-
-function App() {
+function Editor() {
+    const [storeState] = useContext(EditorContext);
     const editorRef: React.RefObject<HTMLDivElement> = useRef(null);
     let {code, setCodemirrorEle, scroll: coScroll, editor, count} = useCodemirror();
     const mdRef = useRef<HTMLDivElement | null>(null);
+    const sideRef = useRef<HTMLDivElement | null>(null);
     const scrollTarget = useRef<number>(-1);
     const containerHeight = useRef<number>(0);
     const [mdScroll, setMdScroll] = useState<any>({
         scrollTop: 0,
         scrollHeight: 0
     });
+    useEffect(() => {
+        if (sideRef && sideRef.current) {
+            sideRef.current.style.width = storeState.sidbarOpened ? '30%' : '0px';
+        }
+    }, [storeState.sidbarOpened, sideRef.current]);
     useEffect(() => {
         let mdScrollHeight = mdRef.current!.clientHeight;
         let coScrollHeight = editor && (editor as any).doc.height;
@@ -66,38 +73,45 @@ function App() {
         []
     );
     return (
-        <div className="app">
-            <ToolBar />
-            <div className="editor-wrapper">
-                <SplitPane
-                    split="vertical"
-                    defaultSize="50%"
-                    paneStyle={{overflow: 'auto'}}
-                >
-                    <Pane
-                        eleRef={getCoViewEle}
-                        className="code-mirror-wrapper"
-                        style={{height: '100%'}}
+        <div className="taotie-editor">
+            <Sider
+                className="editor-file-folder"
+                ref={sideRef}
+            />
+            <div className="editor-container">
+                <ToolBar />
+                <div className="editor-wrapper">
+                    <SplitPane
+                        split="vertical"
+                        defaultSize="50%"
+                        paneStyle={{overflow: 'auto'}}
+                        style={{position: 'relative'}}
                     >
-                        <div
-                            ref={editorRef}
-                            className="code-mirror-container"
-                        ></div>
-                    </Pane>
-                    <Pane
-                        eleRef={getMdViewEle}
-                        className="md-view-wrapper"
-                    >
-                        <MdView
-                            value={code}
-                            className="md-view-container"
-                        />
-                    </Pane>
-                </SplitPane>
+                        <Pane
+                            eleRef={getCoViewEle}
+                            className="code-mirror-wrapper"
+                            style={{height: '100%'}}
+                        >
+                            <div
+                                ref={editorRef}
+                                className="code-mirror-container"
+                            ></div>
+                        </Pane>
+                        <Pane
+                            eleRef={getMdViewEle}
+                            className="md-view-wrapper"
+                        >
+                            <MdView
+                                value={code}
+                                className="md-view-container"
+                            />
+                        </Pane>
+                    </SplitPane>
+                </div>
+                <Footer count={count} />
             </div>
-            <Footer count={count} />
         </div>
     );
 }
 
-export default App;
+export default Editor;

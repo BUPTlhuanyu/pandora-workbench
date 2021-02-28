@@ -1,0 +1,28 @@
+.taotie-sider-wrapper {
+    .taotie-sider-container {
+        min-width: 200px;
+        .sider-title {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sider-file-folder {
+            background: transparent;
+            // 覆盖
+            .ant-tree-list {
+                .ant-tree-treenode-selected::before {
+                    background: #26262626;
+                    border-left: 3px solid #ffb530;
+                    // border-radius: 16px;
+                }
+                .ant-tree-treenode-selected:hover::before {
+                    background: #26262666;
+                }
+            }
+        }
+    }
+}
+.taotie-sider-hide {
+    // display: none;
+}

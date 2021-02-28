@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
-import App from './pages/App';
+import Editor from './pages/editor';
 import reportWebVitals from './reportWebVitals';
+import EditorStore from './pages/editor/editor-store';
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <EditorStore>
+            <Editor />
+        </EditorStore>
     </React.StrictMode>,
     document.getElementById('root')
 );
