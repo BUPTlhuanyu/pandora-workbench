@@ -215,24 +215,32 @@ function referInlineTokenRenderer(tokens: any, index: number) {
         href = '',
         id
     } = inlineToken.meta;
-    let pStyle = getStyleStr({
+    let wrapStyle = getStyleStr({
         display: 'flex'
     });
     let idStyle = getStyleStr({
         paddingTop: '1px',
-        whiteSpace: 'nowrap',
+        // whiteSpace: 'nowrap', // wx 不支持
+        flex: 1,
         marginRight: '8px',
-        fontSize: '14px'
+        fontSize: '80%',
+        display: 'inline'
     });
     let hrefStyle = getStyleStr({
         lineHeight: '1.4',
         wordBreak: 'break-all',
         color: '#6b6b6b'
     });
+    let contentStyle = getStyleStr({
+        lineHeight: 1,
+        display: 'inline',
+        flex: 10,
+        fontSize: '90%'
+    });
     return `
-        <p style='${pStyle}'>
+        <p style='${wrapStyle}'>
             <span style='${idStyle}'>[${id}]</span>
-            <span style='line-height: 1'>
+            <span style='${contentStyle}'>
                 ${content}:  
                 <em style='${hrefStyle}'>${decodeURIComponent(href).replace(/['"]/g, '')}</em>
             </span>
