@@ -11,18 +11,23 @@
             background: transparent;
             // 覆盖
             .ant-tree-list {
-                .ant-tree-treenode-selected::before {
+                .ant-tree-treenode-selected:hover::before {
                     background: #26262626;
-                    border-left: 3px solid #ffb530;
                     // border-radius: 16px;
                 }
-                .ant-tree-treenode-selected:hover::before {
+                .ant-tree-treenode-selected::before {
+                    border-left: 3px solid #ffb530;
                     background: #26262666;
+                }
+                .ant-tree-node-content-wrapper {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
             }
         }
     }
 }
 .taotie-sider-hide {
-    // display: none;
+
 }

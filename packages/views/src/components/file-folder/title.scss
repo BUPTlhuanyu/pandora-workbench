@@ -1,0 +1,17 @@
+.ant-tree-title-search-input {
+    margin: 0;
+    padding: 0;
+    background: 0 0;
+    border: none;
+    outline: none;
+}
+
+.ant-tree-title-text {
+    &::before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        display: inline-block;
+        position: absolute;
+    }
+}

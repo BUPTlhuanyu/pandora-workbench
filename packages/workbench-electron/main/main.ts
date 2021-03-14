@@ -3,6 +3,7 @@ import {app, BrowserWindow} from 'electron';
 import logoIcon from '../assets/png/logo.svg';
 import pkg from '../package.json';
 import {DEVELOP_PORT} from '../../shared/common/constant';
+import {registerContextMenuListener} from './contextmenu/electron-main/contextmenu';
 
 let splashWindow: BrowserWindow | null = null;
 
@@ -152,7 +153,8 @@ function createWindow() {
     const win = new BrowserWindow({
         fullscreen: true,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true
         }
     });
 
@@ -167,6 +169,7 @@ function createWindow() {
 app.whenReady().then(async () => {
     await createSplashWindow();
     await createWindow();
+    registerContextMenuListener();
 });
 
 app.on('window-all-closed', () => {

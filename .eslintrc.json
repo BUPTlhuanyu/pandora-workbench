@@ -9,6 +9,7 @@
         "plugin:jest/recommended"
     ],
     "rules": {
+        "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/camelcase": "off",
         "@typescript-eslint/class-name-casing": "off",
         "@typescript-eslint/generic-type-naming": "off",

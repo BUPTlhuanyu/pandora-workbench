@@ -15,7 +15,7 @@
 //         '@utils': resolve('src/utils'),
 //     };
 // }
-const {override, fixBabelImports} = require('customize-cra');
+const {override, fixBabelImports, addWebpackExternals} = require('customize-cra');
 
 // Let Babel compile outside of src/.
 function craBabelBugFix(config) {
@@ -25,9 +25,20 @@ function craBabelBugFix(config) {
     return config;
 }
 
+// 解决webpack打包无法使用fs模块的问题
+function electronRendererTartget(config) {
+    console.log(config.target);
+    config.target = 'electron-renderer';
+    return config;
+}
+
 module.exports = override(
+    addWebpackExternals({
+        electron: 'require("electron")'
+    }),
     fixBabelImports("import", {
         libraryName: "antd", libraryDirectory: "es", style: 'css' // change importing css to less
     }),
-    craBabelBugFix
+    craBabelBugFix,
+    electronRendererTartget
 );
