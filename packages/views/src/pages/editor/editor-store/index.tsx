@@ -24,6 +24,8 @@ function editorReducer(state: IStoreState, action: IAction) {
     switch (action.type) {
         case 'sidbarStatus':
             return {...state, sidbarOpened: !state.sidbarOpened};
+        case 'selectedFile':
+            return {...state, selectedFilePath: action.payload};
         default:
             return {...state};
     }

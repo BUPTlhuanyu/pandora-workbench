@@ -2,13 +2,15 @@ import * as React from 'react';
 import './title.scss';
 
 // 注册菜单点击事件
-import {fileEvent, FS_REANEM} from '../../electron/menu/file';
+import {fileEvent, FS_EDIT, renameFile} from '../../node/file';
 
 interface ITitileProps {
     nodeData: {
         title?: React.ReactNode;
         type?: string;
         key: string | number;
+        path?: string;
+        name?: string;
     };
 }
 
@@ -22,24 +24,35 @@ function Title(props: ITitileProps) {
     const fsRename = React.useCallback((key: string | number) => {
         if (props.nodeData.key === key && isMouted.current) {
             setInputShow(true);
-            inputRef.current && inputRef.current.focus();
+            if (inputRef.current) {
+                inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
+                inputRef.current.focus();
+            }
         }
     }, [setInputShow]);
 
     React.useEffect(() => {
         isMouted.current = true;
-        fileEvent.on(FS_REANEM, fsRename);
+        fileEvent.on(FS_EDIT, fsRename);
         return () => {
             isMouted.current = false;
-            fileEvent.off.bind(null, FS_REANEM, fsRename);
+            fileEvent.off.bind(null, FS_EDIT, fsRename);
         };
     }, []);
 
     const onKeyPress = React.useCallback((e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            setInputShow(false);
-            if (inputRef.current && inputRef.current.value.trim()) {
-                setTitle(inputRef.current.value);
+            // 去修改文件名
+            // 成功之后需要将文字设置一下，失败了则不设置
+            // setInputShow(false);
+            const newName = inputRef.current && inputRef.current.value.trim();
+            if (newName && props.nodeData.path) {
+                renameFile(props.nodeData.path, newName).then(() => {
+                    setTitle(newName);
+                    setInputShow(false);
+                }).catch(err => {
+                    console.log(err);
+                });
             }
         }
     }, [setInputShow, setTitle, inputRef.current]);

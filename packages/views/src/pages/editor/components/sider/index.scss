@@ -21,8 +21,16 @@
                 }
                 .ant-tree-node-content-wrapper {
                     overflow: hidden;
-                    text-overflow: ellipsis;
                     white-space: nowrap;
+                    height: 24px;
+                }
+                .ant-tree-title {
+                    overflow: auto;
+                    width: calc(100% - 24px);
+                    display: inline-block;
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
                 }
             }
         }

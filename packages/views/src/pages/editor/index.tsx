@@ -11,10 +11,19 @@ import MdView from '../../components/md-view';
 import ToolBar from './components/tool-bar';
 import Footer from './components/footer';
 
+import {getFileString} from '../../node/file';
+
 function Editor() {
     const [storeState] = useContext(EditorContext);
     const editorRef: React.RefObject<HTMLDivElement> = useRef(null);
-    let {code, setCodemirrorEle, scroll: coScroll, editor, count} = useCodemirror();
+    let {
+        code,
+        setCode,
+        setCodemirrorEle,
+        scroll: coScroll,
+        editor,
+        count
+    } = useCodemirror();
     const mdRef = useRef<HTMLDivElement | null>(null);
     const sideRef = useRef<HTMLDivElement | null>(null);
     const scrollTarget = useRef<number>(-1);
@@ -28,6 +37,18 @@ function Editor() {
             sideRef.current.style.width = storeState.sidbarOpened ? '30%' : '0px';
         }
     }, [storeState.sidbarOpened, sideRef.current]);
+
+    // 获取文件code.TODO: 确保组件没有卸载
+    useEffect(() => {
+        getFileString(storeState.selectedFilePath).then((resStr: string) => {
+            console.log('resStr', resStr, editor);
+            setCode(resStr);
+            editor?.getDoc().setValue(resStr);
+        }).catch(err => {
+            console.warn(err);
+        });
+    }, [storeState.selectedFilePath, setCode, editor]);
+
     useEffect(() => {
         let mdScrollHeight = mdRef.current!.clientHeight;
         let coScrollHeight = editor && (editor as any).doc.height;

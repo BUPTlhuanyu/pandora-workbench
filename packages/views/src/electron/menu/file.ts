@@ -1,11 +1,8 @@
 import {IContextMenuItem} from 'workbench-electron/main/contextmenu/common/contextmenu';
-import EventEmitter from 'events';
-
-export const fileEvent = new EventEmitter();
-// 域名设计
-export const FS_REANEM = 'fs:rename';
+import {fileEvent, FS_EDIT} from '../../node/file';
 
 export const CONTEXT_FILE = 'file';
+export const CONTEXT_DIR = 'directory';
 
 interface IData{
     key?: string;
@@ -49,7 +46,7 @@ export function getContextFileItems(data: IData) {
     items.push({
         label: '重命名',
         click: () => {
-            fileEvent.emit(FS_REANEM, data.key);
+            fileEvent.emit(FS_EDIT, data.key);
         }
     });
 
@@ -86,4 +83,3 @@ export function getContextFileItems(data: IData) {
     });
     return items;
 }
-export const CONTEXT_DIR = 'directory';

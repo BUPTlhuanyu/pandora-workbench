@@ -10,6 +10,7 @@ interface CodemirrorObj {
     };
     editor: codemirror.Editor | null;
     count: number;
+    setCode: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function wordCount(data: string) {
@@ -65,5 +66,5 @@ export default function useCodemirror(): CodemirrorObj {
         }
     }, [ele]);
 
-    return {code, setCodemirrorEle, scroll, editor, count};
+    return {code, setCode, setCodemirrorEle, scroll, editor, count};
 }
