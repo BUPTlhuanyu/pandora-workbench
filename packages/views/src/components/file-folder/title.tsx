@@ -12,6 +12,7 @@ interface ITitileProps {
         path?: string;
         name?: string;
     };
+    onRename: (data: Record<string, any>) => void;
 }
 
 function Title(props: ITitileProps) {
@@ -50,6 +51,7 @@ function Title(props: ITitileProps) {
                 renameFile(props.nodeData.path, newName).then(() => {
                     setTitle(newName);
                     setInputShow(false);
+                    props.onRename && props.onRename(props.nodeData);
                 }).catch(err => {
                     console.log(err);
                 });
