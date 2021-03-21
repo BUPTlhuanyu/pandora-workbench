@@ -11,7 +11,7 @@ import MdView from '../../components/md-view';
 import ToolBar from './components/tool-bar';
 import Footer from './components/footer';
 
-import {getFileString} from '../../node/file';
+import {getFileString, saveFile, fileEvent, FS_SAVE} from '../../node/file';
 
 function Editor() {
     const [storeState] = useContext(EditorContext);
@@ -48,6 +48,20 @@ function Editor() {
             console.warn(err);
         });
     }, [storeState.selectedFilePath, setCode, editor]);
+
+    // 保存文件内容
+    const saveFileCb = useCallback(async () => {
+        const content = editor?.getDoc().getValue() || '';
+        console.log(storeState.selectedFilePath, content);
+        const res = await saveFile(storeState.selectedFilePath, content);
+        console.log('saveFileCb', res);
+    }, [storeState.selectedFilePath]);
+
+    // 监听保存文件内容的事件 TODO: saveFileCb 会一直变化
+    useEffect(() => {
+        fileEvent.removeAllListeners(FS_SAVE);
+        fileEvent.on(FS_SAVE, saveFileCb);
+    }, [saveFileCb]);
 
     useEffect(() => {
         let mdScrollHeight = mdRef.current!.clientHeight;

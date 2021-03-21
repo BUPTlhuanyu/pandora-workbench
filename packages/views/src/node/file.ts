@@ -5,6 +5,7 @@ import paths from 'path';
 export const fileEvent = new EventEmitter();
 // 域名设计
 export const FS_EDIT = 'fs:edit';
+export const FS_SAVE = 'fs:save';
 
 export async function renameFile(oldPath: string, newName: string) {
     const oldDir = paths.dirname(oldPath);
@@ -20,6 +21,16 @@ export async function getFileString(path: string) {
         return Promise.reject();
     }
     return fs.promises.readFile(path, {
+        encoding: 'utf8'
+    });
+}
+
+// TODO：换成stream
+export async function saveFile(path: string, content: string) {
+    if (typeof path !== 'string') {
+        return Promise.reject();
+    }
+    return fs.promises.writeFile(path, content, {
         encoding: 'utf8'
     });
 }

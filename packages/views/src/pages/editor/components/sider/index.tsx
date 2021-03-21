@@ -56,7 +56,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
             [props.className]: true
         });
     });
-    const onRename = React.useCallback(function (data: Record<string, any>) {
+    const onRename = React.useCallback(() => {
         const root = treeData[0];
         if (!root.path) {
             return;

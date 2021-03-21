@@ -9,6 +9,8 @@ import {EditorContext} from '../../editor-store';
 import Message, {MessageOptions} from '../../../../components/message';
 import Icon from '../../../../components/icon';
 
+import {fileEvent, FS_SAVE} from '../../../../node/file';
+
 export default function () {
     const copyBtn = useRef<HTMLDivElement | null>(null);
     const [, dispatch] = useContext(EditorContext);
@@ -33,6 +35,9 @@ export default function () {
             type: 'sidbarStatus',
             payload: ''
         });
+    }, []);
+    const saveFile = useCallback(() => {
+        fileEvent.emit(FS_SAVE);
     }, []);
     return (
         <div className="tool-bar-wrapper">
@@ -70,6 +75,13 @@ export default function () {
                         title="file"
                     >
                         <Icon type="file" style={{fontSize: '20px'}} />
+                    </div>
+                    <div
+                        className="tool-bar-icon"
+                        title="save"
+                        onClick={saveFile}
+                    >
+                        <Icon type="save" style={{fontSize: '20px'}} />
                     </div>
                 </div>
             </div>
