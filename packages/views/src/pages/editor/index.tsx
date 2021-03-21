@@ -11,6 +11,8 @@ import MdView from '../../components/md-view';
 import ToolBar from './components/tool-bar';
 import Footer from './components/footer';
 
+import {message} from 'antd';
+
 import {getFileString, saveFile, fileEvent, FS_SAVE} from '../../node/file';
 
 function Editor() {
@@ -52,7 +54,17 @@ function Editor() {
     // 保存文件内容
     const saveFileCb = useCallback(async () => {
         const content = editor?.getDoc().getValue() || '';
+        if (!storeState.selectedFilePath) {
+            // TODO：保存文件弹窗
+            message.error({
+                content: '保存文件失败',
+                duration: 1,
+                className: 'taotie-message-error'
+            });
+            return;
+        }
         console.log(storeState.selectedFilePath, content);
+        // TODO:错误处理
         const res = await saveFile(storeState.selectedFilePath, content);
         console.log('saveFileCb', res);
     }, [storeState.selectedFilePath]);

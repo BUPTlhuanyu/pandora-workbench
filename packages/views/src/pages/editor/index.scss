@@ -93,3 +93,16 @@
         }
     }
 }
+
+.taotie-message-success,
+.taotie-message-loading,
+.taotie-message-error
+{
+    .ant-message-notice-content {
+        padding: 5px 16px;
+        border-radius: 8px;
+        .ant-message-success .anticon {
+            color: #ffb531;
+        }
+    }
+}

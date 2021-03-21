@@ -1,12 +1,13 @@
 /**
  * @file
  */
-import React, {useRef, useEffect, useState, useCallback, useContext} from 'react';
+import React, {useRef, useEffect, useCallback, useContext} from 'react';
 import './index.scss';
 import ClipboardJS from 'clipboard';
 import {EditorContext} from '../../editor-store';
 
-import Message, {MessageOptions} from '../../../../components/message';
+import {message} from 'antd';
+
 import Icon from '../../../../components/icon';
 
 import {fileEvent, FS_SAVE} from '../../../../node/file';
@@ -14,19 +15,23 @@ import {fileEvent, FS_SAVE} from '../../../../node/file';
 export default function () {
     const copyBtn = useRef<HTMLDivElement | null>(null);
     const [, dispatch] = useContext(EditorContext);
-    const [messageOption, setMessage] = useState<MessageOptions | null>(null);
     useEffect(() => {
         let cpIns = new ClipboardJS(copyBtn.current as HTMLDivElement, {
             target: () => document.querySelector('.md-view-wrapper') as HTMLDivElement
         });
         cpIns.on('success', function () {
-            setMessage({
-                text: '复制成功'
+            console.log('asdasdasdasdasd');
+            message.success({
+                content: '复制成功',
+                duration: 1,
+                className: 'taotie-message-success'
             });
         });
         cpIns.on('error', function () {
-            setMessage({
-                text: '复制失败'
+            message.error({
+                content: '复制失败',
+                duration: 1,
+                className: 'taotie-message-error'
             });
         });
     }, []);
@@ -51,7 +56,7 @@ export default function () {
                     >
                         <Icon type="copy" style={{fontSize: '20px'}} />
                     </div>
-                    <div
+                    {/* <div
                         className="tool-bar-icon"
                         title="undo"
                     >
@@ -62,7 +67,7 @@ export default function () {
                         title="redo"
                     >
                         <Icon type="redo" style={{fontSize: '20px'}} />
-                    </div>
+                    </div> */}
                     <div
                         className="tool-bar-icon"
                         title="side bar"
@@ -70,12 +75,12 @@ export default function () {
                     >
                         <Icon type="sideBar" style={{fontSize: '20px'}} />
                     </div>
-                    <div
+                    {/* <div
                         className="tool-bar-icon"
                         title="file"
                     >
                         <Icon type="file" style={{fontSize: '20px'}} />
-                    </div>
+                    </div> */}
                     <div
                         className="tool-bar-icon"
                         title="save"
@@ -85,7 +90,6 @@ export default function () {
                     </div>
                 </div>
             </div>
-            <Message message={messageOption} />
         </div>
     );
 }
