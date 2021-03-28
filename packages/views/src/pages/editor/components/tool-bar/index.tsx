@@ -3,7 +3,7 @@
  */
 import React, {useRef, useEffect, useCallback, useContext} from 'react';
 import './index.scss';
-import ClipboardJS from 'clipboard';
+import ClipboardJS from 'clipboard-web';
 import {EditorContext} from '../../editor-store';
 
 import {message} from 'antd';

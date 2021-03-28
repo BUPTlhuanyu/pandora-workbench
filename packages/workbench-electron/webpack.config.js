@@ -12,22 +12,11 @@ module.exports = createConfig({
         fs: 'empty'
     },
     entry: {
-        app: './main/main.ts'
+        index: './main/main.ts'
     },
     output: {
         publicPath: isProd ? './' : '/',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'app'),
         filename: '[name].js'
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: path.join(__dirname, 'main/index.html'),
-            filename: 'index.html'
-        })
-        // new HtmlWebpackPlugin({
-        //     template: path.join(__dirname, 'public/home.html'),
-        //     filename: 'home.ejs',
-        //     chunks: ['home']
-        // })
-    ]
+    }
 });

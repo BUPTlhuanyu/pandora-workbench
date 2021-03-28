@@ -1,8 +1,6 @@
 /**
  * @file 为了解决 cra 的 bug，cra 真心不好使，只能自己fork，还是vue cli 舒服
  */
-// const path = require('path')
-
 // function resolve (dir) {
 //   return path.join(__dirname, '.', dir)
 // }
@@ -15,6 +13,7 @@
 //         '@utils': resolve('src/utils'),
 //     };
 // }
+const path = require('path');
 const {override, fixBabelImports, addWebpackExternals} = require('customize-cra');
 
 // Let Babel compile outside of src/.
@@ -27,12 +26,20 @@ function craBabelBugFix(config) {
 
 // 解决webpack打包无法使用fs模块的问题
 function electronRendererTartget(config) {
-    console.log(config.target);
     config.target = 'electron-renderer';
     return config;
 }
 
+// 修改build路径
+const publicPathPlugin = (config) => {
+    if (process.env.NODE_ENV === 'production') {
+        config.output.publicPath = './';
+    }
+    return config
+}
+
 module.exports = override(
+    publicPathPlugin,
     addWebpackExternals({
         electron: 'require("electron")'
     }),

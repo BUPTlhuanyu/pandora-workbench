@@ -4,21 +4,43 @@
   "description": "workbench-electron",
   "productName": "Taotie Workbench",
   "private": true,
-  "main": "./dist/app.js",
+  "main": "./app/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack && electron ./dist/app.js",
-    "build": "cross-env NODE_ENV=production webpack --mode production --progress --hide-modules"
+    "build": "cross-env NODE_ENV=production webpack --mode production --progress",
+    "build:mac": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac --x64"
   },
   "dependencies": {
     "core": "^0.0.0",
-    "electron": "^11.2.0",
     "shared": "^0.0.0"
   },
   "author": "lhuanyu <lhuanyutot@163.com>",
   "license": "MIT",
   "devDependencies": {
+    "electron": "^11.2.0",
+    "electron-builder": "^22.10.5",
     "cross-env": "^7.0.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^4.3.1"
+  },
+  "build": {
+    "appId": "org.taotieworkbench",
+    "electronVersion": "11.2.1",
+    "mac": {
+        "category": "",
+        "asar": false
+    },
+    "win": {
+        "target": "nsis",
+        "icon": "./src/logo.ico"
+    },
+    "files": [
+        "dist/**/*",
+        "package.json",
+        "index.js"
+    ],
+    "directories": {
+        "output": "release"
+    }
   }
 }

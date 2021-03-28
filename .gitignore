@@ -82,6 +82,8 @@ Thumbs.db
 .vscode
 
 # build assets
-/output
-/dist
-/dll
+output
+dist
+dll
+build
+release
