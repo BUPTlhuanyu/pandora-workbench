@@ -1,9 +1,17 @@
+/**
+ * @file app
+ */
 import path from 'path';
 import {app, BrowserWindow} from 'electron';
 import logoIcon from '../assets/png/logo.svg';
 import pkg from '../package.json';
 import {DEVELOP_PORT} from '../../shared/common/constant';
 import {registerContextMenuListener} from './contextmenu/electron-main/contextmenu';
+
+import {Injector} from 'core/base/dependency-inject';
+import CodeApplication from './initService';
+import { IFileService } from 'services/files/files';
+import { FileService } from 'services/files/fileService';
 
 let splashWindow: BrowserWindow | null = null;
 
@@ -166,20 +174,42 @@ function createWindow() {
     });
 }
 
-app.whenReady().then(async () => {
-    await createSplashWindow();
-    await createWindow();
-    registerContextMenuListener();
-});
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
+class CodeMain {
+    constructor() {
+        this.registerListeners();
     }
-});
-
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
+    async startUp(): Promise<void> {
+        this.initServices();
     }
-});
+    private registerListeners() {
+        app.whenReady().then(async () => {
+            await createSplashWindow();
+            await createWindow();
+            registerContextMenuListener();
+        });
+
+        app.on('window-all-closed', () => {
+            if (process.platform !== 'darwin') {
+                app.quit();
+            }
+        });
+
+        app.on('activate', () => {
+            if (BrowserWindow.getAllWindows().length === 0) {
+                createWindow();
+            }
+        });
+    }
+    private initServices() {
+        const injector = new Injector();
+    
+        injector.add(IFileService, {
+            useClass: FileService,
+        }, true);
+    
+        injector.createInstance(CodeApplication);
+    }
+}
+
+const main = new CodeMain();
+main.startUp();

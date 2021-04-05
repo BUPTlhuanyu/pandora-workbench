@@ -1,0 +1,12 @@
+{
+    "name": "services",
+    "version": "0.0.0",
+    "description": "services",
+    "private": true,
+    "dependencies": {
+        "highlight.js": "^10.6.0",
+        "shared": "^0.0.0"
+    },
+    "author": "lhuanyu <lhuanyutot@163.com>",
+    "license": "MIT"
+}
