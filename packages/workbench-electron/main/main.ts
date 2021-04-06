@@ -150,17 +150,21 @@ function createSplashWindow() {
                 resolve('');
             }, 1500);
         });
-        console.log(splashWindow);
     });
 }
 
 function createWindow() {
     const html = MODE
-        ? `file://${path.resolve(app.getAppPath(), './dist/index.html')}`
+        ? `file://${path.resolve(app.getAppPath(), './index.html')}`
         : `http://localhost:${DEVELOP_PORT}/index.html`;
+    const preload = MODE
+        ? `file://${path.resolve(app.getAppPath(), './dist/preload.js')}`
+        : `file://${path.resolve(app.getAppPath(), './preload.js')}`;
+    console.log('preload', app.getAppPath(), preload);
     const win = new BrowserWindow({
         fullscreen: true,
         webPreferences: {
+            preload,
             nodeIntegration: true,
             enableRemoteModule: true
         }
