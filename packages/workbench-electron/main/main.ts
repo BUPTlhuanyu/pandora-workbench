@@ -157,10 +157,7 @@ function createWindow() {
     const html = MODE
         ? `file://${path.resolve(app.getAppPath(), './index.html')}`
         : `http://localhost:${DEVELOP_PORT}/index.html`;
-    const preload = MODE
-        ? `file://${path.resolve(app.getAppPath(), './dist/preload.js')}`
-        : `file://${path.resolve(app.getAppPath(), './preload.js')}`;
-    console.log('preload', app.getAppPath(), preload);
+    const preload = path.resolve(app.getAppPath(), './preload.js');
     const win = new BrowserWindow({
         fullscreen: true,
         webPreferences: {
