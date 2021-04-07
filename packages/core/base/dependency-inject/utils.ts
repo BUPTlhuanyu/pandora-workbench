@@ -7,8 +7,8 @@ import {
 } from './typings';
 
 export const dependencyIds = new Map<string, Identifier<any>>();
-export const DEPENDENCIES = '$$MORPHO_DEPENDENCIES';
-export const TARGET = '$$MORPHO_TARGET';
+export const DEPENDENCIES = '$$TAOTIE_DEPENDENCIES';
+export const TARGET = '$$TAOTIE_TARGET';
 
 /**
  * 获取消费者依赖的服务
@@ -70,7 +70,7 @@ export function assertRecursionNotTrappedInACircle(
         resetRecursionCounter();
 
         throw new Error(
-            `[morpho] "createInstance" exceeds the limitation of recursion (${RECURSION_MAX}x). `
+            `[TAOTIE] "createInstance" exceeds the limitation of recursion (${RECURSION_MAX}x). `
             + 'There might be a circular dependency among your dependency items. '
             + `Last target was "${getDependencyKeyName(key)}".`
         );

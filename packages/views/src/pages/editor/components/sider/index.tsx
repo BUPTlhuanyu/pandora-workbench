@@ -2,6 +2,7 @@ import * as React from 'react';
 import './index.scss';
 import getClassname from 'views/src/utils/classMaker';
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
+import {taotie} from 'views/src/services/taotie';
 
 // TODO: 依赖注入不同环境的处理方式
 import {remote} from 'electron';
@@ -24,15 +25,15 @@ const onEachDirectory: IOnEachDirectory = (item: Record<string, any>) => {
     item.title = item.name;
 };
 
-function openDialog() {
-    return remote.dialog.showOpenDialog({
-        properties: [
-            'openFile',
-            'openDirectory',
-            'createDirectory' // macOS only
-        ],
-    });
-}
+// function openDialog() {
+//     return remote.dialog.showOpenDialog({
+//         properties: [
+//             'openFile',
+//             'openDirectory',
+//             'createDirectory' // macOS only
+//         ],
+//     });
+// }
 
 function getDirTree(result: {canceled: boolean, filePaths: string[]}) {
     let treeData = null;
@@ -66,9 +67,10 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, [treeData[0], setTreeData]);
 
     const getTreeData = React.useCallback(async () => {
-        const res: any = await openDialog();
-        const treeData = getDirTree(res);
-        treeData && setTreeData(treeData as ItreeData);
+        taotie.ipcRenderer.send('');
+        // const res: any = await openDialog();
+        // const treeData = getDirTree(res);
+        // treeData && setTreeData(treeData as ItreeData);
     }, []);
 
     return (

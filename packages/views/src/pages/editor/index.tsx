@@ -15,6 +15,8 @@ import {message} from 'antd';
 
 import {getFileString, saveFile, fileEvent, FS_SAVE} from '../../node/file';
 
+const taotie = (window as any).taotie;
+
 function Editor() {
     const [storeState] = useContext(EditorContext);
     const editorRef: React.RefObject<HTMLDivElement> = useRef(null);
@@ -121,10 +123,12 @@ function Editor() {
     );
     return (
         <div className="taotie-editor">
-            <Sider
-                className="editor-file-folder"
-                ref={sideRef}
-            />
+            {
+                taotie && <Sider
+                    className="editor-file-folder"
+                    ref={sideRef}
+                />
+            }
             <div className="editor-container">
                 <ToolBar />
                 <div className="editor-wrapper">

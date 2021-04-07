@@ -15,20 +15,19 @@ export class FileService implements IFileService{
     constructor() {
 
     }
-
-    renameFile(oldPath: string, newName: string) {
+    async renameFile(oldPath: string, newName: string) {
         const oldDir = paths.dirname(oldPath);
         const newPath = paths.join(oldDir, newName);
         console.log('newPath', newPath);
-        return fs.promises.rename(oldPath, newPath).then(() => {
+        return await fs.promises.rename(oldPath, newPath).then(() => {
             return newPath;
         });
     }
-    readFile(path: string): Promise<string> {
+    async readFile(path: string): Promise<string> {
         if (typeof path !== 'string') {
             return Promise.reject();
         }
-        return fs.promises.readFile(path, {
+        return await fs.promises.readFile(path, {
             encoding: 'utf8'
         });
     }
@@ -37,7 +36,7 @@ export class FileService implements IFileService{
         if (typeof path !== 'string') {
             return Promise.reject();
         }
-        return fs.promises.writeFile(path, content, {
+        return await fs.promises.writeFile(path, content, {
             encoding: 'utf8'
         });
     }
