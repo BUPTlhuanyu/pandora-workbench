@@ -28,4 +28,6 @@ export interface IFileService {
      * Updates the content replacing its previous value.
      */
     writeFile(resource: URI, content: string): Promise<string>;
+
+    getDirTree(resource: URI): any[] | null
 }

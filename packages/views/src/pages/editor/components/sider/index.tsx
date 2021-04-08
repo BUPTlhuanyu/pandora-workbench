@@ -5,48 +5,9 @@ import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import {taotie} from 'views/src/services/taotie';
 
 // TODO: 依赖注入不同环境的处理方式
-import {remote} from 'electron';
-import {directoryTree, IOnEachFile, IOnEachDirectory} from 'shared/utils/file';
 
 interface ISiderProps {
     className: string;
-}
-
-const onEachFile: IOnEachFile = (item: Record<string, any>) => {
-    item.key = item.path;
-    item.title = item.name;
-    item.isLeaf = true;
-};
-const onEachDirectory: IOnEachDirectory = (item: Record<string, any>) => {
-    if (item.children.length === 0) {
-        item.isLeaf = true;
-    }
-    item.key = item.path;
-    item.title = item.name;
-};
-
-// function openDialog() {
-//     return remote.dialog.showOpenDialog({
-//         properties: [
-//             'openFile',
-//             'openDirectory',
-//             'createDirectory' // macOS only
-//         ],
-//     });
-// }
-
-function getDirTree(result: {canceled: boolean, filePaths: string[]}) {
-    let treeData = null;
-    if (!result.canceled && result.filePaths) {
-        const files = directoryTree(
-            result.filePaths[0],
-            {excludeHidden: true},
-            onEachFile,
-            onEachDirectory
-        );
-        treeData = files ? [files] : [];
-    }
-    return treeData;
 }
 
 export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
@@ -58,12 +19,12 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         });
     });
     const onRename = React.useCallback(() => {
-        const root = treeData[0];
-        if (!root.path) {
-            return;
-        }
-        const newTreeData = getDirTree({canceled: false, filePaths: [root.path]});
-        newTreeData && setTreeData(newTreeData as ItreeData);
+        // const root = treeData[0];
+        // if (!root.path) {
+        //     return;
+        // }
+        // const newTreeData = getDirTree({canceled: false, filePaths: [root.path]});
+        // newTreeData && setTreeData(newTreeData as ItreeData);
     }, [treeData[0], setTreeData]);
 
     const getTreeData = React.useCallback(async () => {

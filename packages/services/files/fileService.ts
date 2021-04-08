@@ -11,10 +11,41 @@ export const fileEvent = new EventEmitter();
 export const FS_EDIT = 'fs:edit';
 export const FS_SAVE = 'fs:save';
 
+import {directoryTree, IOnEachFile, IOnEachDirectory} from 'shared/utils/file';
+
 export class FileService implements IFileService{
     constructor() {
 
     }
+
+    private onEachFile: IOnEachFile = (item: Record<string, any>) => {
+        item.key = item.path;
+        item.title = item.name;
+        item.isLeaf = true;
+    }
+
+    private onEachDirectory: IOnEachDirectory = (item: Record<string, any>) => {
+        if (item.children.length === 0) {
+            item.isLeaf = true;
+        }
+        item.key = item.path;
+        item.title = item.name;
+    }
+
+    getDirTree(dirPath: string) {
+        let treeData = null;
+        if (dirPath) {
+            const files = directoryTree(
+                dirPath,
+                {excludeHidden: true},
+                this.onEachFile,
+                this.onEachDirectory
+            );
+            treeData = files ? [files] : [];
+        }
+        return treeData;
+    }
+
     async renameFile(oldPath: string, newName: string) {
         const oldDir = paths.dirname(oldPath);
         const newPath = paths.join(oldDir, newName);
