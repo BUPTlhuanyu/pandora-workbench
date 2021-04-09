@@ -12,6 +12,7 @@ import {Injector} from 'core/base/dependency-inject';
 import CodeApplication from './initService';
 import { IFileService } from 'services/files/files';
 import { FileService } from 'services/files/fileService';
+import {IDialogService, DialogService} from 'services/dialog/dialog';
 
 let splashWindow: BrowserWindow | null = null;
 
@@ -206,9 +207,15 @@ class CodeMain {
     
         injector.add(IFileService, {
             useClass: FileService,
-        }, true);
+        });
+
+        injector.add(IDialogService, {
+            useClass: DialogService,
+        });
     
-        injector.createInstance(CodeApplication);
+        const test: any = injector.createInstance(CodeApplication);
+        console.log(test.dialogService);
+        console.log(test.fileService);
     }
 }
 

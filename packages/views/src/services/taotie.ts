@@ -21,22 +21,22 @@ interface ITaotie {
 
         /**
          * @param {string} channel
-         * @param {(event: import('electron').IpcRendererEvent, ...args: any[]) => void} listener
+         * @param {(event: any, ...args: any[]) => void} listener
          */
-        on: (channel: string, listener: (event: import('electron').IpcRendererEvent, ...args: any[]) => void) => void,
+        on: (channel: string, listener: (event: any, ...args: any[]) => void) => void;
 
         /**
          * @param {string} channel
-         * @param {(event: import('electron').IpcRendererEvent, ...args: any[]) => void} listener
+         * @param {(event: any, ...args: any[]) => void} listener
          */
-        once: (channel: string, listener: (event: import('electron').IpcRendererEvent, ...args: any[]) => void) => void;
+        once: (channel: string, listener: (event: any, ...args: any[]) => void) => void;
 
         /**
          * @param {string} channel
-         * @param {(event: import('electron').IpcRendererEvent, ...args: any[]) => void} listener
+         * @param {(event: any, ...args: any[]) => void} listener
          */
-        removeListener: (channel: string, listener: (event: import('electron').IpcRendererEvent, ...args: any[]) => void) => void;
-    },
+        removeListener: (channel: string, listener: (event: any, ...args: any[]) => void) => void;
+    };
 
     ipcMessagePort: {
         /**
@@ -45,7 +45,7 @@ interface ITaotie {
          * @param {string} requestNonce
          */
         connect: (channelRequest: string, channelResponse: string, requestNonce: string) => void;
-    },
+    };
 
     /**
      * Support for subset of methods of Electron's `webFrame` type.
@@ -55,7 +55,7 @@ interface ITaotie {
          * @param {number} level
          */
         setZoomLevel: (level: number) => void;
-    },
+    };
 
     /**
      * Support for subset of methods of Electron's `crashReporter` type.
@@ -66,7 +66,7 @@ interface ITaotie {
          * @param {string} value
          */
         addExtraParameter: (key: string, value: string) => void;
-    },
+    };
 
     /**
      * Support for a subset of access to node.js global `process`.
@@ -80,4 +80,4 @@ interface ITaotie {
      * Some information about the context we are running in.
      */
     context: any;
-};
+}

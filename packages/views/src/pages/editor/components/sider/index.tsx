@@ -28,7 +28,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, [treeData[0], setTreeData]);
 
     const getTreeData = React.useCallback(async () => {
-        taotie.ipcRenderer.send('');
+        taotie.ipcRenderer.send('taotie:dialog');
         // const res: any = await openDialog();
         // const treeData = getDirTree(res);
         // treeData && setTreeData(treeData as ItreeData);

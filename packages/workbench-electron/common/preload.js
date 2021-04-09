@@ -203,7 +203,7 @@
      * @returns {true | never}
      */
     function validateIPC(channel) {
-        if (!channel || !channel.startsWith('vscode:')) {
+        if (!channel || !channel.startsWith('taotie:')) {
             throw new Error(`Unsupported event IPC channel '${channel}'`);
         }
 

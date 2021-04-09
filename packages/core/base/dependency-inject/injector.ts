@@ -75,7 +75,6 @@ export class Injector implements Disposable {
     getOrInit<T>(key: DependencyKey<T>, optional: true): T | null
     getOrInit<T>(key: DependencyKey<T>, optional?: true): T | null {
         const thing = this.getDependencyOrIdentifierPair(key);
-
         if (typeof thing === 'undefined') {
             if (!optional) {
                 throw new Error(

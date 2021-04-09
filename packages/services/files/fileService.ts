@@ -33,6 +33,7 @@ export class FileService implements IFileService{
     }
 
     getDirTree(dirPath: string) {
+        console.log('fs', fs);
         let treeData = null;
         if (dirPath) {
             const files = directoryTree(
