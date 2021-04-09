@@ -17,7 +17,7 @@ interface ITaotie {
          * @param {any[]} args
          * @returns {Promise<any> | undefined}
          */
-        invoke: (channel: string, ...args: any[]) => Promise<any> | undefined;
+        invoke: (channel: string, ...args: any[]) => Promise<any>;
 
         /**
          * @param {string} channel

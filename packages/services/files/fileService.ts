@@ -53,6 +53,8 @@ export class FileService implements IFileService{
         console.log('newPath', newPath);
         return await fs.promises.rename(oldPath, newPath).then(() => {
             return newPath;
+        }).catch(err => {
+            return '';
         });
     }
     async readFile(path: string): Promise<string> {

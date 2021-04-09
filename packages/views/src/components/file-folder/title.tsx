@@ -2,7 +2,8 @@ import * as React from 'react';
 import './title.scss';
 
 // 注册菜单点击事件
-import {fileEvent, FS_EDIT, renameFile} from '../../node/file';
+import {fileEvent, FS_EDIT} from '../../node/file';
+import {taotie} from 'views/src/services/taotie';
 
 interface ITitileProps {
     nodeData: {
@@ -48,10 +49,17 @@ function Title(props: ITitileProps) {
             // setInputShow(false);
             const newName = inputRef.current && inputRef.current.value.trim();
             if (newName && props.nodeData.path) {
-                renameFile(props.nodeData.path, newName).then(() => {
-                    setTitle(newName);
-                    setInputShow(false);
-                    props.onRename && props.onRename(props.nodeData);
+                taotie.ipcRenderer.invoke(
+                    'taotie:renameFile',
+                    props.nodeData.path,
+                    newName
+                ).then(res => {
+                    // TODO: 数据格式
+                    if (res.success) {
+                        setTitle(newName);
+                        setInputShow(false);
+                        props.onRename && props.onRename(props.nodeData);
+                    }
                 }).catch(err => {
                     console.log(err);
                 });

@@ -4,8 +4,6 @@ import getClassname from 'views/src/utils/classMaker';
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import {taotie} from 'views/src/services/taotie';
 
-// TODO: 依赖注入不同环境的处理方式
-
 interface ISiderProps {
     className: string;
 }
@@ -19,19 +17,19 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         });
     });
     const onRename = React.useCallback(() => {
-        // const root = treeData[0];
-        // if (!root.path) {
-        //     return;
-        // }
-        // const newTreeData = getDirTree({canceled: false, filePaths: [root.path]});
-        // newTreeData && setTreeData(newTreeData as ItreeData);
+        const root = treeData[0];
+        if (!root.path) {
+            return;
+        }
+        taotie.ipcRenderer.invoke('taotie:getDirFiles', root.path).then(newTreeData => {
+            newTreeData && setTreeData(newTreeData as ItreeData);
+        });
     }, [treeData[0], setTreeData]);
 
-    const getTreeData = React.useCallback(async () => {
-        taotie.ipcRenderer.send('taotie:dialog');
-        // const res: any = await openDialog();
-        // const treeData = getDirTree(res);
-        // treeData && setTreeData(treeData as ItreeData);
+    const getTreeData = React.useCallback(() => {
+        taotie.ipcRenderer.invoke('taotie:dialog').then(treeData => {
+            treeData && setTreeData(treeData as ItreeData);
+        });
     }, []);
 
     return (
@@ -42,11 +40,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                     <div onClick={getTreeData}>文件</div>
                     <div></div>
                 </div>
-                <FileFolder
-                    className="sider-file-folder"
-                    treeData={treeData}
-                    onRename={onRename}
-                />
+                <FileFolder className="sider-file-folder" treeData={treeData} onRename={onRename} />
             </div>
         </div>
     );

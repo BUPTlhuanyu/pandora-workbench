@@ -21,18 +21,28 @@ class CodeApplication {
 			return this.fileService.readFile(path);
 		});
         ipcMain.handle('taotie:renameFile', async (event, oldPath: string, newPath: string) => {
-			return this.fileService.renameFile(oldPath, newPath);
+			const result = this.fileService.renameFile(oldPath, newPath);
+			if (result) {
+				return {
+					success: true
+				}
+			} else {
+				return {
+					success: false
+				}
+			}
 		});
 
-		ipcMain.on('taotie:dialog', async (event) => {
-			console.log('taotie:dialog', this.dialogService, this.fileService);
+		ipcMain.handle('taotie:getDirFiles', async (event, dirPath) => {
+			return this.fileService.getDirTree(dirPath);
+		});
+
+		ipcMain.handle('taotie:dialog', async (event) => {
 			const result: Record<string, any> = await this.dialogService.openDialog();
 			let treeData = null;
-			console.log('result', result, this.fileService);
 			if (!result.canceled && result.filePaths) {
 				treeData = this.fileService.getDirTree(result.filePaths[0]);
 			}
-			console.log('treeData', treeData);
 			return treeData;
 		});
     }
