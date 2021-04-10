@@ -10,7 +10,7 @@ import {message} from 'antd';
 
 import Icon from '../../../../components/icon';
 
-import {fileEvent, FS_SAVE} from '../../../../node/file';
+import {fileEvent, FS_SAVE} from '../../../../utils/event';
 
 export default function () {
     const copyBtn = useRef<HTMLDivElement | null>(null);

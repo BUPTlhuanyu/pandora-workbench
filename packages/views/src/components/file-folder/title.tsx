@@ -2,7 +2,7 @@ import * as React from 'react';
 import './title.scss';
 
 // 注册菜单点击事件
-import {fileEvent, FS_EDIT} from '../../node/file';
+import {fileEvent, FS_EDIT} from '../../utils/event';
 import {taotie} from 'views/src/services/taotie';
 
 interface ITitileProps {
@@ -49,7 +49,7 @@ function Title(props: ITitileProps) {
             // setInputShow(false);
             const newName = inputRef.current && inputRef.current.value.trim();
             if (newName && props.nodeData.path) {
-                taotie.ipcRenderer.invoke(
+                taotie && taotie.ipcRenderer.invoke(
                     'taotie:renameFile',
                     props.nodeData.path,
                     newName

@@ -5,6 +5,7 @@
     "private": true,
     "scripts": {
         "start": "react-app-rewired start",
+        "start:web": "react-app-rewired start -web",
         "build": "react-app-rewired build",
         "test": "react-app-rewired test",
         "eject": "react-app-rewired eject"

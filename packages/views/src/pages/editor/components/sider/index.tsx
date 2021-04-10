@@ -21,13 +21,13 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         if (!root.path) {
             return;
         }
-        taotie.ipcRenderer.invoke('taotie:getDirFiles', root.path).then(newTreeData => {
+        taotie && taotie.ipcRenderer.invoke('taotie:getDirFiles', root.path).then(newTreeData => {
             newTreeData && setTreeData(newTreeData as ItreeData);
         });
     }, [treeData[0], setTreeData]);
 
     const getTreeData = React.useCallback(() => {
-        taotie.ipcRenderer.invoke('taotie:dialog').then(treeData => {
+        taotie && taotie.ipcRenderer.invoke('taotie:dialog').then(treeData => {
             treeData && setTreeData(treeData as ItreeData);
         });
     }, []);

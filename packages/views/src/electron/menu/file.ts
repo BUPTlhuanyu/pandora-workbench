@@ -1,5 +1,5 @@
 import {IContextMenuItem} from 'workbench-electron/main/contextmenu/common/contextmenu';
-import {fileEvent, FS_EDIT} from '../../node/file';
+import {fileEvent, FS_EDIT} from '../../utils/event';
 
 export const CONTEXT_FILE = 'file';
 export const CONTEXT_DIR = 'directory';
