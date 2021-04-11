@@ -8,6 +8,7 @@
         "start:views": "yarn workspace views start",
         "start:views-web": "yarn workspace views start:web",
         "build:views": "yarn workspace views build",
+        "build:views-web": "yarn workspace views build:web",
         "build:workbench-electron": "yarn workspace workbench-electron build",
         "build:mac": "yarn workspace workbench-electron build:mac"
     },

@@ -16,7 +16,7 @@
 const path = require('path');
 const {override, fixBabelImports} = require('customize-cra');
 
-const isWeb = process.env['npm_lifecycle_event'] === 'start:web';
+const isWeb = process.env['npm_lifecycle_event'].indexOf('web') > -1;
 
 // Let Babel compile outside of src/.
 function craBabelBugFix(config) {

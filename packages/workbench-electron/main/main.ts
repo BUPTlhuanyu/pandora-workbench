@@ -159,9 +159,11 @@ function createSplashWindow() {
 
 function createWindow() {
     const html = MODE
-        ? `file://${path.resolve(app.getAppPath(), './index.html')}`
+        ? `file://${path.resolve(app.getAppPath(), './dist/index.html')}`
         : `http://localhost:${DEVELOP_PORT}/index.html`;
-    const preload = path.resolve(app.getAppPath(), './preload.js');
+    const preload = MODE
+        ? path.resolve(app.getAppPath(), './dist/preload.js')
+        : path.resolve(app.getAppPath(), './preload.js');
     const win = new BrowserWindow({
         fullscreen: true,
         webPreferences: {
@@ -175,7 +177,6 @@ function createWindow() {
 
     win.webContents.on('did-finish-load', () => {
         splashWindow?.destroy();
-        win.webContents.openDevTools();
     });
 }
 

@@ -7,6 +7,7 @@
         "start": "react-app-rewired start",
         "start:web": "react-app-rewired start -web",
         "build": "react-app-rewired build",
+        "build:web": "react-app-rewired build -web",
         "test": "react-app-rewired test",
         "eject": "react-app-rewired eject"
     },
