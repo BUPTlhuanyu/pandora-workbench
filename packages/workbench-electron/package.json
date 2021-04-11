@@ -8,7 +8,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack && electron ./app/dist/index.js",
     "build": "cross-env NODE_ENV=production webpack --mode production --progress",
-    "build:mac": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac --x64"
+    "build:mac": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac --x64",
+    "release:mac": "node ./scripts/build.js"
   },
   "dependencies": {
     "core": "^0.0.0",

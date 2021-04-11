@@ -14,9 +14,11 @@
 //     };
 // }
 const path = require('path');
-const {override, fixBabelImports} = require('customize-cra');
+const {override, fixBabelImports, addWebpackPlugin} = require('customize-cra');
+const compiledHook = require('build-tools/plugins/compilationFinished');
 
 const isWeb = process.env['npm_lifecycle_event'].indexOf('web') > -1;
+const building = process.env['npm_lifecycle_event'].indexOf('build') > -1;
 
 // Let Babel compile outside of src/.
 function craBabelBugFix(config) {
@@ -54,6 +56,7 @@ const webConfig = (config) => {
 }
 
 module.exports = override(
+    building && addWebpackPlugin(compiledHook),
     isWeb ? webConfig : electronConfig,
     publicPathPlugin,
     fixBabelImports("import", {

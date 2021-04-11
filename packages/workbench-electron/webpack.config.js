@@ -5,6 +5,7 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const {createConfig} = require('build-tools');
+const compiledHook = require('build-tools/plugins/compilationFinished');
 
 const isProd = process.env.NODE_ENV === 'production';
 module.exports = createConfig({
@@ -48,6 +49,7 @@ module.exports = createConfig({
             patterns: [
                 {from: 'common/preload.js', to: 'preload.js'}
             ]
-        })
+        }),
+        compiledHook
     ]
 });
