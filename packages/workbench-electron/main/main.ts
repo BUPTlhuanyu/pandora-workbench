@@ -214,8 +214,6 @@ class CodeMain {
         });
     
         const test: any = injector.createInstance(CodeApplication);
-        console.log(test.dialogService);
-        console.log(test.fileService);
     }
 }
 

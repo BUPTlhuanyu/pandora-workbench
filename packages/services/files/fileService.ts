@@ -33,7 +33,6 @@ export class FileService implements IFileService{
     }
 
     getDirTree(dirPath: string) {
-        console.log('fs', fs);
         let treeData = null;
         if (dirPath) {
             const files = directoryTree(
@@ -50,7 +49,6 @@ export class FileService implements IFileService{
     async renameFile(oldPath: string, newName: string) {
         const oldDir = paths.dirname(oldPath);
         const newPath = paths.join(oldDir, newName);
-        console.log('newPath', newPath);
         return await fs.promises.rename(oldPath, newPath).then(() => {
             return newPath;
         }).catch(err => {

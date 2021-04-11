@@ -69,17 +69,12 @@ export function directoryTree(
     path = options && options.normalizePath ? normalizePath(path) : path;
     const item: Iterm = {path, name, size: 0};
     let stats: FS.Stats;
-    console.log('directoryTree', path, FS);
-
     try {
         stats = FS.statSync(path);
-        console.log('try stats', stats);
     } catch (e) {
-        console.log('try fail', e);
         return null;
     }
 
-    console.log('directoryTree stats', stats);
     // Skip if it matches the exclude regex
     if (options && options.exclude) {
         let excludes: RegExp[] = options.exclude;

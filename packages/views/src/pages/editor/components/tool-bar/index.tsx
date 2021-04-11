@@ -20,7 +20,6 @@ export default function () {
             target: () => document.querySelector('.md-view-wrapper') as HTMLDivElement
         });
         cpIns.on('success', function () {
-            console.log('asdasdasdasdasd');
             message.success({
                 content: '复制成功',
                 duration: 1,

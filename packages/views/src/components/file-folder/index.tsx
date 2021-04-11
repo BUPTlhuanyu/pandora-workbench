@@ -34,7 +34,6 @@ export type ItreeData = Array<IDirData | IFileData> | [];
 function FileFolder(props: any) {
     const [, dispatch] = React.useContext(EditorContext);
     const onSelect = React.useCallback((keys: Array<string | number>, {node}: Record<string, any>) => {
-        console.log();
         if (node.type === 'file' && node.path) {
             dispatch({
                 type: 'selectedFile',

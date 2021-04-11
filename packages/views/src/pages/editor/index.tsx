@@ -44,7 +44,6 @@ function Editor() {
     // 获取文件code.TODO: 确保组件没有卸载
     useEffect(() => {
         taotie && taotie.ipcRenderer.invoke('taotie:readFile', storeState.selectedFilePath).then((resStr: string) => {
-            console.log('resStr', resStr, editor);
             setCode(resStr);
             editor?.getDoc().setValue(resStr);
         }).catch(err => {
@@ -64,7 +63,6 @@ function Editor() {
             });
             return;
         }
-        console.log(storeState.selectedFilePath, content);
         // TODO:错误处理
         taotie && taotie.ipcRenderer.invoke('taotie:writeFile', storeState.selectedFilePath, content).then(() => {
             console.log('success');
