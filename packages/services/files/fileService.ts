@@ -57,7 +57,7 @@ export class FileService implements IFileService{
     }
     async readFile(path: string): Promise<string> {
         if (typeof path !== 'string') {
-            return Promise.reject();
+            return '';
         }
         return await fs.promises.readFile(path, {
             encoding: 'utf8'

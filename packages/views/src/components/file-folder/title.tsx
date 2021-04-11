@@ -5,6 +5,27 @@ import './title.scss';
 import {fileEvent, FS_EDIT} from '../../utils/event';
 import {taotie} from 'views/src/services/taotie';
 
+/**
+ * TODO: file service
+ * @param oldPath
+ * @param newPath
+ * @param callBack
+ */
+function rename(oldPath: string, newPath: string, callBack: () => void) {
+    taotie && taotie.ipcRenderer.invoke(
+        'taotie:renameFile',
+        oldPath,
+        newPath
+    ).then(res => {
+        // TODO: 数据格式
+        if (res.success) {
+            callBack();
+        }
+    }).catch(err => {
+        console.log(err);
+    });
+}
+
 interface ITitileProps {
     nodeData: {
         title?: React.ReactNode;
@@ -49,28 +70,31 @@ function Title(props: ITitileProps) {
             // setInputShow(false);
             const newName = inputRef.current && inputRef.current.value.trim();
             if (newName && props.nodeData.path) {
-                taotie && taotie.ipcRenderer.invoke(
-                    'taotie:renameFile',
+                rename(
                     props.nodeData.path,
-                    newName
-                ).then(res => {
-                    // TODO: 数据格式
-                    if (res.success) {
+                    newName,
+                    () => {
                         setTitle(newName);
                         setInputShow(false);
                         props.onRename && props.onRename(props.nodeData);
                     }
-                }).catch(err => {
-                    console.log(err);
-                });
+                );
             }
         }
     }, [setInputShow, setTitle, inputRef.current]);
 
     const onBlur = React.useCallback(() => {
-        setInputShow(false);
-        if (inputRef.current && inputRef.current.value.trim()) {
-            setTitle(inputRef.current.value);
+        if (inputRef.current && inputRef.current.value.trim() && props.nodeData.path) {
+            const newName = inputRef.current.value.trim();
+            rename(
+                props.nodeData.path,
+                newName,
+                () => {
+                    setTitle(newName);
+                    setInputShow(false);
+                    props.onRename && props.onRename(props.nodeData);
+                }
+            );
         }
     }, [setInputShow, setTitle, inputRef.current]);
 

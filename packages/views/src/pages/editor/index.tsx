@@ -11,7 +11,7 @@ import MdView from '../../components/md-view';
 import ToolBar from './components/tool-bar';
 import Footer from './components/footer';
 
-import {message} from 'antd';
+import {success, error} from '../../utils/message';
 
 import {fileEvent, FS_SAVE} from '../../utils/event';
 import {taotie} from 'views/src/services/taotie';
@@ -43,12 +43,14 @@ function Editor() {
 
     // 获取文件code.TODO: 确保组件没有卸载
     useEffect(() => {
-        taotie && taotie.ipcRenderer.invoke('taotie:readFile', storeState.selectedFilePath).then((resStr: string) => {
-            setCode(resStr);
-            editor?.getDoc().setValue(resStr);
-        }).catch(err => {
-            console.warn(err);
-        });
+        if (storeState.selectedFilePath && taotie) {
+            taotie.ipcRenderer.invoke('taotie:readFile', storeState.selectedFilePath).then((resStr: string) => {
+                setCode(resStr);
+                editor?.getDoc().setValue(resStr);
+            }).catch(err => {
+                console.warn(err);
+            });
+        }
     }, [storeState.selectedFilePath, setCode, editor]);
 
     // 保存文件内容
@@ -56,16 +58,12 @@ function Editor() {
         const content = editor?.getDoc().getValue() || '';
         if (!storeState.selectedFilePath) {
             // TODO：保存文件弹窗
-            message.error({
-                content: '保存文件失败',
-                duration: 1,
-                className: 'taotie-message-error'
-            });
+            error('保存文件失败');
             return;
         }
         // TODO:错误处理
         taotie && taotie.ipcRenderer.invoke('taotie:writeFile', storeState.selectedFilePath, content).then(() => {
-            console.log('success');
+            success('保存文件成功');
         }).catch(err => {
             console.log(err);
         });
