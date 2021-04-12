@@ -1,6 +1,7 @@
 const {spawn, exec} = require('child_process');
 const chalk = require('chalk');
 const Event = require('events');
+const createPackage = require('./version');
 
 const piplineEvent = new Event();
 
@@ -77,6 +78,7 @@ function buildMac() {
 }
 
 function start() {
+    createPackage();
     buildViews();
     piplineEvent.on('views-ready', buildWorkbench);
     piplineEvent.on('electron-main', copyViews);
