@@ -193,7 +193,7 @@ class CodeMain {
         // process.on('unhandledRejection', (reason: unknown) => onUnexpectedError(reason));
 
         app.whenReady().then(async () => {
-            await createSplashWindow();
+            // await createSplashWindow();
             await createWindow();
             registerContextMenuListener();
         });

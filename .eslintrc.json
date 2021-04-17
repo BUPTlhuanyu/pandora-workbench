@@ -16,6 +16,7 @@
         "react/no-array-index-key": "off",
         "comma-dangle": "off",
         "no-use-before-define": [0],
-        "@typescript-eslint/no-use-before-define": [1]
+        "@typescript-eslint/no-use-before-define": [1],
+        "operator-linebreak": "off"
     }
 }

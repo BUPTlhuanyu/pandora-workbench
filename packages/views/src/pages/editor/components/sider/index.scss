@@ -1,16 +1,107 @@
 .taotie-sider-wrapper {
+    position: relative;
     .taotie-sider-container {
         min-width: 200px;
         .sider-title {
+            position: relative;
             height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            &-icon {
+                cursor: pointer;
+                height: 20px;
+                width: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            &-search {
+                position: absolute;
+                right: 0;
+            }
+            &-list {
+                position: absolute;
+                left: 0;
+            }
+        }
+        .sider-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background-color: #f3f3f7;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            &-icon {
+                display: flex;
+                cursor: pointer;
+            }
+            &-back {
+                &:hover {
+                    background: #e1e1e1;
+                    border-radius: 6px;
+                }
+            }
+            .ant-input-affix-wrapper {
+                width: 0%;
+                animation: widthSpread .3s ease-in forwards;
+            }
+            .ant-input-affix-wrapper :focus{
+                border-color: #FFB531;
+                box-shadow: none;
+            }
+            .ant-input-affix-wrapper-focused {
+                border-color: #FFB531;
+                box-shadow: none;
+            }
+            .sider-panel-input {
+                // flex: 1;
+                height: 20px;
+                background: transparent;
+                padding: 0;
+                margin-right: 4px;
+                margin-left: 4px;
+                border-radius: 0;
+                border-top: 0;
+                border-left: 0;
+                border-right: 0;
+                &:focus, &:hover {
+                    border-color: #FFB531;
+                    box-shadow: none;
+                }
+                &-selected {
+                    background: #e1e1e1;
+                    border-radius: 6px;
+                }
+                .ant-input {
+                    background: transparent;
+                }
+                .ant-input-suffix {
+                    display: flex;
+                }
+            }
+        }
+        .sider-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: #b9b9b9;
         }
         .sider-file-folder {
             background: transparent;
             // 覆盖
             .ant-tree-list {
+                .ant-tree-switcher {
+                    display: none;
+                }
                 .ant-tree-treenode-selected:hover::before {
                     background: #26262626;
                     // border-radius: 16px;
@@ -38,4 +129,13 @@
 }
 .taotie-sider-hide {
 
+}
+
+@keyframes widthSpread {
+    0% {
+        width: 0%;
+    }
+    100% {
+        width: 100%;
+    }
 }
