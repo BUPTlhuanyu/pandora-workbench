@@ -1,5 +1,5 @@
 import {popup} from 'workbench-electron/main/contextmenu/electron-sandbox/contextmenu';
-import {CONTEXT_FILE, getContextFileItems} from './file';
+import {CONTEXT_FILE, getContextFileItems, CONTEXT_SIDER, getContextSider} from './file';
 
 export function registerContextMenu() {
     window.addEventListener('contextmenu', (e: MouseEvent) => {
@@ -11,6 +11,10 @@ export function registerContextMenu() {
                 popup(getContextFileItems({
                     key: e.target.dataset.key
                 }));
+                break;
+            }
+            case CONTEXT_SIDER: {
+                popup(getContextSider());
                 break;
             }
             default: break;

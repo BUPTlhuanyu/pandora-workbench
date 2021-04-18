@@ -69,7 +69,13 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, []);
 
     return (
-        <div className={className} ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        <div
+            className={className}
+            ref={ref}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            data-context="sider"
+        >
             <div className="taotie-sider-container">
                 <div className="sider-title">
                     {mouseEnter && (
