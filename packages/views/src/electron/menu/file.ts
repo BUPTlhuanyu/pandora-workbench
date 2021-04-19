@@ -1,5 +1,5 @@
 import {IContextMenuItem} from 'workbench-electron/main/contextmenu/common/contextmenu';
-import {fileEvent, FS_EDIT} from '../../utils/event';
+import {fileEvent, FS_EDIT, FS_CREATE_FILE, FS_CREATE_DIR} from '../../utils/event';
 
 export const CONTEXT_FILE = 'file';
 export const CONTEXT_DIR = 'directory';
@@ -30,14 +30,14 @@ export function getContextFileItems(data: IData) {
     items.push({
         label: '新建文件',
         click: () => {
-            console.log('123');
+            fileEvent.emit(FS_CREATE_FILE);
         }
     });
 
     items.push({
         label: '新建文件夹',
         click: () => {
-            console.log('123');
+            fileEvent.emit(FS_CREATE_DIR);
         }
     });
 
@@ -91,14 +91,14 @@ export function getContextSider() {
     items.push({
         label: '新建文件',
         click: () => {
-            console.log('123');
+            fileEvent.emit(FS_CREATE_FILE);
         }
     });
 
     items.push({
         label: '新建文件夹',
         click: () => {
-            console.log('123');
+            fileEvent.emit(FS_CREATE_DIR);
         }
     });
     return items;

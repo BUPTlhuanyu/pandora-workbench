@@ -4,13 +4,16 @@ import getClassname from 'views/src/utils/classMaker';
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import Icon from 'views/src/components/icon';
 import {taotie} from 'views/src/services/taotie';
+import {FS_CREATE_FILE, FS_CREATE_DIR, fileEvent} from 'views/src/utils/event';
 import {Input} from 'antd';
+import {EditorContext} from 'views/src/pages/editor/editor-store';
 
 interface ISiderProps {
     className: string;
 }
 
 export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
+    const [{selectedFilePath}] = React.useContext(EditorContext);
     const [treeData, setTreeData] = React.useState<ItreeData>([]);
     const [mouseEnter, setMouseEbter] = React.useState<boolean>(false);
     const [showPanel, setShowPanel] = React.useState<boolean>(false);
@@ -67,6 +70,30 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                 treeData && setTreeData(treeData as ItreeData);
             });
     }, []);
+
+    React.useEffect(() => {
+        fileEvent.on(FS_CREATE_FILE, () => {
+            console.log('FS_CREATE_FILE', treeData, selectedFilePath);
+            if (!selectedFilePath) {
+                const newFile = {
+                    extension: '.md',
+                    index: [],
+                    isLeaf: true,
+                    key: 'Untitled',
+                    name: '',
+                    path: 'Untitled',
+                    size: 0,
+                    title: 'Untitled',
+                    type: 'file'
+                };
+                setTreeData([...treeData, newFile]);
+            }
+        });
+        fileEvent.on(FS_CREATE_DIR, () => {
+            console.log('FS_CREATE_DIR', treeData);
+        });
+        return fileEvent.removeAllListeners.bind(fileEvent);
+    }, [treeData, selectedFilePath]);
 
     return (
         <div
