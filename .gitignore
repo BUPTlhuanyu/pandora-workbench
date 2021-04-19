@@ -82,8 +82,10 @@ Thumbs.db
 .vscode
 
 # build assets
+
 output
 dist
 dll
 build
 release
+app
