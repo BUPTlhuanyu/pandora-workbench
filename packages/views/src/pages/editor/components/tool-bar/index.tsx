@@ -20,7 +20,7 @@ export default function () {
             target: () => document.querySelector('.md-view-wrapper') as HTMLDivElement
         });
         cpIns.on('success', success.bind(null, '复制成功'));
-        cpIns.on('success', error.bind(null, '复制失败'));
+        cpIns.on('error', error.bind(null, '复制失败'));
     }, []);
     const changeSidebarStatus = useCallback(() => {
         dispatch({
