@@ -13,7 +13,7 @@ interface ISiderProps {
 }
 
 export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
-    const [{selectedFilePath}] = React.useContext(EditorContext);
+    const [{selectedFilePath}, dispatch] = React.useContext(EditorContext);
     const [treeData, setTreeData] = React.useState<ItreeData>([]);
     const [mouseEnter, setMouseEbter] = React.useState<boolean>(false);
     const [showPanel, setShowPanel] = React.useState<boolean>(false);
@@ -79,13 +79,17 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                     extension: '.md',
                     index: [],
                     isLeaf: true,
-                    key: 'Untitled',
+                    key: '',
                     name: '',
-                    path: 'Untitled',
+                    path: '',
                     size: 0,
-                    title: 'Untitled',
+                    title: '',
                     type: 'file'
                 };
+                dispatch({
+                    type: 'selectedFile',
+                    payload: newFile.key
+                });
                 setTreeData([...treeData, newFile]);
             }
         });

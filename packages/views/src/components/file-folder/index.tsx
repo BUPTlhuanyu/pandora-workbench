@@ -32,15 +32,14 @@ export type ItreeData = Array<IDirData | IFileData> | [];
 // ];
 
 function FileFolder(props: any) {
-    const [, dispatch] = React.useContext(EditorContext);
+    const [{selectedFilePath}, dispatch] = React.useContext(EditorContext);
     const onSelect = React.useCallback((keys: Array<string | number>, {node}: Record<string, any>) => {
-        if (node.type === 'file' && node.path) {
-            dispatch({
-                type: 'selectedFile',
-                payload: node.path
-            });
-        }
-    }, []);
+        dispatch({
+            type: 'selectedFile',
+            payload: keys[0] || node.path
+        });
+    }, [dispatch]);
+    console.log('FileFolder update');
     return (
         <DirectoryTree
             className={props.className}
@@ -55,6 +54,7 @@ function FileFolder(props: any) {
                         onRename={props.onRename}
                     />)
             }
+            selectedKeys={[selectedFilePath]}
             onSelect={onSelect}
             {...props}
         />
