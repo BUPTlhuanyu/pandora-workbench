@@ -66,11 +66,13 @@ function Title(props: ITitileProps) {
     React.useEffect(() => {
         if (!props.nodeData.key) {
             setInputShow(true);
-            if (inputRef.current) {
-                console.log('props.nodeData', props.nodeData);
-                inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
-                inputRef.current.focus();
-            }
+            setTimeout(() => {
+                if (inputRef.current) {
+                    console.log('props.nodeData', props.nodeData);
+                    inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
+                    inputRef.current.focus();
+                }
+            }, 60);
         }
     }, [props.nodeData.key]);
 

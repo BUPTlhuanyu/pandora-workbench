@@ -13,6 +13,7 @@ interface ISiderProps {
 }
 
 export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
+    const contextRef = React.useRef<boolean>(false);
     const [{selectedFilePath}, dispatch] = React.useContext(EditorContext);
     const [treeData, setTreeData] = React.useState<ItreeData>([]);
     const [mouseEnter, setMouseEbter] = React.useState<boolean>(false);
@@ -37,11 +38,19 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, [treeData[0], setTreeData]);
 
     const onMouseEnter = React.useCallback(() => {
-        setMouseEbter(true);
+        if (!contextRef.current) {
+            console.log('onMouseEnter');
+            setMouseEbter(true);
+        } else {
+            contextRef.current = false;
+        }
     }, [setMouseEbter]);
 
     const onMouseLeave = React.useCallback(() => {
-        setMouseEbter(false);
+        if (!contextRef.current) {
+            console.log('onMouseLeave');
+            setMouseEbter(false);
+        }
     }, [setMouseEbter]);
 
     const onCaseSensitive = React.useCallback(() => {
@@ -75,6 +84,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         fileEvent.on(FS_CREATE_FILE, () => {
             console.log('FS_CREATE_FILE', treeData, selectedFilePath);
             if (!selectedFilePath) {
+                contextRef.current = true;
                 const newFile = {
                     extension: '.md',
                     index: [],
@@ -90,7 +100,9 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                     type: 'selectedFile',
                     payload: newFile.key
                 });
-                setTreeData([...treeData, newFile]);
+                const newTreeData = treeData.slice(0);
+                newTreeData.push(newFile);
+                setTreeData(newTreeData);
             }
         });
         fileEvent.on(FS_CREATE_DIR, () => {
@@ -99,6 +111,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         return fileEvent.removeAllListeners.bind(fileEvent);
     }, [treeData, selectedFilePath]);
 
+    console.log('Sider update');
     return (
         <div
             className={className}
