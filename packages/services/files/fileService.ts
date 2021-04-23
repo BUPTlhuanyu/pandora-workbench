@@ -13,24 +13,22 @@ export const FS_SAVE = 'fs:save';
 
 import {directoryTree, IOnEachFile, IOnEachDirectory} from 'shared/utils/file';
 
-export class FileService implements IFileService{
-    constructor() {
-
-    }
-
-    private onEachFile: IOnEachFile = (item: Record<string, any>) => {
+export class FileService implements IFileService {
+    private readonly onEachFile: IOnEachFile = (item: Record<string, any>) => {
         item.key = item.path;
         item.title = item.name;
+        item.exist = true;
         item.isLeaf = true;
-    }
+    };
 
-    private onEachDirectory: IOnEachDirectory = (item: Record<string, any>) => {
+    private readonly onEachDirectory: IOnEachDirectory = (item: Record<string, any>) => {
         if (item.children.length === 0) {
             item.isLeaf = true;
         }
         item.key = item.path;
+        item.exist = true;
         item.title = item.name;
-    }
+    };
 
     getDirTree(dirPath: string) {
         let treeData = null;
@@ -51,7 +49,7 @@ export class FileService implements IFileService{
         const newPath = paths.join(oldDir, newName);
         return await fs.promises.rename(oldPath, newPath).then(() => {
             return newPath;
-        }).catch(err => {
+        }).catch(err => { // eslint-disable-line
             return '';
         });
     }
@@ -65,6 +63,7 @@ export class FileService implements IFileService{
     }
     // TODO：换成stream
     async writeFile(path: string, content: string): Promise<any> {
+        console.log('path', path);
         if (typeof path !== 'string') {
             return Promise.reject();
         }

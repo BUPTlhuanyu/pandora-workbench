@@ -33,6 +33,7 @@ interface ITitileProps {
         key: string | number;
         path?: string;
         name?: string;
+        exist?: boolean;
     };
     onRename: (data: Record<string, any>) => void;
 }
@@ -64,7 +65,7 @@ function Title(props: ITitileProps) {
     }, []);
 
     React.useEffect(() => {
-        if (!props.nodeData.key) {
+        if (!props.nodeData.exist) {
             setInputShow(true);
             setTimeout(() => {
                 if (inputRef.current) {
@@ -82,7 +83,20 @@ function Title(props: ITitileProps) {
             // 成功之后需要将文字设置一下，失败了则不设置
             // setInputShow(false);
             const newName = inputRef.current && inputRef.current.value.trim();
-            if (newName && props.nodeData.path) {
+            if (!newName) {
+                return;
+            }
+            if (!props.nodeData.exist) {
+                console.log('asdasdasdasd');
+                const rootDir = props.nodeData.path?.substring(0, props.nodeData.path.lastIndexOf('/'));
+                taotie && taotie.ipcRenderer.invoke('taotie:writeFile', `${rootDir}/${newName}`, '').then(() => {
+                    setTitle(newName);
+                    setInputShow(false);
+                }).catch(err => {
+                    console.log(err);
+                });
+            }
+            else if (props.nodeData.path) {
                 rename(
                     props.nodeData.path,
                     newName,
@@ -97,8 +111,20 @@ function Title(props: ITitileProps) {
     }, [setInputShow, setTitle, inputRef.current]);
 
     const onBlur = React.useCallback(() => {
-        if (inputRef.current && inputRef.current.value.trim() && props.nodeData.path) {
-            const newName = inputRef.current.value.trim();
+        const newName = inputRef.current && inputRef.current.value.trim();
+        if (!newName) {
+            return;
+        }
+        if (!props.nodeData.exist) {
+            const rootDir = props.nodeData.path?.substring(0, props.nodeData.path.lastIndexOf('/'));
+            taotie && taotie.ipcRenderer.invoke('taotie:writeFile', `${rootDir}/${newName}`, '').then(() => {
+                setTitle(newName);
+                setInputShow(false);
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+        else if (props.nodeData.path) {
             rename(
                 props.nodeData.path,
                 newName,

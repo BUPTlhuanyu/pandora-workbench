@@ -82,6 +82,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
 
     React.useEffect(() => {
         fileEvent.on(FS_CREATE_FILE, () => {
+            const rootDir = treeData[0].path?.substring(0, treeData[0].path.lastIndexOf('/'));
             console.log('FS_CREATE_FILE', treeData, selectedFilePath);
             if (!selectedFilePath) {
                 contextRef.current = true;
@@ -89,12 +90,13 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                     extension: '.md',
                     index: [],
                     isLeaf: true,
-                    key: '',
+                    key: `${rootDir}/Untitled.md`,
                     name: '',
-                    path: '',
+                    path: `${rootDir}/Untitled.md`,
                     size: 0,
-                    title: '',
-                    type: 'file'
+                    title: 'Untitled.md',
+                    type: 'file',
+                    exist: false
                 };
                 dispatch({
                     type: 'selectedFile',

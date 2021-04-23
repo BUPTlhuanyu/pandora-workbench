@@ -9,11 +9,13 @@ export interface IFileData {
     title: React.ReactNode;
     key: string | number;
     isLeaf: boolean;
+    exist?: boolean;
     path?: string;
     [key: string]: any;
 }
 export interface IDirData {
     title: React.ReactNode;
+    exist?: boolean;
     key: string | number;
     path?: string;
     children: IFileData[] | IDirData[];
