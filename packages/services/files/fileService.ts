@@ -57,6 +57,9 @@ export class FileService implements IFileService {
         if (typeof path !== 'string') {
             return '';
         }
+        if (fs.statSync(path).isDirectory()) {
+            return '';
+        }
         return await fs.promises.readFile(path, {
             encoding: 'utf8'
         });

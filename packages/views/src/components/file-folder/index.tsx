@@ -35,25 +35,50 @@ export type ItreeData = Array<IDirData | IFileData> | [];
 
 function FileFolder(props: any) {
     const [{selectedFilePath}, dispatch] = React.useContext(EditorContext);
+    const [expandedKeys, setExpandedKeys] = React.useState<string[]>([]);
     const onSelect = React.useCallback((keys: Array<string | number>, {node}: Record<string, any>) => {
         dispatch({
             type: 'selectedFile',
             payload: keys[0] || node.path
         });
     }, [dispatch]);
-    console.log('FileFolder update');
+
+    React.useEffect(() => {
+        let keys = [];
+        let root = props.treeData[0];
+        if (root) {
+            let stack: Record<string, any> = [root];
+            while (stack.length > 0) {
+                let node = stack.pop();
+                let key = '';
+                if (node.children && node.children.length > 0) {
+                    key = node.key;
+                    let len = node.children.length;
+                    for (let i = 0; i < len; i++) {
+                        stack.push(node.children[i]);
+                    }
+                }
+                if (!selectedFilePath || selectedFilePath.indexOf(node.path) > -1) {
+                    keys.push(key);
+                }
+            }
+            setExpandedKeys(keys);
+        }
+    }, [selectedFilePath, props.treeData]);
+
     return (
         <DirectoryTree
             className={props.className}
             multiple
             expandAction="doubleClick"
-            defaultExpandAll
+            expandedKeys={expandedKeys}
             titleRender={
                 node =>
                     (<Title
                         nodeData={node}
                         key={node.key}
                         onRename={props.onRename}
+                        selectedFilePath={selectedFilePath}
                     />)
             }
             selectedKeys={[selectedFilePath]}

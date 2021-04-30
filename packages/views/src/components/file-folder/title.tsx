@@ -36,6 +36,7 @@ interface ITitileProps {
         exist?: boolean;
     };
     onRename: (data: Record<string, any>) => void;
+    selectedFilePath: string;
 }
 
 function Title(props: ITitileProps) {
@@ -75,7 +76,7 @@ function Title(props: ITitileProps) {
                 }
             }, 60);
         }
-    }, [props.nodeData.key]);
+    }, [props.nodeData.key, props.selectedFilePath]);
 
     const onKeyPress = React.useCallback((e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -87,11 +88,12 @@ function Title(props: ITitileProps) {
                 return;
             }
             if (!props.nodeData.exist) {
-                console.log('asdasdasdasd');
                 const rootDir = props.nodeData.path?.substring(0, props.nodeData.path.lastIndexOf('/'));
                 taotie && taotie.ipcRenderer.invoke('taotie:writeFile', `${rootDir}/${newName}`, '').then(() => {
                     setTitle(newName);
                     setInputShow(false);
+                    // TODO:immutable
+                    props.nodeData.exist = true;
                 }).catch(err => {
                     console.log(err);
                 });
@@ -117,9 +119,12 @@ function Title(props: ITitileProps) {
         }
         if (!props.nodeData.exist) {
             const rootDir = props.nodeData.path?.substring(0, props.nodeData.path.lastIndexOf('/'));
+            // TODO: editor应该是全局状态
             taotie && taotie.ipcRenderer.invoke('taotie:writeFile', `${rootDir}/${newName}`, '').then(() => {
                 setTitle(newName);
                 setInputShow(false);
+                // TODO:immutable
+                props.nodeData.exist = true;
             }).catch(err => {
                 console.log(err);
             });

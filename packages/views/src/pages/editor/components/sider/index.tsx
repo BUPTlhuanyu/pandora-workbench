@@ -12,6 +12,52 @@ interface ISiderProps {
     className: string;
 }
 
+function getRootPath(path: string) {
+    const lastIndex = path.lastIndexOf('/');
+    let rootPath = path;
+    if (path.indexOf('.') > 0) {
+        rootPath = path.substring(0, lastIndex);
+    }
+    return rootPath;
+}
+
+function addToTreeData(tree: any, path: string) {
+    let item = null;
+    for (let root of tree) {
+        let node = root;
+        while (node) {
+            if (node.type === 'directory' && Array.isArray(node.children) && node.path === path) {
+                let maxIndex = 1;
+                for (let i of node.children) {
+                    const match = /Untitled(.*)\.md/.exec(i.path);
+                    if (match && match[1]) {
+                        let curIndex = +match[1];
+                        if (!Number.isNaN(curIndex) && typeof curIndex === 'number' && curIndex > maxIndex) {
+                            maxIndex = curIndex;
+                        }
+                    }
+                }
+                maxIndex += 1;
+                item = {
+                    extension: '.md',
+                    index: [],
+                    isLeaf: true,
+                    key: `${path}/Untitled${maxIndex}.md`,
+                    name: '',
+                    path: `${path}/Untitled${maxIndex}.md`,
+                    size: 0,
+                    title: `Untitled${maxIndex}.md`,
+                    type: 'file',
+                    exist: false
+                };
+                node.children.push(item);
+                return item;
+            }
+            node = node.children;
+        }
+    }
+}
+
 export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const contextRef = React.useRef<boolean>(false);
     const [{selectedFilePath}, dispatch] = React.useContext(EditorContext);
@@ -82,28 +128,21 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
 
     React.useEffect(() => {
         fileEvent.on(FS_CREATE_FILE, () => {
-            const rootDir = treeData[0].path?.substring(0, treeData[0].path.lastIndexOf('/'));
             console.log('FS_CREATE_FILE', treeData, selectedFilePath);
-            if (!selectedFilePath) {
-                contextRef.current = true;
-                const newFile = {
-                    extension: '.md',
-                    index: [],
-                    isLeaf: true,
-                    key: `${rootDir}/Untitled.md`,
-                    name: '',
-                    path: `${rootDir}/Untitled.md`,
-                    size: 0,
-                    title: 'Untitled.md',
-                    type: 'file',
-                    exist: false
-                };
+            let rootDir = selectedFilePath ? selectedFilePath : treeData[0].path;
+            if (!rootDir) {
+                return;
+            }
+            rootDir = getRootPath(rootDir);
+            contextRef.current = true;
+            // treeData 插入
+            const newTreeData = treeData.slice(0);
+            const newFile = addToTreeData(newTreeData, rootDir);
+            if (newFile) {
                 dispatch({
                     type: 'selectedFile',
                     payload: newFile.key
                 });
-                const newTreeData = treeData.slice(0);
-                newTreeData.push(newFile);
                 setTreeData(newTreeData);
             }
         });
