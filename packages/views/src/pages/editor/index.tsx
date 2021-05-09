@@ -3,7 +3,8 @@ import './index.scss';
 import React, {useRef, useEffect, useCallback, useState, useContext} from 'react';
 import {useMount} from 'ahooks';
 import useCodemirror from '../../components/useCodemirror';
-import {EditorContext} from './editor-store';
+import {FileContext} from './store/sidbar';
+import {EditorContext} from 'views/src/pages/editor/store/editor';
 
 import SplitPane, {Pane} from 'react-split-pane';
 import Sider from './components/sider';
@@ -17,7 +18,8 @@ import {fileEvent, FS_SAVE} from '../../utils/event';
 import {taotie} from 'views/src/services/taotie';
 
 function Editor() {
-    const [storeState] = useContext(EditorContext);
+    const [storeState] = useContext(FileContext);
+    const [, dispatch] = useContext(EditorContext);
     const editorRef: React.RefObject<HTMLDivElement> = useRef(null);
     let {
         code,
@@ -35,6 +37,14 @@ function Editor() {
         scrollTop: 0,
         scrollHeight: 0
     });
+
+    useEffect(() => {
+        dispatch({
+            type: 'storeeditor',
+            payload: editor
+        });
+    }, [editor]);
+
     useEffect(() => {
         if (sideRef && sideRef.current) {
             sideRef.current.style.width = storeState.sidbarOpened ? '30%' : '0px';

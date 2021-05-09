@@ -8,7 +8,7 @@ interface FooterProps {
     count: number;
 }
 
-export default function Footer(props: FooterProps) {
+function Footer(props: FooterProps) {
     return (
         <div className="taotie-markdown-footer">
             {props.count} 词
@@ -19,3 +19,5 @@ export default function Footer(props: FooterProps) {
 Footer.defaultProps = {
     count: 0
 };
+
+export default React.memo(Footer);

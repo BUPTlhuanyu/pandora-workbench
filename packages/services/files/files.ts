@@ -22,7 +22,7 @@ export interface IFileService {
     /**
      * rename
      */
-    renameFile(resource: URI, newResource: URI): Promise<URI>;
+    renameFile(resource: URI, newResource: URI, content: string): Promise<URI | void>;
 
     /**
      * Updates the content replacing its previous value.

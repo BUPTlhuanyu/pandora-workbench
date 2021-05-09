@@ -1,43 +1,44 @@
+/**
+ * @file 用于管理文件系统状态
+ */
 import * as React from 'react';
 
-interface IStoreState {
+export interface IStoreState {
     sidbarOpened: boolean;
 }
 
-interface IAction {
+export interface IAction {
     type: string;
     payload: any;
 }
 
-const initState: IStoreState = {
+export const initState: IStoreState = {
     sidbarOpened: false
 };
 
-const EditorContext = React.createContext<any>(null);
-
 /**
- * editor页面的reducer
+ * reducer
  * @param state
  * @param action
  */
-function editorReducer(state: IStoreState, action: IAction) {
+function reducer(state: IStoreState, action: IAction) {
     switch (action.type) {
         case 'sidbarStatus':
             return {...state, sidbarOpened: !state.sidbarOpened};
         case 'selectedFile':
             return {...state, selectedFilePath: action.payload};
         default:
-            return {...state};
+            return state;
     }
 }
 
+export const FileContext = React.createContext<any>(null);
+
 export default function EditorStore(props: any) {
-    const store = React.useReducer(editorReducer, initState);
+    const sidbarState = React.useReducer(reducer, initState);
     return (
-        <EditorContext.Provider value={store}>
+        <FileContext.Provider value={sidbarState}>
             {props.children}
-        </EditorContext.Provider>
+        </FileContext.Provider>
     );
 }
-
-export {EditorContext};

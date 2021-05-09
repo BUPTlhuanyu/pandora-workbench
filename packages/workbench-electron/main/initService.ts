@@ -10,7 +10,7 @@ class CodeApplication {
         @IFileService private readonly fileService: IFileService,
 		@IDialogService private readonly dialogService: IDialogService
     ) {
-        ipcMain.handle('taotie:writeFile', async (event, path: string, data: unknown) => {
+        ipcMain.handle('taotie:writeFile', async (event, path: string, data: string) => {
 			if (typeof data !== 'string') {
 				throw new Error('Invalid operation (vscode:writeNlsFile)');
 			}
@@ -20,15 +20,17 @@ class CodeApplication {
         ipcMain.handle('taotie:readFile', async (event, path: string) => {
 			return this.fileService.readFile(path);
 		});
-        ipcMain.handle('taotie:renameFile', async (event, oldPath: string, newPath: string) => {
-			const result = this.fileService.renameFile(oldPath, newPath);
+        ipcMain.handle('taotie:renameFile', async (event, oldPath: string, newPath: string, data: string) => {
+			const result = await this.fileService.renameFile(oldPath, newPath, data).catch(err => console.log(err));
 			if (result) {
 				return {
-					success: true
+					success: true,
+					data: result
 				}
 			} else {
 				return {
-					success: false
+					success: false,
+					data: ''
 				}
 			}
 		});

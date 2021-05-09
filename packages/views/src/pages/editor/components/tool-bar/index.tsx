@@ -4,7 +4,7 @@
 import React, {useRef, useEffect, useCallback, useContext} from 'react';
 import './index.scss';
 import ClipboardJS from 'clipboard-web';
-import {EditorContext} from '../../editor-store';
+import {FileContext} from '../../store/sidbar';
 
 import Icon from '../../../../components/icon';
 
@@ -14,7 +14,7 @@ import {taotie} from '../../../../services/taotie';
 
 export default function () {
     const copyBtn = useRef<HTMLDivElement | null>(null);
-    const [, dispatch] = useContext(EditorContext);
+    const [, dispatch] = useContext(FileContext);
     useEffect(() => {
         let cpIns = new ClipboardJS(copyBtn.current as HTMLDivElement, {
             target: () => document.querySelector('.md-view-wrapper') as HTMLDivElement

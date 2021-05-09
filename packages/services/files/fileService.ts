@@ -44,21 +44,34 @@ export class FileService implements IFileService {
         return treeData;
     }
 
-    async renameFile(oldPath: string, newName: string) {
+    async renameFile(oldPath: string, newName: string, content: string) {
         const oldDir = paths.dirname(oldPath);
         const newPath = paths.join(oldDir, newName);
-        return await fs.promises.rename(oldPath, newPath).then(() => {
-            return newPath;
-        }).catch(err => { // eslint-disable-line
-            return '';
-        });
+        if (fs.existsSync(newPath)) {
+            return Promise.reject('');
+        }
+        if (!fs.existsSync(oldPath)) {
+            return await fs.promises.writeFile(newPath, content, {
+                encoding: 'utf8'
+            }).then(() => {
+                return newPath;
+            }).catch(() => {
+                return Promise.reject('');
+            });
+        } else {
+            return await fs.promises.rename(oldPath, newPath).then(() => {
+                return newPath;
+            }).catch(err => { // eslint-disable-line
+                return Promise.reject('');;
+            });
+        }
     }
     async readFile(path: string): Promise<string> {
         if (typeof path !== 'string') {
-            return '';
+            return Promise.reject('');
         }
         if (fs.statSync(path).isDirectory()) {
-            return '';
+            return Promise.reject('');
         }
         return await fs.promises.readFile(path, {
             encoding: 'utf8'
@@ -66,7 +79,6 @@ export class FileService implements IFileService {
     }
     // TODO：换成stream
     async writeFile(path: string, content: string): Promise<any> {
-        console.log('path', path);
         if (typeof path !== 'string') {
             return Promise.reject();
         }

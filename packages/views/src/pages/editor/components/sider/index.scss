@@ -1,10 +1,14 @@
 .taotie-sider-wrapper {
     position: relative;
     .taotie-sider-container {
+        position: relative;
+        height: 100%;
         min-width: 200px;
+        display: flex;
+        flex-direction: column;
         .sider-title {
-            position: relative;
-            height: 40px;
+            background: #f3f3f7;
+            height: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -84,6 +88,8 @@
             }
         }
         .sider-footer {
+            background: #f3f3f7;
+            z-index: 1;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -92,10 +98,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            border-top: #b9b9b9;
+            border-top: #e4e4e4;
+            border-top-width: 1px;
+            border-top-style: solid;
         }
         .sider-file-folder {
             background: transparent;
+            overflow-x: auto;
             // 覆盖
             .ant-tree-list {
                 .ant-tree-switcher {

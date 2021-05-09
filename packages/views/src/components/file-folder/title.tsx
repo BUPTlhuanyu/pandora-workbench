@@ -1,31 +1,6 @@
 import * as React from 'react';
 import './title.scss';
 
-// 注册菜单点击事件
-import {fileEvent, FS_EDIT} from '../../utils/event';
-import {taotie} from 'views/src/services/taotie';
-
-/**
- * TODO: file service
- * @param oldPath
- * @param newPath
- * @param callBack
- */
-function rename(oldPath: string, newPath: string, callBack: () => void) {
-    taotie && taotie.ipcRenderer.invoke(
-        'taotie:renameFile',
-        oldPath,
-        newPath
-    ).then(res => {
-        // TODO: 数据格式
-        if (res.success) {
-            callBack();
-        }
-    }).catch(err => {
-        console.log(err);
-    });
-}
-
 interface ITitileProps {
     nodeData: {
         title?: React.ReactNode;
@@ -35,8 +10,10 @@ interface ITitileProps {
         name?: string;
         exist?: boolean;
     };
-    onRename: (data: Record<string, any>) => void;
-    selectedFilePath: string;
+    rename: boolean;
+    onRename: (oldPath: string, newPath: string) => Promise<any>;
+    onBlur: (data: string) => Promise<any>;
+    onKeyPress: (data: string) => Promise<any>;
 }
 
 function Title(props: ITitileProps) {
@@ -45,38 +22,35 @@ function Title(props: ITitileProps) {
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const isMouted = React.useRef<boolean>(false);
 
-    // 重命名
-    const fsRename = React.useCallback((key: string | number) => {
-        if (props.nodeData.key === key && isMouted.current) {
-            setInputShow(true);
-            if (inputRef.current) {
-                inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
-                inputRef.current.focus();
-            }
-        }
-    }, [setInputShow]);
-
     React.useEffect(() => {
         isMouted.current = true;
-        fileEvent.on(FS_EDIT, fsRename);
+        if (props.rename) {
+            setInputShow(true);
+            setTimeout(() => {
+                if (inputRef.current) {
+                    inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
+                    inputRef.current.focus();
+                }
+            }, 0);
+        } else {
+            setInputShow(false);
+        }
         return () => {
             isMouted.current = false;
-            fileEvent.off.bind(null, FS_EDIT, fsRename);
         };
-    }, []);
+    }, [props.rename]);
 
     React.useEffect(() => {
         if (!props.nodeData.exist) {
             setInputShow(true);
             setTimeout(() => {
                 if (inputRef.current) {
-                    console.log('props.nodeData', props.nodeData);
                     inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
                     inputRef.current.focus();
                 }
             }, 60);
         }
-    }, [props.nodeData.key, props.selectedFilePath]);
+    }, [props.nodeData.exist]);
 
     const onKeyPress = React.useCallback((e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -87,27 +61,20 @@ function Title(props: ITitileProps) {
             if (!newName) {
                 return;
             }
-            if (!props.nodeData.exist) {
-                const rootDir = props.nodeData.path?.substring(0, props.nodeData.path.lastIndexOf('/'));
-                taotie && taotie.ipcRenderer.invoke('taotie:writeFile', `${rootDir}/${newName}`, '').then(() => {
-                    setTitle(newName);
+            if (props.nodeData.path) {
+                typeof props.onRename === 'function' && props.onRename(
+                    props.nodeData.path,
+                    newName
+                ).then((res: string) => {
+                    if (!res) {
+                        setTitle(props.nodeData.title);
+                    } else {
+                        setTitle(newName);
+                    }
                     setInputShow(false);
-                    // TODO:immutable
-                    props.nodeData.exist = true;
                 }).catch(err => {
                     console.log(err);
                 });
-            }
-            else if (props.nodeData.path) {
-                rename(
-                    props.nodeData.path,
-                    newName,
-                    () => {
-                        setTitle(newName);
-                        setInputShow(false);
-                        props.onRename && props.onRename(props.nodeData);
-                    }
-                );
             }
         }
     }, [setInputShow, setTitle, inputRef.current]);
@@ -117,28 +84,20 @@ function Title(props: ITitileProps) {
         if (!newName) {
             return;
         }
-        if (!props.nodeData.exist) {
-            const rootDir = props.nodeData.path?.substring(0, props.nodeData.path.lastIndexOf('/'));
-            // TODO: editor应该是全局状态
-            taotie && taotie.ipcRenderer.invoke('taotie:writeFile', `${rootDir}/${newName}`, '').then(() => {
-                setTitle(newName);
+        if (props.nodeData.path) {
+            typeof props.onRename === 'function' && props.onRename(
+                props.nodeData.path,
+                newName
+            ).then((res: string) => {
+                if (!res) {
+                    setTitle(props.nodeData.title);
+                } else {
+                    setTitle(newName);
+                }
                 setInputShow(false);
-                // TODO:immutable
-                props.nodeData.exist = true;
             }).catch(err => {
                 console.log(err);
             });
-        }
-        else if (props.nodeData.path) {
-            rename(
-                props.nodeData.path,
-                newName,
-                () => {
-                    setTitle(newName);
-                    setInputShow(false);
-                    props.onRename && props.onRename(props.nodeData);
-                }
-            );
         }
     }, [setInputShow, setTitle, inputRef.current]);
 
@@ -163,4 +122,4 @@ function Title(props: ITitileProps) {
     );
 }
 
-export default Title;
+export default React.memo(Title);

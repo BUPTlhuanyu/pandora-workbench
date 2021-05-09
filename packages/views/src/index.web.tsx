@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import Editor from './pages/editor';
 import reportWebVitals from './reportWebVitals';
-import EditorStore from './pages/editor/editor-store';
+import EditorStore from './pages/editor/store';
 
 ReactDOM.render(
     <React.StrictMode>
