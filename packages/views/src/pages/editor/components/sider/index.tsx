@@ -278,7 +278,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
             onMouseLeave={onMouseLeave}
             data-context="sider"
         >
-            <div className="taotie-sider-container">
+            <div className="taotie-sider-container" data-context="sider">
                 <div className="sider-title">
                     {mouseEnter && (
                         <span onClick={onContentMode} className="sider-title-icon sider-title-list" title="大纲/列表">
