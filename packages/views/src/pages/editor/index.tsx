@@ -13,6 +13,7 @@ import ToolBar from './components/tool-bar';
 import Footer from './components/footer';
 
 import {success, error} from '../../utils/message';
+import {isFilePath} from 'views/src/utils/tools';
 
 import {fileEvent, FS_SAVE} from '../../utils/event';
 import {taotie} from 'views/src/services/taotie';
@@ -53,13 +54,16 @@ function Editor() {
 
     // 获取文件code.TODO: 确保组件没有卸载
     useEffect(() => {
-        if (storeState.selectedFilePath && taotie) {
+        if (isFilePath(storeState.selectedFilePath) && taotie) {
             taotie.ipcRenderer.invoke('taotie:readFile', storeState.selectedFilePath).then((resStr: string) => {
                 setCode(resStr);
                 editor?.getDoc().setValue(resStr);
             }).catch(err => {
                 console.warn(err);
             });
+        } else {
+            setCode('');
+            editor?.getDoc().setValue('');
         }
     }, [storeState.selectedFilePath, setCode, editor]);
 

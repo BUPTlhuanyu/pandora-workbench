@@ -1,6 +1,8 @@
 import * as React from 'react';
 import './title.scss';
 
+function noop() {}
+
 interface ITitileProps {
     nodeData: {
         title?: React.ReactNode;
@@ -11,9 +13,9 @@ interface ITitileProps {
         exist?: boolean;
     };
     rename: boolean;
-    onRename: (oldPath: string, newPath: string) => Promise<any>;
-    onBlur: (data: string) => Promise<any>;
-    onKeyPress: (data: string) => Promise<any>;
+    onRename?: (oldPath: string, newPath: string, nodeData: Record<string, any>) => Promise<any>;
+    onBlur?: (data: string) => Promise<any>;
+    onKeyPress?: (data: string) => Promise<any>;
 }
 
 function Title(props: ITitileProps) {
@@ -64,7 +66,8 @@ function Title(props: ITitileProps) {
             if (props.nodeData.path) {
                 typeof props.onRename === 'function' && props.onRename(
                     props.nodeData.path,
-                    newName
+                    newName,
+                    props.nodeData
                 ).then((res: string) => {
                     if (!res) {
                         setTitle(props.nodeData.title);
@@ -87,7 +90,8 @@ function Title(props: ITitileProps) {
         if (props.nodeData.path) {
             typeof props.onRename === 'function' && props.onRename(
                 props.nodeData.path,
-                newName
+                newName,
+                props.nodeData
             ).then((res: string) => {
                 if (!res) {
                     setTitle(props.nodeData.title);
@@ -121,5 +125,11 @@ function Title(props: ITitileProps) {
         </>
     );
 }
+
+Title.defaultProps = {
+    onRename: noop,
+    onBlur: noop,
+    onKeyPress: noop
+};
 
 export default React.memo(Title);

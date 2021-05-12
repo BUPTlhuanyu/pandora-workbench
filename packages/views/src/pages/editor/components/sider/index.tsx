@@ -32,6 +32,9 @@ interface ISiderProps {
 }
 
 function getRootPath(path: string) {
+    if (typeof path !== 'string') {
+        return '';
+    }
     const lastIndex = path.lastIndexOf('/');
     let rootPath = path;
     if (path.indexOf('.') > 0) {
@@ -40,18 +43,49 @@ function getRootPath(path: string) {
     return rootPath;
 }
 
-function addToTreeData(tree: any, path: string) {
-    let newFile: Record<string, any> = {};
+function createFile(path: string, index: number) {
+    return {
+        extension: '.md',
+        index: [],
+        isLeaf: true,
+        key: `${path}/Untitled${index}.md`,
+        name: `Untitled${index}.md`,
+        path: `${path}/Untitled${index}.md`,
+        size: 0,
+        title: `Untitled${index}.md`,
+        type: 'file',
+        exist: false
+    };
+}
+
+function createDir(path: string, index: number) {
+    return {
+        children: [],
+        exist: false,
+        size: 0,
+        name: `Untitled Folder${index}`,
+        title: `Untitled Folder${index}`,
+        key: `${path}/Untitled Folder${index}`,
+        path: `${path}/Untitled Folder${index}`,
+        type: 'directory'
+    };
+}
+
+function addToTreeData(tree: any, path: string, type: 'file' | 'directory') {
+    let addedNode: Record<string, any> = {};
     let nextTree = produce(tree, (draftTree: any) => {
         let item = null;
-        for (let root of draftTree) {
-            let node = root;
-            while (node) {
+        let root = draftTree[0];
+        if (root) {
+            let stack: Record<string, any> = [root];
+            while (stack.length > 0) {
+                let node = stack.pop();
                 if (node.type === 'directory' && Array.isArray(node.children) && node.path === path) {
                     let maxIndex = 1;
                     for (let i of node.children) {
-                        const match = /Untitled(.*)\.md/.exec(i.path);
-                        if (match && match[1]) {
+                        let reg = type === 'file' ? /Untitled(.*)\.md/ : /Untitled\sFolder(.*)/;
+                        const match = reg.exec(i.path);
+                        if (match && match[1] && typeof +match[1] === 'number') {
                             let curIndex = +match[1];
                             if (!Number.isNaN(curIndex) && typeof curIndex === 'number' && curIndex > maxIndex) {
                                 maxIndex = curIndex;
@@ -59,29 +93,24 @@ function addToTreeData(tree: any, path: string) {
                         }
                     }
                     maxIndex += 1;
-                    item = {
-                        extension: '.md',
-                        index: [],
-                        isLeaf: true,
-                        key: `${path}/Untitled${maxIndex}.md`,
-                        name: '',
-                        path: `${path}/Untitled${maxIndex}.md`,
-                        size: 0,
-                        title: `Untitled${maxIndex}.md`,
-                        type: 'file',
-                        exist: false
-                    };
+                    item = type === 'file' ? createFile(path, maxIndex) : createDir(path, maxIndex);
                     node.children.push(item);
-                    newFile = item;
+                    addedNode = item;
+                    stack.length = 0;
                     return;
                 }
-                node = node.children;
+                if (node.children && node.children.length > 0) {
+                    let len = node.children.length;
+                    for (let i = 0; i < len; i++) {
+                        stack.push(node.children[i]);
+                    }
+                }
             }
         }
     });
     return {
         nextTree,
-        newFile
+        node: addedNode
     };
 }
 
@@ -91,7 +120,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const [{selectedFilePath}, dispatch] = React.useContext(FileContext);
     const [renameKey, setRenameKey] = React.useState<string>('');
     const [treeData, setTreeData] = React.useState<ItreeData>([]);
-    const [mouseEnter, setMouseEbter] = React.useState<boolean>(false);
+    const [mouseEnter, setMouseEnter] = React.useState<boolean>(false);
     const [showPanel, setShowPanel] = React.useState<boolean>(false);
     const [caseSensitive, setCaseSensitive] = React.useState<boolean>(false);
     const [wholeWord, setWholeWord] = React.useState<boolean>(false);
@@ -118,17 +147,17 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
 
     const onMouseEnter = React.useCallback(() => {
         if (!contextRef.current) {
-            setMouseEbter(true);
+            setMouseEnter(true);
         } else {
             contextRef.current = false;
         }
-    }, [setMouseEbter]);
+    }, [setMouseEnter]);
 
     const onMouseLeave = React.useCallback(() => {
         if (!contextRef.current) {
-            setMouseEbter(false);
+            setMouseEnter(false);
         }
-    }, [setMouseEbter]);
+    }, [setMouseEnter]);
 
     const onCaseSensitive = React.useCallback(() => {
         setCaseSensitive(!caseSensitive);
@@ -153,7 +182,12 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const getTreeData = React.useCallback(() => {
         taotie &&
             taotie.ipcRenderer.invoke('taotie:dialog').then(treeData => {
+                setTreeData([]);
                 treeData && setTreeData(treeData as ItreeData);
+                dispatch({
+                    type: 'selectedFile',
+                    payload: treeData[0].key
+                });
             });
     }, []);
 
@@ -167,13 +201,16 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
             editor && editor?.getDoc().setValue('');
             let rootDir = selectedFilePath ? selectedFilePath : treeData[0].path;
             rootDir = getRootPath(rootDir);
+            if (!rootDir) {
+                return;
+            }
             contextRef.current = true;
             // treeData 插入
-            const {newFile, nextTree} = addToTreeData(treeData, rootDir);
-            if (newFile.key && nextTree) {
+            const {node, nextTree} = addToTreeData(treeData, rootDir, 'file');
+            if (node.key && nextTree) {
                 dispatch({
                     type: 'selectedFile',
-                    payload: newFile.key
+                    payload: node.key
                 });
                 setTreeData(nextTree as any);
             }
@@ -181,26 +218,24 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
 
         fileEvent.removeAllListeners(FS_CREATE_DIR);
         fileEvent.on(FS_CREATE_DIR, () => {
-            console.log('FS_CREATE_DIR', treeData);
+            if (!treeData[0]) {
+                return;
+            }
+            // 清空编辑器内容
+            let rootDir = selectedFilePath ? selectedFilePath : treeData[0].path;
+            rootDir = getRootPath(rootDir);
+            contextRef.current = true;
+            // treeData 插入
+            const {node, nextTree} = addToTreeData(treeData, rootDir, 'directory');
+            if (node.key && nextTree) {
+                dispatch({
+                    type: 'selectedFile',
+                    payload: node.key
+                });
+                setTreeData(nextTree as any);
+            }
         });
     }, [treeData, selectedFilePath]);
-
-    const onKeyPress = React.useCallback((newPath: string) => {
-        const content = editor?.getDoc().getValue() || '';
-        if (!taotie) {
-            return Promise.reject();
-        }
-        return taotie.ipcRenderer.invoke('taotie:writeFile', newPath, content);
-    }, []);
-
-    const onBlur = React.useCallback((newPath: string) => {
-        const content = editor?.getDoc().getValue() || '';
-        if (!taotie) {
-            return Promise.reject();
-        }
-        // TODO: editor应该是全局状态
-        return taotie.ipcRenderer.invoke('taotie:writeFile', newPath, content);
-    }, []);
 
     const fsRename = React.useCallback((key: string) => {
         dispatch({
@@ -243,31 +278,54 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, [treeData, setTreeData]);
 
     // useCallback 嵌套：内部的callback的依赖是从外层callback获取的，所以这里需要声明treeData
-    const onRename = React.useCallback((oldPath: string, newName: string) => {
+    const onRename = React.useCallback((oldPath: string, newName: string, nodeData: Record<string, any>) => {
         if (!taotie) {
             return Promise.reject();
         }
-        const content = editor?.getDoc().getValue() || '';
-        return taotie.ipcRenderer.invoke(
-            'taotie:renameFile',
-            oldPath,
-            newName,
-            content
-        ).then(res => {
-            // TODO: 数据格式
-            if (res.success) {
-                dispatch({
-                    type: 'selectedFile',
-                    payload: res.data
-                });
-                immerTreeData(oldPath, newName);
-                return true;
-            } else {
-                return false;
-            }
-        }).catch(err => {
-            console.log(err);
-        });
+        if (nodeData.type === 'file') {
+            const content = editor?.getDoc().getValue() || '';
+            return taotie.ipcRenderer.invoke(
+                'taotie:renameFile',
+                oldPath,
+                newName,
+                content
+            ).then(res => {
+                // TODO: 数据格式
+                if (res.success) {
+                    dispatch({
+                        type: 'selectedFile',
+                        payload: res.data
+                    });
+                    immerTreeData(oldPath, newName);
+                    return true;
+                } else {
+                    return false;
+                }
+            }).catch(err => {
+                console.log(err);
+            });
+        } else if (nodeData.type === 'directory') {
+            return taotie.ipcRenderer.invoke(
+                'taotie:renameDir',
+                oldPath,
+                newName
+            ).then(res => {
+                console.log('res', res);
+                // TODO: 数据格式
+                if (res.success) {
+                    dispatch({
+                        type: 'selectedFile',
+                        payload: res.data
+                    });
+                    immerTreeData(oldPath, newName);
+                    return true;
+                } else {
+                    return false;
+                }
+            }).catch(err => {
+                console.log(err);
+            });
+        }
     }, [treeData, dispatch]);
 
     return (
@@ -323,16 +381,18 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                         />
                     </div>
                 )}
-                <FileFolder
-                    className="sider-file-folder"
-                    treeData={treeData}
-                    onRename={onRename}
-                    onSelect={onSelect}
-                    onBlur={onBlur}
-                    onKeyPress={onKeyPress}
-                    renameKey={renameKey}
-                    selectedFilePath={selectedFilePath}
-                />
+                {
+                    treeData.length > 0 && <FileFolder
+                        className="sider-file-folder"
+                        treeData={treeData}
+                        onRename={onRename}
+                        onSelect={onSelect}
+                        renameKey={renameKey}
+                        selectedFilePath={selectedFilePath}
+                        expandAction="click"
+                        defaultExpandedKeys={[treeData[0].path]}
+                    />
+                }
                 {mouseEnter && (
                     <div className="sider-footer" onClick={getTreeData}>
                         打开文件夹...

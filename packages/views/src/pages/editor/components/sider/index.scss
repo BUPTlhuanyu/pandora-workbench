@@ -131,6 +131,14 @@
                         display: none;
                     }
                 }
+                .anticon-file {
+                    // TODO: 颜色可配置
+                    color: rgb(255, 181, 49);
+                }
+                .anticon-folder-open, .anticon-folder{
+                    // TODO: 颜色可配置
+                    color: #afafaf;
+                }
             }
         }
     }

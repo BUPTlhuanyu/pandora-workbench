@@ -20,9 +20,14 @@ export interface IFileService {
     readFile(resource: URI): Promise<string>;
 
     /**
-     * rename
+     * renameFile
      */
     renameFile(resource: URI, newResource: URI, content: string): Promise<URI | void>;
+
+    /**
+     * renameDir
+     */
+    renameDir(resource: URI, newResource: URI): Promise<URI | void>;
 
     /**
      * Updates the content replacing its previous value.

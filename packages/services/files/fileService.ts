@@ -22,9 +22,6 @@ export class FileService implements IFileService {
     };
 
     private readonly onEachDirectory: IOnEachDirectory = (item: Record<string, any>) => {
-        if (item.children.length === 0) {
-            item.isLeaf = true;
-        }
         item.key = item.path;
         item.exist = true;
         item.title = item.name;
@@ -66,6 +63,29 @@ export class FileService implements IFileService {
             });
         }
     }
+
+    async renameDir(oldPath: string, newName: string) {
+        const oldDir = paths.dirname(oldPath);
+        const newPath = paths.join(oldDir, newName);
+        if (fs.existsSync(newPath)) {
+            return Promise.reject('');
+        }
+        if (!fs.existsSync(oldPath)) {
+            return await fs.promises.mkdir(newPath).then(() => {
+                return newPath;
+            }).catch(() => {
+                return Promise.reject('');
+            });
+        } else {
+            return await fs.promises.rename(oldPath, newPath).then(() => {
+                return newPath;
+            }).catch(err => { // eslint-disable-line
+                return Promise.reject('');;
+            });
+        }
+        // 修改文件夹的名称
+    }
+
     async readFile(path: string): Promise<string> {
         if (typeof path !== 'string') {
             return Promise.reject('');
