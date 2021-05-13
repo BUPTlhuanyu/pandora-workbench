@@ -11,6 +11,8 @@ import produce from 'immer';
 import {FileContext} from 'views/src/pages/editor/store/sidbar';
 import {EditorContext} from 'views/src/pages/editor/store/editor';
 
+import {isFilePath} from 'views/src/utils/tools';
+
 function updateNodeData(nodeData: Record<string, any>, newName: string) {
     if (!nodeData || !nodeData.path || !newName) {
         return;
@@ -127,6 +129,14 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
 
     const onSelect = React.useCallback(
         (keys: Array<string | number>, {node}: Record<string, any>) => {
+            if (isFilePath(selectedFilePath)) {
+                const content = editor?.getDoc().getValue() || '';
+                taotie && taotie.ipcRenderer.invoke('taotie:writeFile', selectedFilePath, content).then(() => {
+                    // TODO: 编辑状态
+                }).catch(err => {
+                    console.log(err);
+                });
+            }
             dispatch({
                 type: 'selectedFile',
                 payload: keys[0] || node.path
@@ -135,7 +145,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                 setRenameKey('');
             }
         },
-        [dispatch, renameKey]
+        [dispatch, renameKey, editor, selectedFilePath]
     );
 
     const [className] = React.useState(() => {
@@ -182,6 +192,9 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const getTreeData = React.useCallback(() => {
         taotie &&
             taotie.ipcRenderer.invoke('taotie:dialog').then(treeData => {
+                if (!treeData) {
+                    return;
+                }
                 setTreeData([]);
                 treeData && setTreeData(treeData as ItreeData);
                 dispatch({
