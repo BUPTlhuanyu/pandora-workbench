@@ -7,7 +7,7 @@ import {dependencyIds, setDependencies} from './utils';
  */
 export function createDecorator<T>(name: string): Identifier<T> {
     if (dependencyIds.has(name)) {
-        console.warn(`[taotie] duplicated identifier name ${name}.`);
+        console.warn(`[pandora] duplicated identifier name ${name}.`);
 
         return dependencyIds.get(name)!;
     }

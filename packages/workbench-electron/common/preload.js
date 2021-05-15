@@ -194,16 +194,16 @@
         }
     };
     // TODO: contextIsolation
-    window.taotie = globals;
+    window.pandora = globals;
 
-    //#region Utilities
+    // #region Utilities
 
     /**
      * @param {string} channel
      * @returns {true | never}
      */
     function validateIPC(channel) {
-        if (!channel || !channel.startsWith('taotie:')) {
+        if (!channel || !channel.startsWith('pandora:')) {
             throw new Error(`Unsupported event IPC channel '${channel}'`);
         }
 
@@ -241,10 +241,10 @@
 
             // Resolve `shellEnv` from the main side
             shellEnv = new Promise(function (resolve) {
-                ipcRenderer.once('taotie:acceptShellEnv', function (event, shellEnvResult) {
+                ipcRenderer.once('pandora:acceptShellEnv', function (event, shellEnvResult) {
                     if (
                         !process.env[
-                            'SKIP_PROCESS_ENV_PATCHING'
+                            'SKIP_PROCESS_ENV_PATCHING' // eslint-disable-line
                         ] /* TODO@bpasero for https://github.com/microsoft/vscode/issues/108804 */
                     ) {
                         // Assign all keys of the shell environment to our process environment
@@ -255,12 +255,12 @@
                     resolve({...process.env, ...shellEnvResult, ...userEnv});
                 });
 
-                ipcRenderer.send('taotie:fetchShellEnv');
+                ipcRenderer.send('pandora:fetchShellEnv');
             });
         }
 
         await shellEnv;
     }
 
-    //#endregion
+    // #endregion
 })();

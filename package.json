@@ -1,5 +1,5 @@
 {
-    "name": "taotie-workbench",
+    "name": "pandora-workbench",
     "version": "1.0.0",
     "description": "The workbench for coder",
     "private": true,
@@ -67,7 +67,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/BUPTlhuanyu/taotie-workbench"
+        "url": "git://github.com/BUPTlhuanyu/pandora-workbench"
     },
     "author": "lhuanyu <lhuanyutot@163.com>",
     "license": "MIT",

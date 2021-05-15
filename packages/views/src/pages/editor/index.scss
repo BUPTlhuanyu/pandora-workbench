@@ -1,4 +1,4 @@
-.taotie-editor {
+.pandora-editor {
     display: flex;
     height: 100%;
     width: 100%;
@@ -94,9 +94,9 @@
     }
 }
 
-.taotie-message-success,
-.taotie-message-loading,
-.taotie-message-error
+.pandora-message-success,
+.pandora-message-loading,
+.pandora-message-error
 {
     .ant-message-notice-content {
         padding: 5px 16px;

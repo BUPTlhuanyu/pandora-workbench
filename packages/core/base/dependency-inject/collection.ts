@@ -57,7 +57,7 @@ export class DependencyCollection implements Disposable {
 
     /**
      * 是否存在服务
-     * @param key 
+     * @param key
      */
     has(key: DependencyKey<any>): boolean {
         this.ensureCollectionNotDisposed();
@@ -67,7 +67,7 @@ export class DependencyCollection implements Disposable {
 
     /**
      * 获取服务
-     * @param key 
+     * @param key
      */
     get<T>(key: DependencyKey<T>): T | DependencyValue<T> | undefined {
         this.ensureCollectionNotDisposed();
@@ -81,7 +81,7 @@ export class DependencyCollection implements Disposable {
     dispose(): void {
         this.disposed = true;
 
-        this.items.forEach((item) => {
+        this.items.forEach(item => {
             if (isDisposable(item)) {
                 item.dispose();
             }
@@ -94,7 +94,7 @@ export class DependencyCollection implements Disposable {
     private ensureCollectionNotDisposed(): void {
         if (this.disposed) {
             throw new Error(
-                '[taotie] Dependency collection is not accessible after it disposes!'
+                '[pandora] Dependency collection is not accessible after it disposes!'
             );
         }
     }

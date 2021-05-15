@@ -16,7 +16,7 @@ import {success, error} from '../../utils/message';
 import {isFilePath} from 'views/src/utils/tools';
 
 import {fileEvent, FS_SAVE} from '../../utils/event';
-import {taotie} from 'views/src/services/taotie';
+import {pandora} from 'views/src/services/pandora';
 
 function Editor() {
     const [storeState] = useContext(FileContext);
@@ -54,8 +54,8 @@ function Editor() {
 
     // 获取文件code.TODO: 确保组件没有卸载
     useEffect(() => {
-        if (isFilePath(storeState.selectedFilePath) && taotie) {
-            taotie.ipcRenderer.invoke('taotie:readFile', storeState.selectedFilePath).then((resStr: string) => {
+        if (isFilePath(storeState.selectedFilePath) && pandora) {
+            pandora.ipcRenderer.invoke('pandora:readFile', storeState.selectedFilePath).then((resStr: string) => {
                 setCode(resStr);
                 editor?.getDoc().setValue(resStr);
             }).catch(err => {
@@ -76,7 +76,7 @@ function Editor() {
             return;
         }
         // TODO:错误处理
-        taotie && taotie.ipcRenderer.invoke('taotie:writeFile', storeState.selectedFilePath, content).then(() => {
+        pandora && pandora.ipcRenderer.invoke('pandora:writeFile', storeState.selectedFilePath, content).then(() => {
             success('保存文件成功');
         }).catch(err => {
             console.log(err);
@@ -134,9 +134,9 @@ function Editor() {
         []
     );
     return (
-        <div className="taotie-editor">
+        <div className="pandora-editor">
             {
-                taotie && <Sider
+                pandora && <Sider
                     className="editor-file-folder"
                     ref={sideRef}
                 />

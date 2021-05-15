@@ -10,7 +10,7 @@ interface FooterProps {
 
 function Footer(props: FooterProps) {
     return (
-        <div className="taotie-markdown-footer">
+        <div className="pandora-markdown-footer">
             {props.count} 词
         </div>
     );

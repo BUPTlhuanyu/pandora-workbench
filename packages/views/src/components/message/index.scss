@@ -1,4 +1,4 @@
-.taotie-message-wrapper {
+.pandora-message-wrapper {
     position: fixed;
     top: 100px;
     left: 50%;
@@ -8,7 +8,7 @@
     transform: translate3d(-50%, 0, 0);
 }
 
-.taotie-message-animation-begin {
+.pandora-message-animation-begin {
     border-radius: 4px;
     padding: 1px 4px;
     animation: fadeOut .8s cubic-bezier(1,.02,1,.19) forwards;

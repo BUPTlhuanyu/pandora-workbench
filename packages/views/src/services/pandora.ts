@@ -1,4 +1,4 @@
-export const taotie: ITaotie = (window as any).taotie;
+export const pandora: ITaotie = (window as any).pandora;
 
 interface ITaotie {
     /**

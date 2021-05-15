@@ -10,7 +10,7 @@ import Icon from '../../../../components/icon';
 
 import {fileEvent, FS_SAVE} from '../../../../utils/event';
 import {success, error} from '../../../../utils/message';
-import {taotie} from '../../../../services/taotie';
+import {pandora} from '../../../../services/pandora';
 
 export default function () {
     const copyBtn = useRef<HTMLDivElement | null>(null);
@@ -34,7 +34,7 @@ export default function () {
     return (
         <div className="tool-bar-wrapper">
             <div className="tool-bar-content">
-                <div className="tool-bar-title">Taotie Markdown</div>
+                <div className="tool-bar-title">Pandora Markdown</div>
                 <div className="tool-bar-icon-group">
                     <div className="tool-bar-icon" ref={copyBtn} title="复制">
                         <Icon type="copy" style={{fontSize: '20px'}} />
@@ -51,7 +51,7 @@ export default function () {
                     >
                         <Icon type="redo" style={{fontSize: '20px'}} />
                     </div> */}
-                    {taotie && (
+                    {pandora && (
                         <div className="tool-bar-icon" title="side bar" onClick={changeSidebarStatus}>
                             <Icon type="sideBar" style={{fontSize: '20px'}} />
                         </div>
@@ -62,7 +62,7 @@ export default function () {
                     >
                         <Icon type="file" style={{fontSize: '20px'}} />
                     </div> */}
-                    {taotie && (
+                    {pandora && (
                         <div className="tool-bar-icon" title="save" onClick={saveFile}>
                             <Icon type="save" style={{fontSize: '20px'}} />
                         </div>

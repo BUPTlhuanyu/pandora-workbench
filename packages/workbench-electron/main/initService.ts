@@ -10,17 +10,17 @@ class CodeApplication {
         @IFileService private readonly fileService: IFileService,
         @IDialogService private readonly dialogService: IDialogService
     ) {
-        ipcMain.handle('taotie:writeFile', async (event, path: string, data: string) => {
+        ipcMain.handle('pandora:writeFile', async (event, path: string, data: string) => {
             if (typeof data !== 'string') {
                 throw new Error('Invalid operation (vscode:writeNlsFile)');
             }
 
             return this.fileService.writeFile(path, data);
         });
-        ipcMain.handle('taotie:readFile', async (event, path: string) => {
+        ipcMain.handle('pandora:readFile', async (event, path: string) => {
             return this.fileService.readFile(path);
         });
-        ipcMain.handle('taotie:renameFile', async (event, oldPath: string, newPath: string, data: string) => {
+        ipcMain.handle('pandora:renameFile', async (event, oldPath: string, newPath: string, data: string) => {
             const result = await this.fileService.renameFile(oldPath, newPath, data).catch(err => console.log(err));
             if (result) {
                 return {
@@ -35,7 +35,7 @@ class CodeApplication {
             }
         });
 
-        ipcMain.handle('taotie:renameDir', async (event, oldPath: string, newPath: string, data: string) => {
+        ipcMain.handle('pandora:renameDir', async (event, oldPath: string, newPath: string, data: string) => {
             const result = await this.fileService.renameDir(oldPath, newPath).catch(err => console.log(err));
             if (result) {
                 return {
@@ -50,11 +50,11 @@ class CodeApplication {
             }
         });
 
-        ipcMain.handle('taotie:getDirFiles', async (event, dirPath) => {
+        ipcMain.handle('pandora:getDirFiles', async (event, dirPath) => {
             return this.fileService.getDirTree(dirPath);
         });
 
-        ipcMain.handle('taotie:dialog', async event => {
+        ipcMain.handle('pandora:dialog', async event => {
             const result: Record<string, any> = await this.dialogService.openDialog();
             let treeData = null;
             if (!result.canceled && result.filePaths) {

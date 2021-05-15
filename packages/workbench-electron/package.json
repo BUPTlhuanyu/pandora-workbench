@@ -1,14 +1,15 @@
 {
   "name": "workbench-electron",
   "version": "0.0.0",
-  "description": "Taotie Workbench",
-  "productName": "Taotie Workbench",
+  "description": "Pandora Workbench",
+  "productName": "Pandora Workbench",
   "private": true,
   "main": "./dist/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack && electron ./app/dist/index.js",
     "build": "cross-env NODE_ENV=production webpack --mode production --progress",
     "build:mac": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac --x64",
+    "build:icon": "cross-env node ./scripts/png2icns.js",
     "release:mac": "node ./scripts/build.js"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "cross-env": "^7.0.3",
     "electron": "^11.2.0",
     "electron-builder": "^22.10.5",
+    "png2icons": "^2.0.1",
     "ts-loader": "^8.1.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^4.3.1"
@@ -37,11 +39,12 @@
     "electronVersion": "11.2.1",
     "mac": {
       "category": "",
-      "asar": false
+      "asar": false,
+      "icon": "./assets/png/logo.icns"
     },
     "win": {
       "target": "nsis",
-      "icon": "./src/logo.ico"
+      "icon": "./assets/png/logo.ico"
     },
     "files": [
       "dist/**/*",

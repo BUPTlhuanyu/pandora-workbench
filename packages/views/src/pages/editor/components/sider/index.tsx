@@ -3,7 +3,7 @@ import './index.scss';
 import getClassname from 'views/src/utils/classMaker';
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import Icon from 'views/src/components/icon';
-import {taotie} from 'views/src/services/taotie';
+import {pandora} from 'views/src/services/pandora';
 import {FS_CREATE_FILE, FS_CREATE_DIR, FS_EDIT, fileEvent} from 'views/src/utils/event';
 import {Input} from 'antd';
 import produce from 'immer';
@@ -131,7 +131,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         (keys: Array<string | number>, {node}: Record<string, any>) => {
             if (isFilePath(selectedFilePath)) {
                 const content = editor?.getDoc().getValue() || '';
-                taotie && taotie.ipcRenderer.invoke('taotie:writeFile', selectedFilePath, content).then(() => {
+                pandora && pandora.ipcRenderer.invoke('pandora:writeFile', selectedFilePath, content).then(() => {
                     // TODO: 编辑状态
                 }).catch(err => {
                     console.log(err);
@@ -150,7 +150,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
 
     const [className] = React.useState(() => {
         return getClassname({
-            'taotie-sider-wrapper': true,
+            'pandora-sider-wrapper': true,
             [props.className]: true
         });
     });
@@ -190,8 +190,8 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, []);
 
     const getTreeData = React.useCallback(() => {
-        taotie &&
-            taotie.ipcRenderer.invoke('taotie:dialog').then(treeData => {
+        pandora &&
+            pandora.ipcRenderer.invoke('pandora:dialog').then(treeData => {
                 if (!treeData) {
                     return;
                 }
@@ -292,13 +292,13 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
 
     // useCallback 嵌套：内部的callback的依赖是从外层callback获取的，所以这里需要声明treeData
     const onRename = React.useCallback((oldPath: string, newName: string, nodeData: Record<string, any>) => {
-        if (!taotie) {
+        if (!pandora) {
             return Promise.reject();
         }
         if (nodeData.type === 'file') {
             const content = editor?.getDoc().getValue() || '';
-            return taotie.ipcRenderer.invoke(
-                'taotie:renameFile',
+            return pandora.ipcRenderer.invoke(
+                'pandora:renameFile',
                 oldPath,
                 newName,
                 content
@@ -318,8 +318,8 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                 console.log(err);
             });
         } else if (nodeData.type === 'directory') {
-            return taotie.ipcRenderer.invoke(
-                'taotie:renameDir',
+            return pandora.ipcRenderer.invoke(
+                'pandora:renameDir',
                 oldPath,
                 newName
             ).then(res => {
@@ -349,7 +349,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
             onMouseLeave={onMouseLeave}
             data-context="sider"
         >
-            <div className="taotie-sider-container" data-context="sider">
+            <div className="pandora-sider-container" data-context="sider">
                 <div className="sider-title">
                     {mouseEnter && (
                         <span onClick={onContentMode} className="sider-title-icon sider-title-list" title="大纲/列表">
