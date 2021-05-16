@@ -4,11 +4,13 @@
 import {ipcMain} from 'electron';
 import {IFileService} from 'services/files/files';
 import {IDialogService} from 'services/dialog/dialog';
+import {INativeService} from 'services/native/native';
 
 class CodeApplication {
     constructor(
         @IFileService private readonly fileService: IFileService,
-        @IDialogService private readonly dialogService: IDialogService
+        @IDialogService private readonly dialogService: IDialogService,
+        @INativeService private readonly nativeService: INativeService
     ) {
         ipcMain.handle('pandora:writeFile', async (event, path: string, data: string) => {
             if (typeof data !== 'string') {
@@ -35,7 +37,7 @@ class CodeApplication {
             }
         });
 
-        ipcMain.handle('pandora:renameDir', async (event, oldPath: string, newPath: string, data: string) => {
+        ipcMain.handle('pandora:renameDir', async (event, oldPath: string, newPath: string) => {
             const result = await this.fileService.renameDir(oldPath, newPath).catch(err => console.log(err));
             if (result) {
                 return {
@@ -54,13 +56,21 @@ class CodeApplication {
             return this.fileService.getDirTree(dirPath);
         });
 
-        ipcMain.handle('pandora:dialog', async event => {
+        ipcMain.handle('pandora:dialog', async () => {
             const result: Record<string, any> = await this.dialogService.openDialog();
             let treeData = null;
             if (!result.canceled && result.filePaths) {
                 treeData = this.fileService.getDirTree(result.filePaths[0]);
             }
             return treeData;
+        });
+
+        ipcMain.handle('pandora:revealFileInOs', async (event, fullpath: string) => {
+            this.nativeService.revealFileInOs(fullpath);
+        });
+
+        ipcMain.handle('pandora:moveFileToTrash', async (event, fullpath: string) => {
+            this.nativeService.moveFileToTrash(fullpath);
         });
     }
 }

@@ -13,11 +13,13 @@ import CodeApplication from './initService';
 import {IFileService} from 'services/files/files';
 import {FileService} from 'services/files/fileService';
 import {IDialogService, DialogService} from 'services/dialog/dialog';
+import {INativeService, NativeService} from 'services/native/native';
 
 let splashWindow: BrowserWindow | null = null;
 
 const MODE = process.env.NODE_ENV === 'production';
 
+// eslint-disable-next-line
 function createSplashWindow() {
     return new Promise(resolve => {
         const html = `
@@ -213,10 +215,10 @@ class CodeMain {
     private onUnexpectedError(err: Error): void {
         if (err) {
             // take only the message and stack property
-            const friendlyError = {
-                message: `[uncaught exception in main]: ${err.message}`,
-                stack: err.stack
-            };
+            // const friendlyError = {
+            //     message: `[uncaught exception in main]: ${err.message}`,
+            //     stack: err.stack
+            // };
 
             // TODO: handle on client side
             // this.windowsMainService?.sendToFocused('vscode:reportError', JSON.stringify(friendlyError));
@@ -234,6 +236,10 @@ class CodeMain {
 
         injector.add(IDialogService, {
             useClass: DialogService
+        });
+
+        injector.add(INativeService, {
+            useClass: NativeService
         });
 
         injector.createInstance(CodeApplication);

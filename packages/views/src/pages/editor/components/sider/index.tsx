@@ -4,7 +4,7 @@ import getClassname from 'views/src/utils/classMaker';
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import Icon from 'views/src/components/icon';
 import {pandora} from 'views/src/services/pandora';
-import {FS_CREATE_FILE, FS_CREATE_DIR, FS_EDIT, fileEvent} from 'views/src/utils/event';
+import {FS_CREATE_FILE, FS_CREATE_DIR, FS_EDIT, FS_DELETE, fileEvent} from 'views/src/utils/event';
 import {Input} from 'antd';
 import produce from 'immer';
 
@@ -85,7 +85,7 @@ function addToTreeData(tree: any, path: string, type: 'file' | 'directory') {
                 if (node.type === 'directory' && Array.isArray(node.children) && node.path === path) {
                     let maxIndex = 1;
                     for (let i of node.children) {
-                        let reg = type === 'file' ? /Untitled(.*)\.md/ : /Untitled\sFolder(.*)/;
+                        let reg = type === 'file' ? /Untitled([^/]*)\.md$/ : /Untitled\sFolder([^/]*)$/;
                         const match = reg.exec(i.path);
                         if (match && match[1] && typeof +match[1] === 'number') {
                             let curIndex = +match[1];
@@ -113,6 +113,48 @@ function addToTreeData(tree: any, path: string, type: 'file' | 'directory') {
     return {
         nextTree,
         node: addedNode
+    };
+}
+
+function deleteToTreeData(tree: any, path: string) {
+    let rootPath = getRootPath(path);
+    let selectedFile = '';
+    let nextTree = produce(tree, (draftTree: any) => {
+        let root = draftTree[0];
+        if (root) {
+            let stack: Record<string, any> = [root];
+            while (stack.length > 0) {
+                let node = stack.pop();
+                if (Array.isArray(node.children) && node.path === rootPath) {
+                    let len = node.children.length;
+                    for (let i = 0; i < len; i++) {
+                        if (node.children[i].path === path) {
+                            if (node.children[i + 1]) {
+                                selectedFile = node.children[i + 1].key;
+                            } else if (node.children[i - 1]) {
+                                selectedFile = node.children[i - 1].key;
+                            } else {
+                                selectedFile = node.key;
+                            }
+                            node.children.splice(i, 1);
+                            break;
+                        }
+                    }
+                    stack.length = 0;
+                    return;
+                }
+                if (node.children && node.children.length > 0) {
+                    let len = node.children.length;
+                    for (let i = 0; i < len; i++) {
+                        stack.push(node.children[i]);
+                    }
+                }
+            }
+        }
+    });
+    return {
+        nextTree,
+        selectedFile
     };
 }
 
@@ -244,6 +286,17 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                 dispatch({
                     type: 'selectedFile',
                     payload: node.key
+                });
+                setTreeData(nextTree as any);
+            }
+        });
+        fileEvent.removeAllListeners(FS_DELETE);
+        fileEvent.on(FS_DELETE, path => {
+            const {selectedFile, nextTree} = deleteToTreeData(treeData, path);
+            if (nextTree) {
+                selectedFilePath === path && dispatch({
+                    type: 'selectedFile',
+                    payload: selectedFile
                 });
                 setTreeData(nextTree as any);
             }

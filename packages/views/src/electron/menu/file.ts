@@ -1,5 +1,6 @@
 import {IContextMenuItem} from 'workbench-electron/main/contextmenu/common/contextmenu';
-import {fileEvent, FS_EDIT, FS_CREATE_FILE, FS_CREATE_DIR} from '../../utils/event';
+import {revealFileInOs, moveFileToTrash} from 'views/src/services/messageCenter';
+import {fileEvent, FS_EDIT, FS_CREATE_FILE, FS_CREATE_DIR, FS_DELETE} from '../../utils/event';
 
 export const CONTEXT_FILE = 'file';
 export const CONTEXT_DIR = 'directory';
@@ -11,19 +12,19 @@ interface IData{
 export function getContextFileItems(data: IData) {
     const items: IContextMenuItem[] = [];
 
-    items.push({
-        label: '打开',
-        click: () => {
-            console.log('123');
-        }
-    });
+    // items.push({
+    //     label: '打开',
+    //     click: () => {
+    //         console.log('123');
+    //     }
+    // });
 
-    items.push({
-        label: '在新窗口打开',
-        click: () => {
-            console.log('123');
-        }
-    });
+    // items.push({
+    //     label: '在新窗口打开',
+    //     click: () => {
+    //         console.log('123');
+    //     }
+    // });
 
     items.push({type: 'separator'});
 
@@ -41,7 +42,6 @@ export function getContextFileItems(data: IData) {
         }
     });
 
-
     items.push({type: 'separator'});
 
     items.push({
@@ -51,35 +51,31 @@ export function getContextFileItems(data: IData) {
         }
     });
 
-    items.push({
-        label: '创建副本',
-        click: () => {
-            console.log('123');
-        }
-    });
+    // items.push({
+    //     label: '创建副本',
+    //     click: () => {
+    //         console.log('123');
+    //     }
+    // });
 
     items.push({type: 'separator'});
 
     items.push({
         label: '移至回收站',
         click: () => {
-            console.log('123');
+            if (data.key) {
+                moveFileToTrash(data.key);
+                fileEvent.emit(FS_DELETE, data.key);
+            }
         }
     });
 
     items.push({type: 'separator'});
 
     items.push({
-        label: '复制文件路径',
-        click: () => {
-            console.log('123');
-        }
-    });
-
-    items.push({
         label: '在finder中显示',
         click: () => {
-            console.log('123');
+            data.key && revealFileInOs(data.key);
         }
     });
     return items;
