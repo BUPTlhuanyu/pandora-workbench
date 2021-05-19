@@ -6,7 +6,9 @@ import {app, BrowserWindow} from 'electron';
 import logoIcon from '../assets/png/logo.svg';
 import pkg from '../package.json';
 import {DEVELOP_PORT} from '../../shared/common/constant';
+
 import {registerContextMenuListener} from './contextmenu/electron-main/contextmenu';
+import {Menubar} from './menu/menubar';
 
 import {Injector} from 'core/base/dependency-inject';
 import CodeApplication from './initService';
@@ -188,6 +190,7 @@ class CodeMain {
     }
     async startUp(): Promise<void> {
         this.initServices();
+        new Menubar();
     }
     private registerListeners() {
         process.on('uncaughtException', err => this.onUnexpectedError(err));
