@@ -1,6 +1,5 @@
 import {IContextMenuItem} from 'workbench-electron/main/contextmenu/common/contextmenu';
-import {revealFileInOs, moveFileToTrash} from 'views/src/services/messageCenter';
-import {fileEvent, FS_EDIT, FS_CREATE_FILE, FS_CREATE_DIR, FS_DELETE} from '../../utils/event';
+import {fileEvent, FS_EDIT, FS_CREATE_FILE, FS_CREATE_DIR, FS_DELETE, FS_REVEAL} from '../../utils/event';
 
 export const CONTEXT_FILE = 'file';
 export const CONTEXT_DIR = 'directory';
@@ -63,10 +62,7 @@ export function getContextFileItems(data: IData) {
     items.push({
         label: '移至回收站',
         click: () => {
-            if (data.key) {
-                moveFileToTrash(data.key);
-                fileEvent.emit(FS_DELETE, data.key);
-            }
+            data.key && fileEvent.emit(FS_DELETE, data.key);
         }
     });
 
@@ -75,7 +71,7 @@ export function getContextFileItems(data: IData) {
     items.push({
         label: '在finder中显示',
         click: () => {
-            data.key && revealFileInOs(data.key);
+            data.key && fileEvent.emit(FS_REVEAL, data.key);
         }
     });
     return items;

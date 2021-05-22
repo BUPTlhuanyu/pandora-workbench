@@ -12,6 +12,7 @@
         overflow: auto;
     }
     .editor-container {
+        overflow: hidden;
         width:100%;
         transition: all .5s;
         .editor-wrapper {

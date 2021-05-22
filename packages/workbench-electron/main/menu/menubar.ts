@@ -6,6 +6,8 @@
  * vscode 对 menu 的实现都归于 action，非常复杂
  */
 import {Menu, MenuItem} from 'electron';
+import {camelToWords} from '../../lib/utils';
+import {ICommandService} from 'services/command';
 
 export interface IMenubarMenuItemAction {
     id: string;
@@ -42,13 +44,59 @@ export type MenubarMenuItem =
     | IMenubarMenuItemSeparator
     | IMenubarMenuRecentItemAction;
 
+type Role =
+    | '|'
+    | 'undo'
+    | 'redo'
+    | 'cut'
+    | 'copy'
+    | 'paste'
+    | 'pasteAndMatchStyle'
+    | 'delete'
+    | 'selectAll'
+    | 'reload'
+    | 'forceReload'
+    | 'toggleDevTools'
+    | 'resetZoom'
+    | 'zoomIn'
+    | 'zoomOut'
+    | 'togglefullscreen'
+    | 'window'
+    | 'minimize'
+    | 'close'
+    | 'help'
+    | 'about'
+    | 'services'
+    | 'hide'
+    | 'hideOthers'
+    | 'unhide'
+    | 'quit'
+    | 'startSpeaking'
+    | 'stopSpeaking'
+    | 'zoom'
+    | 'front'
+    | 'appMenu'
+    | 'fileMenu'
+    | 'editMenu'
+    | 'viewMenu'
+    | 'recentDocuments'
+    | 'toggleTabBar'
+    | 'selectNextTab'
+    | 'selectPreviousTab'
+    | 'mergeAllWindows'
+    | 'clearRecentDocuments'
+    | 'moveTabToNewWindow'
+    | 'windowMenu';
+
 function __separator__(): MenuItem {
     return new MenuItem({type: 'separator'});
 }
 
 export class Menubar {
     // private menubarMenus: {[id: string]: IMenubarMenu};
-    constructor() {
+    constructor(
+        @ICommandService private readonly commandService: ICommandService
+    ) {
         // this.menubarMenus = Object.create(null);
         this.install();
     }
@@ -62,8 +110,26 @@ export class Menubar {
         // app
         const applicationMenu = new Menu();
         this.setMacApplicationMenu(applicationMenu);
-        const macApplicationMenuItem = new MenuItem({ label: 'pandora', submenu: applicationMenu });
+        const macApplicationMenuItem = new MenuItem({label: 'Pandora', submenu: applicationMenu});
         menubar.append(macApplicationMenuItem);
+
+        // edit
+        const editMenu = new Menu();
+        this.setEditMenu(editMenu);
+        const editItem = new MenuItem({label: 'Edit', submenu: editMenu});
+        menubar.append(editItem);
+
+        // file
+        const fileMenu = new Menu();
+        this.setFileMenu(fileMenu);
+        const fileItem = new MenuItem({label: 'File', submenu: fileMenu});
+        menubar.append(fileItem);
+
+        // Window
+        const windowMenu = new Menu();
+        this.setWindowMenu(windowMenu);
+        const windowItem = new MenuItem({label: 'Window', submenu: windowMenu});
+        menubar.append(windowItem);
 
         // Help
         const helpMenu = new Menu();
@@ -80,19 +146,15 @@ export class Menubar {
     }
 
     private setMacApplicationMenu(macApplicationMenu: Menu): void {
-        const preferences = new MenuItem({
-            label: 'preferences',
-            click() {
-                
-            }
-        });
+        // const preferences = new MenuItem({
+        //     label: 'preferences',
+        //     click() {}
+        // });
 
-        const update = new MenuItem({
-            label: 'update',
-            click() {
-                
-            }
-        });
+        // const update = new MenuItem({
+        //     label: 'update',
+        //     click() {}
+        // });
 
         const services = new MenuItem({
             label: 'services',
@@ -107,8 +169,8 @@ export class Menubar {
         const actions = [
             // about,
             // __separator__(),
-            preferences,
-            update,
+            // preferences,
+            // update,
             __separator__(),
             services,
             __separator__(),
@@ -117,16 +179,87 @@ export class Menubar {
         actions.forEach(i => macApplicationMenu.append(i));
     }
 
-    private setHelpMenu(helpMenu: Menu) {
+    private setHelpMenu(helpMenu: Menu): void {
         // Toggle Developer Tools
         const toggleDevtools = new MenuItem({
             label: 'Toggle Developer Tools',
             role: 'toggleDevTools'
         });
-        const actions = [
-            __separator__(),
-            toggleDevtools
-        ];
+        const actions = [__separator__(), toggleDevtools];
         actions.forEach(i => helpMenu.append(i));
+    }
+
+    private appendRoleMenu(menu: Menu, roles: Role[]) {
+        roles.forEach(role => {
+            if (role === '|') {
+                menu.append(__separator__());
+            } else {
+                menu.append(
+                    new MenuItem({
+                        label: camelToWords(role),
+                        role
+                    })
+                );
+            }
+        });
+    }
+
+    private setFileMenu(fileMenu: Menu): void {
+        const newFile = new MenuItem({
+            label: 'new file',
+            click: () => {
+                this.commandService.createFile();
+            }
+        });
+        const newFolder = new MenuItem({
+            label: 'new folder',
+            click: () => {
+                this.commandService.createDir();
+            }
+        });
+        const rename = new MenuItem({
+            label: 'rename',
+            click: () => {
+                this.commandService.rename();
+            }
+        });
+        const moveToTrash = new MenuItem({
+            label: 'move to trash',
+            click: () => {
+                this.commandService.moveToTrash();
+            }
+        });
+        const revealInFinder = new MenuItem({
+            label: 'reveal in finder',
+            click: () => {
+                this.commandService.revealInFinder();
+            }
+        });
+        const actions = [newFile, newFolder, rename, __separator__(), moveToTrash, __separator__(), revealInFinder];
+        actions.forEach(i => fileMenu.append(i));
+    }
+
+    private setEditMenu(editMenu: Menu): void {
+        const roles: Role[] = ['undo', 'redo', '|', 'cut', 'copy', 'paste', 'pasteAndMatchStyle', 'delete', 'selectAll'];
+        this.appendRoleMenu(editMenu, roles);
+    }
+
+    private setWindowMenu(windowMenu: Menu): void {
+        const roles: Role[] = [
+            'reload',
+            'forceReload',
+            '|',
+            'resetZoom',
+            'zoomIn',
+            'zoomOut',
+            'togglefullscreen',
+            'minimize',
+            '|',
+            'close',
+            'hide',
+            'hideOthers',
+            'unhide'
+        ];
+        this.appendRoleMenu(windowMenu, roles);
     }
 }

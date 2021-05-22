@@ -16,6 +16,7 @@ import {IFileService} from 'services/files/files';
 import {FileService} from 'services/files/fileService';
 import {IDialogService, DialogService} from 'services/dialog/dialog';
 import {INativeService, NativeService} from 'services/native/native';
+import {ICommandService, CommandService} from 'services/command';
 
 let splashWindow: BrowserWindow | null = null;
 
@@ -190,7 +191,6 @@ class CodeMain {
     }
     async startUp(): Promise<void> {
         this.initServices();
-        new Menubar();
     }
     private registerListeners() {
         process.on('uncaughtException', err => this.onUnexpectedError(err));
@@ -245,7 +245,12 @@ class CodeMain {
             useClass: NativeService
         });
 
+        injector.add(ICommandService, {
+            useClass: CommandService
+        });
+
         injector.createInstance(CodeApplication);
+        injector.createInstance(Menubar);
     }
 }
 

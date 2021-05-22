@@ -51,6 +51,8 @@ export const FS_SAVE = 'fs:save';
 export const FS_CREATE_FILE = 'fs:create-file';
 export const FS_CREATE_DIR = 'fs:create-dir';
 export const FS_DELETE = 'fs:delete-item';
+// electron
+export const FS_REVEAL = 'fs:reveal-finder';
 
 export type EventType = string | symbol;
 export type Listener<T = any> = (event?: T) => void;

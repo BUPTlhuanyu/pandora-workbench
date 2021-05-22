@@ -6,6 +6,7 @@
         min-width: 200px;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         .sider-title {
             background: #f3f3f7;
             height: 30px;
@@ -90,7 +91,7 @@
         .sider-footer {
             background: #f3f3f7;
             z-index: 1;
-            position: absolute;
+            // position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
@@ -105,6 +106,7 @@
         .sider-file-folder {
             background: transparent;
             overflow-x: auto;
+            flex: 1;
             // 覆盖
             .ant-tree-list {
                 .ant-tree-switcher {

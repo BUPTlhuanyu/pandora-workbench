@@ -4,7 +4,8 @@ import getClassname from 'views/src/utils/classMaker';
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import Icon from 'views/src/components/icon';
 import {pandora} from 'views/src/services/pandora';
-import {FS_CREATE_FILE, FS_CREATE_DIR, FS_EDIT, FS_DELETE, fileEvent} from 'views/src/utils/event';
+import {revealFileInOs, moveFileToTrash} from 'views/src/services/messageCenter';
+import {FS_CREATE_FILE, FS_CREATE_DIR, FS_EDIT, FS_DELETE, fileEvent, FS_REVEAL} from 'views/src/utils/event';
 import {Input} from 'antd';
 import produce from 'immer';
 
@@ -247,6 +248,12 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, []);
 
     React.useEffect(() => {
+        // 在finder中打开
+        fileEvent.removeAllListeners(FS_CREATE_FILE);
+        fileEvent.on(FS_REVEAL, path => {
+            path = path || selectedFilePath;
+            revealFileInOs(path);
+        });
         fileEvent.removeAllListeners(FS_CREATE_FILE);
         fileEvent.on(FS_CREATE_FILE, () => {
             if (!treeData[0]) {
@@ -292,6 +299,8 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         });
         fileEvent.removeAllListeners(FS_DELETE);
         fileEvent.on(FS_DELETE, path => {
+            path = path || selectedFilePath;
+            moveFileToTrash(path);
             const {selectedFile, nextTree} = deleteToTreeData(treeData, path);
             if (nextTree) {
                 selectedFilePath === path && dispatch({
