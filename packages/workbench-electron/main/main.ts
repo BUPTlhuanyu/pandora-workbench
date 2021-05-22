@@ -170,7 +170,10 @@ function createWindow() {
         ? path.resolve(app.getAppPath(), './dist/preload.js')
         : path.resolve(app.getAppPath(), './preload.js');
     const win = new BrowserWindow({
-        fullscreen: true,
+        minWidth: 800,
+        minHeight: 600,
+        title: 'Pandora Markdown',
+        backgroundColor: '#262626',
         webPreferences: {
             preload,
             nodeIntegration: true,

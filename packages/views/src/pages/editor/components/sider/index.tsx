@@ -418,7 +418,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                             <Icon type="list" style={{fontSize: '20px'}} />
                         </span>
                     )}
-                    <div>文件</div>
+                    <div className="sider-title-text">文件</div>
                     {mouseEnter && (
                         <span onClick={onStartSearch} className="sider-title-icon sider-title-search" title="查找">
                             <Icon type="search" style={{fontSize: '20px'}} />
