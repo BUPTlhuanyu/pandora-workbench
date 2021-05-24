@@ -174,6 +174,11 @@ function createWindow() {
         minHeight: 600,
         title: 'Pandora Markdown',
         backgroundColor: '#262626',
+        titleBarStyle: 'hidden',
+        trafficLightPosition: {
+            x: 0,
+            y: 0
+        },
         webPreferences: {
             preload,
             nodeIntegration: true,
