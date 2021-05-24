@@ -172,13 +172,13 @@ function createWindow() {
     const win = new BrowserWindow({
         minWidth: 800,
         minHeight: 600,
-        title: 'Pandora Markdown',
+        title: '',
         backgroundColor: '#262626',
-        titleBarStyle: 'hidden',
-        trafficLightPosition: {
-            x: 0,
-            y: 0
-        },
+        // titleBarStyle: 'hidden',
+        // trafficLightPosition: {
+        //     x: 0,
+        //     y: 0
+        // },
         webPreferences: {
             preload,
             nodeIntegration: true,

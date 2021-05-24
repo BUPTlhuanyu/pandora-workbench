@@ -34,7 +34,7 @@ export default function () {
     return (
         <div className="tool-bar-wrapper">
             <div className="tool-bar-content">
-                <div className="tool-bar-title" style={{paddingLeft: '60px'}}>Pandora Markdown</div>
+                <div className="tool-bar-title">Pandora Markdown</div>
                 <div className="tool-bar-icon-group">
                     <div className="tool-bar-icon" ref={copyBtn} title="复制">
                         <Icon type="copy" style={{fontSize: '20px'}} />
