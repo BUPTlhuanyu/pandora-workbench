@@ -50,6 +50,10 @@ export interface IChannelClient {
     getChannel<T extends IChannel>(channelName: string): T;
 }
 
+interface IHandler {
+	(response: IRawResponse): void;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 ////                          request type                               ////
 /////////////////////////////////////////////////////////////////////////////
@@ -134,9 +138,104 @@ export class ChannelServer<TContext = string> implements IChannelServer<TContext
         this.channels.set(channelName, channel);
     }
     dispose() {
-
+        if (this.protocolListener) {
+            this.protocolListener = null;
+        }
     }
     private onRawMessage(message: any) {
-        
+
+    }
+}
+
+/**
+ * ChannelClient 客户端是主线程中创建的，在创建客户端的过程中会创建子进程
+ */
+export class ChannelClient implements IChannelClient, IDisposable {
+    private protocolListener: IDisposable | null;
+    private handlers = new Map<number, Function>();
+    private isDisposed: boolean = false;
+    private lastRequestId: number = 0;
+
+    constructor(private protocol: IMessagePassingProtocol) {
+		this.protocolListener = this.protocol.onMessage(msg => this.onBuffer(msg));
+	}
+
+    // TODO: should be buffer data
+    private onBuffer(message: any): void {
+        // deserialize 反序列化之后的数据
+		// const reader = new BufferReader(message);
+		// const header = deserialize(reader);
+		// const body = deserialize(reader);
+		// const type: ResponseType = header[0];
+        // switch (type) {
+            // case 'A': return this.onResponse({ type: header[0], id: header[1], data: body });
+        // }
+
+        const data = JSON.parse(message);
+        return this.onResponse(data);
+    }
+
+	private onResponse(response: IRawResponse): void {
+        if (response.type === ResponseType.Initialize) {
+            // 初始消息
+            return;
+        }
+
+		const handler = this.handlers.get(response.id);
+
+		if (handler) {
+			handler(response);
+		}
+	}
+
+    getChannel<T extends IChannel>(channelName: string): T {
+        const that = this;
+
+        return {
+            call(command: string, arg?: any) {
+                if (that.isDisposed) {
+                    return Promise.reject();
+                }
+                return that.requestPromise(channelName, command, arg);
+            },
+            // listen(event: string, arg: any) {
+            //     if (that.isDisposed) {
+            //         return Promise.reject();
+            //     }
+            //     return that.requestEvent(channelName, event, arg);
+            // }
+        } as T;
+    }
+
+    private  requestPromise(channelName: string, name: string, arg?: any): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.sendBuffer([channelName, name, arg]);
+        }).then(data => data).catch(err => Promise.resolve(err));
+    }
+
+    // private requestEvent(channelName: string, name: string, arg?: any): Event<any> {
+    //     const id = this.lastRequestId++;
+    //     // 当onResponse的时候，执行handler并且利用event.emit触发事件处理函数
+    //     const handler: IHandler = (res: IRawResponse) => emitter.fire((res as IRawEventFireResponse).data);
+    //     this.handlers.set(id, handler);
+
+    //     return emitter.event;
+    // }
+    
+    private sendBuffer(message: any): number {
+        try {
+            this.protocol.send(message);
+            return message.byteLength;
+        } catch (err) {
+            // noop
+            return 0;
+        }
+    }
+
+    dispose() {
+        this.isDisposed = true;
+        if (this.protocolListener) {
+            this.protocolListener = null;
+        }
     }
 }
