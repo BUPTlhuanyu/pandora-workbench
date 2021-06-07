@@ -19,7 +19,7 @@ export function registerSingleton<T>(
 
     if (index !== -1) {
         singletonDependencies[index] = [id, {useClass: ctor, lazyInstantiation}];
-        console.warn(`[morpho] Duplicated registration of ${id.toString()}.`);
+        console.warn(`[pandora] Duplicated registration of ${id.toString()}.`);
     }
     else {
         singletonDependencies.push([id, {useClass: ctor, lazyInstantiation}]);
@@ -35,7 +35,7 @@ export function getSingletonDependencies(): Array<[
 ]> {
     if (singletonDependenciesHaveBeenFetched && !haveWarned) {
         console.warn(
-            '[morpho] More than one root injectors tried to fetch singleton dependencies. '
+            '[pandora] More than one root injectors tried to fetch singleton dependencies. '
         + 'This may cause undesired behavior in your application.'
         );
 

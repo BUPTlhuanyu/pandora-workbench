@@ -18,6 +18,9 @@ import {IDialogService, DialogService} from 'services/dialog/dialog';
 import {INativeService, NativeService} from 'services/native/native';
 import {ICommandService, CommandService} from 'services/command';
 
+// single service
+import 'services/search/electron-browser/searchServices';
+
 let splashWindow: BrowserWindow | null = null;
 
 const MODE = process.env.NODE_ENV === 'production';

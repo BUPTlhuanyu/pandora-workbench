@@ -57,7 +57,7 @@ interface IHandler {
 /////////////////////////////////////////////////////////////////////////////
 ////                          request type                               ////
 /////////////////////////////////////////////////////////////////////////////
-export const enum RequestType {
+export enum RequestType {
     Promise = 100,
     PromiseCancel = 101,
     EventListen = 102,
@@ -86,7 +86,7 @@ type IRawRequest = IRawPromiseRequest | IRawPromiseCancelRequest | IRawEventList
 /////////////////////////////////////////////////////////////////////////////
 ////                          response type                              ////
 /////////////////////////////////////////////////////////////////////////////
-export const enum ResponseType {
+export enum ResponseType {
     Initialize = 200,
     PromiseSuccess = 201,
     PromiseError = 202,
@@ -121,7 +121,7 @@ type IRawResponse = IRawInitializeResponse | IRawPromiseSuccessResponse | IRawPr
 
 export interface IMessagePassingProtocol {
     send(data: any): void;
-    onMessage: Event<any>;
+    onMessage(e: any): any;
 }
 
 // TODO: buffer
@@ -132,7 +132,7 @@ export class ChannelServer<TContext = string> implements IChannelServer<TContext
     private protocolListener: IDisposable | null;
 
     constructor(private protocol: IMessagePassingProtocol, channelName: string) {
-        this.protocolListener = this.protocol.onMessage(msg => this.onRawMessage(msg));
+        this.protocolListener = this.protocol.onMessage((msg: any) => this.onRawMessage(msg));
     }
     registerChannel(channelName: string, channel: IServerChannel<TContext>) {
         this.channels.set(channelName, channel);
@@ -157,7 +157,7 @@ export class ChannelClient implements IChannelClient, IDisposable {
     private lastRequestId: number = 0;
 
     constructor(private protocol: IMessagePassingProtocol) {
-		this.protocolListener = this.protocol.onMessage(msg => this.onBuffer(msg));
+		this.protocolListener = this.protocol.onMessage((msg: any) => this.onBuffer(msg));
 	}
 
     // TODO: should be buffer data

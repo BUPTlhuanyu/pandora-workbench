@@ -11,7 +11,8 @@ const isProd = process.env.NODE_ENV === 'production';
 module.exports = createConfig({
     target: 'electron-main',
     entry: {
-        index: './main/main.ts'
+        index: './main/main.ts',
+        search: '../services/search/node/searchApp.ts'
     },
     output: {
         publicPath: isProd ? './' : '/',

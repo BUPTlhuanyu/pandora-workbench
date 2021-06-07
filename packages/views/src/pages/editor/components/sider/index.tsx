@@ -225,6 +225,8 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, [showPanel, setShowPanel]);
 
     const onStartSearch = React.useCallback(() => {
+        pandora &&
+        pandora.ipcRenderer.invoke('pandora:fileSearch');
         setShowPanel(true);
     }, [setShowPanel]);
 

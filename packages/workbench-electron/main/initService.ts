@@ -5,12 +5,14 @@ import {ipcMain} from 'electron';
 import {IFileService} from 'services/files/files';
 import {IDialogService} from 'services/dialog/dialog';
 import {INativeService} from 'services/native/native';
+import {ISearchService} from 'services/search/common/searchService';
 
 class CodeApplication {
     constructor(
         @IFileService private readonly fileService: IFileService,
         @IDialogService private readonly dialogService: IDialogService,
-        @INativeService private readonly nativeService: INativeService
+        @INativeService private readonly nativeService: INativeService,
+        @ISearchService private readonly diskSearch: ISearchService
     ) {
         ipcMain.handle('pandora:writeFile', async (event, path: string, data: string) => {
             if (typeof data !== 'string') {
@@ -71,6 +73,10 @@ class CodeApplication {
 
         ipcMain.handle('pandora:moveFileToTrash', async (event, fullpath: string) => {
             this.nativeService.moveFileToTrash(fullpath);
+        });
+
+        ipcMain.handle('pandora:fileSearch', async () => {
+            this.diskSearch.fileSearch('asdasdasd');
         });
     }
 }
