@@ -1,20 +1,22 @@
 /**
  * @file
  */
-import {createDecorator} from 'core/base/dependency-inject';
-export const IRawSearchService = createDecorator<IRawSearchService>('search');
-
-export interface IRawSearchService {
-    fileSearch(search: any): any;
-    textSearch(search: any): any;
-    clearCache(cacheKey: string): Promise<void>;
-}
+import {SyncFindTextInDir} from 'core/base/common/node/search';
+import {ISearchService as IRawSearchService} from 'services/search/common/searchService';
 
 export class SearchService implements IRawSearchService {
     private caches: { [cacheKey: string]: Cache; } = Object.create(null);
 
     fileSearch(arg: any) {
-        console.log('pandora:fileSearch', arg);
+        if (!arg.query) {
+            return null;
+        }
+        const finder = new SyncFindTextInDir({
+            pattern: arg.query,
+            targetDir: arg.dir,
+            fileFilter: /\.md$/
+        });
+        return finder.findSync();
     }
 
     textSearch() {

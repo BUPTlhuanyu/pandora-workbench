@@ -14,6 +14,7 @@ class CodeApplication {
         @INativeService private readonly nativeService: INativeService,
         @ISearchService private readonly diskSearch: ISearchService
     ) {
+        // TODO：返回数据格式
         ipcMain.handle('pandora:writeFile', async (event, path: string, data: string) => {
             if (typeof data !== 'string') {
                 throw new Error('Invalid operation (vscode:writeNlsFile)');
@@ -75,8 +76,15 @@ class CodeApplication {
             this.nativeService.moveFileToTrash(fullpath);
         });
 
-        ipcMain.handle('pandora:fileSearch', async () => {
-            this.diskSearch.fileSearch('asdasdasd');
+        ipcMain.handle('pandora:fileSearch', async (event: Electron.IpcMainInvokeEvent, dir: string, query: string) => {
+            const res = await this.diskSearch.fileSearch({
+                dir,
+                query
+            });
+            return {
+                status: res.data && res.data.length && 0,
+                data: res.data
+            };
         });
     }
 }

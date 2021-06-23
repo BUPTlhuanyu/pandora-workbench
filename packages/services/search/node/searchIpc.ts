@@ -2,10 +2,10 @@
  * @file
  */
 import {IServerChannel, Event, IChannel} from 'core/base/ipc/common/ipc';
-import {IRawSearchService} from './rawSearchService';
+import {ISearchService} from 'services/search/common/searchService';
 export class SearchChannel implements IServerChannel {
 
-    constructor(private service: IRawSearchService) { }
+    constructor(private service: ISearchService) { }
 
     listen(_: unknown, event: string, arg?: any): Event<any> {
         switch (event) {
@@ -22,7 +22,7 @@ export class SearchChannel implements IServerChannel {
     }
 }
 
-export class SearchChannelClient implements IRawSearchService {
+export class SearchChannelClient implements ISearchService {
 
 	constructor(private channel: IChannel) {}
 

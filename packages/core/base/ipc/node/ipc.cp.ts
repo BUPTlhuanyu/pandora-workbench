@@ -15,7 +15,7 @@ export class Server<TContext extends string> extends IPCServer<TContext> {
                 send: r => {
                     try {
                         if (process.send) {
-                            process.send((<Buffer>r.buffer).toString('base64'));
+                        	process.send(r);
                         }
                     } catch (e) {
                         /* not much to do */
@@ -88,6 +88,17 @@ export class Client implements IChannelClient {
 		return channel.call<T>(command, arg);
 	}
 
+	private getCachedChannel(name: string): IChannel {
+		let channel = this.channels.get(name);
+
+		if (!channel) {
+			channel = this.client.getChannel(name);
+			this.channels.set(name, channel);
+		}
+
+		return channel;
+	}
+
 	private get client(): IPCClient {
 		if (!this._client) {
 			const args = this.options && this.options.args ? this.options.args : [];
@@ -97,11 +108,13 @@ export class Client implements IChannelClient {
 			}
 			console.log('this.modulePath', this.modulePath);
 			this.child = fork(this.modulePath, args, forkOpts);
-			this.child.on('message', (msg: any) => {
-				console.log('msg', msg);
-			});
 			const send = (r: any) => this.child && this.child.connected && this.child.send(r);
-			const onMessage = (msg: any) => {console.log(msg)};
+			const onMessage = (fn: any) => {
+				this.child && this.child.on('message', (msg: any) => {
+					// 从子进程传递过来的数据
+					fn(msg);
+				});
+			};
 			const protocol = { send, onMessage };
 			this._client = new IPCClient(protocol);
 
@@ -121,17 +134,6 @@ export class Client implements IChannelClient {
 			});
 		}
 		return this._client;
-	}
-
-	private getCachedChannel(name: string): IChannel {
-		let channel = this.channels.get(name);
-
-		if (!channel) {
-			channel = this.client.getChannel(name);
-			this.channels.set(name, channel);
-		}
-
-		return channel;
 	}
 
 	private disposeClient() {

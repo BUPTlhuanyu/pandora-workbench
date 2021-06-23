@@ -2,6 +2,7 @@ import * as React from 'react';
 import './index.scss';
 import getClassname from 'views/src/utils/classMaker';
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
+import SearchList, {ISearchResult} from 'views/src/components/search-list';
 import Icon from 'views/src/components/icon';
 import {pandora} from 'views/src/services/pandora';
 import {revealFileInOs, moveFileToTrash} from 'views/src/services/messageCenter';
@@ -163,6 +164,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const contextRef = React.useRef<boolean>(false);
     const [{editor}] = React.useContext(EditorContext);
     const [{selectedFilePath}, dispatch] = React.useContext(FileContext);
+    const [searchResult, setSearchResult] = React.useState<ISearchResult[]>([]);
     const [renameKey, setRenameKey] = React.useState<string>('');
     const [treeData, setTreeData] = React.useState<ItreeData>([]);
     const [mouseEnter, setMouseEnter] = React.useState<boolean>(false);
@@ -225,10 +227,15 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, [showPanel, setShowPanel]);
 
     const onStartSearch = React.useCallback(() => {
-        pandora &&
-        pandora.ipcRenderer.invoke('pandora:fileSearch');
+        if (treeData[0]) {
+            pandora && pandora.ipcRenderer.invoke('pandora:fileSearch', treeData[0].path, 'React').then(data => {
+                if (data.status === 0) {
+                    setSearchResult(data.data);
+                }
+            });
+        }
         setShowPanel(true);
-    }, [setShowPanel]);
+    }, [setShowPanel, treeData]);
 
     const onContentMode = React.useCallback(() => {
         // 用于切换大纲和文件列表
@@ -387,7 +394,6 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                 oldPath,
                 newName
             ).then(res => {
-                console.log('res', res);
                 // TODO: 数据格式
                 if (res.success) {
                     dispatch({
@@ -469,6 +475,9 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                         expandAction="click"
                         defaultExpandedKeys={[treeData[0].path]}
                     />
+                }
+                {
+                    searchResult.length > 0 && <SearchList data={searchResult} />
                 }
                 {mouseEnter && (
                     <div className="sider-footer" onClick={getTreeData}>

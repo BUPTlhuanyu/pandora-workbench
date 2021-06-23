@@ -143,7 +143,12 @@ export class ChannelServer<TContext = string> implements IChannelServer<TContext
         }
     }
     private onRawMessage(message: any) {
-
+        const {channelName, command, arg, id} = message;
+        const channel = this.channels.get(channelName);
+        return this.protocol.send({
+            id,
+            data: channel?.listen(channelName, command, arg)
+        });
     }
 }
 
@@ -170,9 +175,8 @@ export class ChannelClient implements IChannelClient, IDisposable {
         // switch (type) {
             // case 'A': return this.onResponse({ type: header[0], id: header[1], data: body });
         // }
-
-        const data = JSON.parse(message);
-        return this.onResponse(data);
+        // const data = JSON.parse(message);
+        return this.onResponse(message);
     }
 
 	private onResponse(response: IRawResponse): void {
@@ -207,10 +211,22 @@ export class ChannelClient implements IChannelClient, IDisposable {
         } as T;
     }
 
-    private  requestPromise(channelName: string, name: string, arg?: any): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.sendBuffer([channelName, name, arg]);
-        }).then(data => data).catch(err => Promise.resolve(err));
+    private requestPromise(channelName: string, command: string, arg?: any): Promise<any> {
+        const id = this.lastRequestId++;
+        const request = {id, channelName, command, arg};
+        const result = new Promise((resolve, reject) => {
+            const doRequest = () => {
+                const handler = (response: any) => {
+                    resolve(response);
+                }
+                this.handlers.set(id, handler);
+				this.sendRequest(request);
+            };
+            doRequest();
+        })
+        return result.finally(() => {
+            // do something
+        });
     }
 
     // private requestEvent(channelName: string, name: string, arg?: any): Event<any> {
@@ -222,7 +238,7 @@ export class ChannelClient implements IChannelClient, IDisposable {
     //     return emitter.event;
     // }
     
-    private sendBuffer(message: any): number {
+    private sendRequest(message: any): number {
         try {
             this.protocol.send(message);
             return message.byteLength;
