@@ -2,6 +2,7 @@
  * @file
  */
 import * as React from 'react';
+import './index.scss';
 
 export interface ISearchResult {
     filename: string;
@@ -15,10 +16,17 @@ function SearchList(props: any) {
         <div>
             {
                 props.data.map((item: ISearchResult) => (<div key={item.filename}>
-                    <div>{item.filename}</div>
+                    <div className="search-header">
+                        <span className="search-title">{item.filename}</span>
+                        <span className="search-count">{item.times}</span>
+                    </div>
                     {
                         item.list.map((htmlContent: string, index: number) => (
-                            <div dangerouslySetInnerHTML={{__html: htmlContent}} key={`search-${index}`}></div>
+                            <div
+                                className="search-content"
+                                dangerouslySetInnerHTML={{__html: htmlContent}}
+                                key={`search-${index}`}
+                            ></div>
                         ))
                     }
                 </div>))
