@@ -435,33 +435,43 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                 </div>
                 {showPanel && (
                     <div className="sider-panel">
-                        <span className="sider-panel-icon sider-panel-back" onClick={onShowPanel}>
-                            <Icon type="left" style={{fontSize: '20px'}} />
-                        </span>
-                        <Input
-                            placeholder="查找"
-                            className="sider-panel-input"
-                            suffix={
-                                <>
-                                    <span
-                                        title="区分大小写"
-                                        className={`sider-panel-icon ${
-                                            caseSensitive ? 'sider-panel-input-selected' : ''
-                                        }`}
-                                        onClick={onCaseSensitive}
-                                    >
-                                        <Icon type="case" style={{fontSize: '20px'}} />
-                                    </span>
-                                    <span
-                                        title="查找整个单词"
-                                        className={`sider-panel-icon ${wholeWord ? 'sider-panel-input-selected' : ''}`}
-                                        onClick={onCheckWholeWord}
-                                    >
-                                        <Icon type="word" style={{fontSize: '20px'}} />
-                                    </span>
-                                </>
-                            }
-                        />
+                        <div className="sider-panel-header">
+                            <span className="sider-panel-header-icon sider-panel-header-back" onClick={onShowPanel}>
+                                <Icon type="left" style={{fontSize: '20px'}} />
+                            </span>
+                            <Input
+                                placeholder="查找"
+                                className="sider-panel-header-input"
+                                suffix={
+                                    <>
+                                        <span
+                                            title="区分大小写"
+                                            className={`sider-panel-header-icon ${
+                                                caseSensitive ? 'sider-panel-header-input-selected' : ''
+                                            }`}
+                                            onClick={onCaseSensitive}
+                                        >
+                                            <Icon type="case" style={{fontSize: '20px'}} />
+                                        </span>
+                                        <span
+                                            title="查找整个单词"
+                                            className={`sider-panel-header-icon ${
+                                                wholeWord ? 'sider-panel-header-input-selected' : ''
+                                            }`}
+                                            onClick={onCheckWholeWord}
+                                        >
+                                            <Icon type="word" style={{fontSize: '20px'}} />
+                                        </span>
+                                    </>
+                                }
+                            />
+                        </div>
+                        {
+                            searchResult.length > 0 && <SearchList
+                                data={searchResult}
+                                className="sider-panel-content"
+                            />
+                        }
                     </div>
                 )}
                 {
@@ -475,9 +485,6 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                         expandAction="click"
                         defaultExpandedKeys={[treeData[0].path]}
                     />
-                }
-                {
-                    searchResult.length > 0 && <SearchList data={searchResult} />
                 }
                 {mouseEnter && (
                     <div className="sider-footer" onClick={getTreeData}>
