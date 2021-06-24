@@ -55,6 +55,7 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                box-shadow: rgba(17, 17, 26, 0.1) 0px 2px 4px, rgba(17, 17, 26, 0.05) 0px 4px 8px;
                 &-icon {
                     display: flex;
                     cursor: pointer;
@@ -66,6 +67,7 @@
                     }
                 }
                 .ant-input-affix-wrapper {
+                    border: none;
                     width: 0%;
                     animation: widthSpread .3s ease-in forwards;
                 }
@@ -74,7 +76,8 @@
                     box-shadow: none;
                 }
                 .ant-input-affix-wrapper-focused {
-                    border-color: #FFB531;
+                    // border-color: #FFB531;
+                    border: none;
                     box-shadow: none;
                 }
                 &-input {

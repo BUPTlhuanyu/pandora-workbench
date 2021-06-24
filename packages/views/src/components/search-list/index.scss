@@ -1,8 +1,7 @@
 .search-wrapper {
-    padding: 5px 0;
     .search-item {
-        padding: 8px 0;
-        border-bottom: #c7cbce 1px solid;
+        padding: 4px 0 8px;
+        border-bottom: #d8d8d8 1px solid;
         .search-header {
             display: flex;
             flex-direction: row;
@@ -23,9 +22,11 @@
             .search-count {
                 margin-right: 6px;
                 margin-left: 4px;
-                background-color: #d8d8d8;
+                background-color: #e4e4e4;
                 border-radius: 2px;
                 padding: 0 2px;
+                height: 18px;
+                font-size: 12px;
             }
         }
         
