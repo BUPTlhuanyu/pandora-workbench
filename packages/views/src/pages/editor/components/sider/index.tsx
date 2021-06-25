@@ -226,16 +226,30 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         setShowPanel(!showPanel);
     }, [showPanel, setShowPanel]);
 
-    const onStartSearch = React.useCallback(() => {
-        if (treeData[0]) {
-            pandora && pandora.ipcRenderer.invoke('pandora:fileSearch', treeData[0].path, 'React').then(data => {
+    const onStartSearch = React.useCallback(e => {
+        if (!e || !e.target) {
+            return;
+        }
+        const value = e.target.value;
+        if (!value) {
+            setSearchResult([]);
+        } else if (treeData[0]) {
+            pandora && pandora.ipcRenderer.invoke(
+                'pandora:fileSearch',
+                treeData[0].path,
+                {
+                    value,
+                    caseSensitive,
+                    wholeWord
+                }
+            ).then(data => {
                 if (data.status === 0) {
                     setSearchResult(data.data);
                 }
             });
         }
         setShowPanel(true);
-    }, [setShowPanel, treeData]);
+    }, [setShowPanel, treeData, caseSensitive, wholeWord]);
 
     const onContentMode = React.useCallback(() => {
         // 用于切换大纲和文件列表
@@ -428,7 +442,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                     )}
                     <div className="sider-title-text">文件</div>
                     {mouseEnter && (
-                        <span onClick={onStartSearch} className="sider-title-icon sider-title-search" title="查找">
+                        <span onClick={onShowPanel} className="sider-title-icon sider-title-search" title="查找">
                             <Icon type="search" style={{fontSize: '20px'}} />
                         </span>
                     )}
@@ -440,6 +454,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                                 <Icon type="left" style={{fontSize: '20px'}} />
                             </span>
                             <Input
+                                onPressEnter={onStartSearch}
                                 placeholder="查找"
                                 className="sider-panel-header-input"
                                 suffix={

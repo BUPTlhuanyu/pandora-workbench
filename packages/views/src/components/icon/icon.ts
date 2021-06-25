@@ -93,6 +93,14 @@ const PATH_WORD = [
     }
 ];
 
+const PATH_DOWN = [
+    {
+        d: "M952.5662596 696.50144616L1272.87530623 376.19239952a33.50865592 33.50865592 0 0 0-23.46254029-57.61933278H607.49839951a33.50865592 33.50865592 0 0 0-23.4625403 57.68414625l320.30904665 320.24423317a34.15679249 34.15679249 0 0 0 48.22135374 0z",
+        fill: "#555",
+        transform: "translate(-7, 2) scale(0.02)"
+    }
+];
+
 const ICONS: Record<string, any> = {
     copy: PATH_COPY,
     undo: PATH_UNDO,
@@ -104,7 +112,8 @@ const ICONS: Record<string, any> = {
     search: PATH_SEARCH,
     left: PATH_LEFT,
     case: PATH_CASE,
-    word: PATH_WORD
+    word: PATH_WORD,
+    down: PATH_DOWN
 };
 
 export default ICONS;

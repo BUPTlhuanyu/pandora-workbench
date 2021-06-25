@@ -17,6 +17,8 @@ export interface ISearchOptions {
     pattern: string;
     targetDir: string;
     fileFilter?: string | RegExp;
+    caseSensitive: boolean;
+    wholeWord: boolean;
 }
 const options = {
     startTag : "<b class='highlight'>", // could be a hyperlink
@@ -24,7 +26,7 @@ const options = {
 }
 
 function highlight(keywords: string | RegExp, text: string) {
-    const matcher = new RegExp(keywords, 'gi');
+    const matcher = new RegExp(keywords);
     let times = 0;
   
     const line = text.replace(matcher, (match: string) => {
@@ -42,16 +44,23 @@ function highlight(keywords: string | RegExp, text: string) {
     }
 }
 
+function wholeWord(pattern: string | RegExp, wholeWord: boolean): string {
+    const patternStr = new RegExp(pattern).source;
+    return wholeWord ? `\\b${patternStr}\\b` : patternStr;
+}
+
 export class SyncFindTextInDir {
     pattern: string;
     targetDir: string;
     fileFilter?: RegExp;
     highlight: boolean;
+    caseSensitive: boolean;
     constructor(options: ISearchOptions) {
         this.highlight = options.highlight || true;
-        this.pattern = options.pattern;
+        this.pattern = wholeWord(options.pattern, options.wholeWord);
         this.targetDir = options.targetDir;
         this.fileFilter = this.getFileFilter(options.fileFilter);
+        this.caseSensitive = options.caseSensitive;
     }
     getFileFilter(fileFilter: string | undefined | RegExp) {
         if (typeof fileFilter === 'string') {
@@ -89,11 +98,12 @@ export class SyncFindTextInDir {
         } : null;
     }
     getMatchedFiles(files: string[]) {
+        let flags = this.caseSensitive ? 'g' : 'gi';
         let matchedFiles = [];
         for (let i = files.length - 1; i >= 0; i--) {
             const content = readFile(files[i]);
             const matched = this.getMatchedData(content, {
-                regex: new RegExp(this.pattern, 'gi'),
+                regex: new RegExp(this.pattern, flags),
                 filename: files[i]
             });
             matched && matchedFiles.push(

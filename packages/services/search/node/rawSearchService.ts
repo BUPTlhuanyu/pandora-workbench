@@ -12,7 +12,9 @@ export class SearchService implements IRawSearchService {
             return null;
         }
         const finder = new SyncFindTextInDir({
-            pattern: arg.query,
+            pattern: arg.query.value,
+            caseSensitive: arg.query.caseSensitive,
+            wholeWord: arg.query.wholeWord,
             targetDir: arg.dir,
             fileFilter: /\.md$/
         });

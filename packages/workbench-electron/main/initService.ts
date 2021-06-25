@@ -76,7 +76,7 @@ class CodeApplication {
             this.nativeService.moveFileToTrash(fullpath);
         });
 
-        ipcMain.handle('pandora:fileSearch', async (event: Electron.IpcMainInvokeEvent, dir: string, query: string) => {
+        ipcMain.handle('pandora:fileSearch', async (event: Electron.IpcMainInvokeEvent, dir: string, query: Record<string, string>) => {
             const res = await this.diskSearch.fileSearch({
                 dir,
                 query
