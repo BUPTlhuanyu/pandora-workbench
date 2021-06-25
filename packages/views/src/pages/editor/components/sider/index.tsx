@@ -171,6 +171,27 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const [showPanel, setShowPanel] = React.useState<boolean>(false);
     const [caseSensitive, setCaseSensitive] = React.useState<boolean>(false);
     const [wholeWord, setWholeWord] = React.useState<boolean>(false);
+    const inputRef = React.useRef<Input>(null);
+
+    // TODO: 放到 useCodeMirror
+    const scrollEditor = React.useCallback((line: number) => {
+        // TODO: 封装
+        // 1. 去掉硬编码，34 是头部高度30 + padding高度4
+        // 2. editor.charCoords({line}, 'line') 获取字符相对于行的top值
+        // 3. editor.charCoords({line}).top 获取字符相对于page的top
+        editor.scrollTo(0, editor.charCoords({line}, 'local').top - editor.charCoords({line}, 'line').top);
+        const textMarker = editor.getDoc().markText(
+            {line: line - 1},
+            {line},
+            {
+                css: 'background-color: #FFFAAA',
+                atomic: true
+            }
+        );
+        setTimeout(() => {
+            textMarker.clear();
+        }, 500);
+    }, [editor]);
 
     const onSearchSelect = React.useCallback(filename => {
         dispatch({
@@ -179,25 +200,22 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         });
     }, [dispatch]);
 
-    const onLineSelect = React.useCallback((line: number) => {
+    const onLineSelect = React.useCallback((line: number, _, filename: string) => {
         try {
-            // TODO: 封装
-            editor.scrollIntoView({
-                line
-            });
-            const textMarker = editor.getDoc().markText(
-                {line: line - 1},
-                {line},
-                {
-                    css: 'background-color: #FFFAAA',
-                    atomic: true
-                }
-            );
-            setTimeout(() => {
-                textMarker.clear();
-            }, 1000);
+            if (filename !== selectedFilePath) {
+                dispatch({
+                    type: 'selectedFile',
+                    payload: filename
+                });
+                // TODO: 中间存在一个读取的操纵，因此这里会存在bug
+                setTimeout(() => {
+                    scrollEditor(line);
+                }, 200);
+            } else {
+                scrollEditor(line);
+            }
         } catch (e) {}
-    }, [editor]);
+    }, [editor, selectedFilePath, dispatch]);
 
     const onSelect = React.useCallback(
         (keys: Array<string | number>, {node}: Record<string, any>) => {
@@ -252,6 +270,10 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const onShowPanel = React.useCallback(() => {
         setShowPanel(!showPanel);
     }, [showPanel, setShowPanel]);
+
+    React.useEffect(() => {
+        showPanel && inputRef.current && inputRef.current?.focus();
+    }, [showPanel]);
 
     const onStartSearch = React.useCallback(e => {
         if (!e || !e.target) {
@@ -481,6 +503,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                                 <Icon type="left" style={{fontSize: '20px'}} />
                             </span>
                             <Input
+                                ref={inputRef}
                                 onPressEnter={onStartSearch}
                                 placeholder="查找"
                                 className="sider-panel-header-input"

@@ -20,8 +20,8 @@ function SearchListItem(props: any) {
     const onSelect = React.useCallback(() => {
         props.onSelect(props.data.filename);
     }, [props.onSelect, props.data]);
-    const onLineSelect = React.useCallback((line: number, htmlContent: string) => {
-        props.onLineSelect(line, htmlContent);
+    const onLineSelect = React.useCallback((line: number, htmlContent: string, filename: string) => {
+        props.onLineSelect(line, htmlContent, filename);
     }, [props.onLineSelect]);
     return (
         <div className='search-item' onClick={onSelect}>
@@ -43,8 +43,9 @@ function SearchListItem(props: any) {
                     props.data.list.map(({line, text: htmlContent}: Record<string, any>, index: number) => (
                         <div
                             className='search-content-item'
-                            onClick={() => {
-                                onLineSelect(line, htmlContent);
+                            onClick={e => {
+                                e.stopPropagation();
+                                onLineSelect(line, htmlContent, props.data.filename);
                             }}
                             dangerouslySetInnerHTML={{__html: htmlContent}}
                             key={`search-${index}`}
