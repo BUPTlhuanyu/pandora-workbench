@@ -172,6 +172,13 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const [caseSensitive, setCaseSensitive] = React.useState<boolean>(false);
     const [wholeWord, setWholeWord] = React.useState<boolean>(false);
 
+    const onSearchSelect = React.useCallback(filename => {
+        dispatch({
+            type: 'selectedFile',
+            payload: filename
+        });
+    }, [dispatch]);
+
     const onSelect = React.useCallback(
         (keys: Array<string | number>, {node}: Record<string, any>) => {
             if (isFilePath(selectedFilePath)) {
@@ -485,6 +492,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                             searchResult.length > 0 && <SearchList
                                 data={searchResult}
                                 className="sider-panel-content"
+                                onSelect={onSearchSelect}
                             />
                         }
                     </div>

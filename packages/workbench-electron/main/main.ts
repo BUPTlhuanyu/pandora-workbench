@@ -175,6 +175,8 @@ function createWindow() {
     const win = new BrowserWindow({
         minWidth: 800,
         minHeight: 600,
+        width: 1200,
+        height: 800,
         title: '',
         backgroundColor: '#262626',
         // titleBarStyle: 'hidden',

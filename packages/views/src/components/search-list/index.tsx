@@ -13,11 +13,15 @@ export interface ISearchResult {
 
 function SearchListItem(props: any) {
     const [contentStatus, setContentStatus] = React.useState<boolean>(true);
-    const onToggle = React.useCallback(() => {
+    const onToggle = React.useCallback(e => {
+        e.stopPropagation();
         setContentStatus(!contentStatus);
     }, [contentStatus]);
+    const onSelect = React.useCallback(() => {
+        props.onSelect(props.data.filename);
+    }, [props.onSelect, props.data]);
     return (
-        <div className='search-item'>
+        <div className='search-item' onClick={onSelect}>
             <div className='search-header'>
                 <span onClick={onToggle} className='search-prefix'>
                     <Icon
@@ -52,7 +56,7 @@ function SearchList(props: any) {
         <div className={`search-wrapper ${props.className}`}>
             {
                 props.data.map((item: ISearchResult) => (
-                    <SearchListItem key={item.filename} data={item} />
+                    <SearchListItem onSelect={props.onSelect} key={item.filename} data={item} />
                 ))
             }
         </div>
