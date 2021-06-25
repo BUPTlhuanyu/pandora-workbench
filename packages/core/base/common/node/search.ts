@@ -88,7 +88,10 @@ export class SyncFindTextInDir {
             const res = highlight(data.regex, line);
             if (res) {
                 times += res.times;
-                match.push(res.line);
+                match.push({
+                    text: res.line,
+                    line: i
+                });
             }
         }
         return match.length !== 0 ? {

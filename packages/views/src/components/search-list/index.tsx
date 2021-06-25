@@ -20,6 +20,9 @@ function SearchListItem(props: any) {
     const onSelect = React.useCallback(() => {
         props.onSelect(props.data.filename);
     }, [props.onSelect, props.data]);
+    const onLineSelect = React.useCallback((line: number, htmlContent: string) => {
+        props.onLineSelect(line, htmlContent);
+    }, [props.onLineSelect]);
     return (
         <div className='search-item' onClick={onSelect}>
             <div className='search-header'>
@@ -37,9 +40,12 @@ function SearchListItem(props: any) {
             </div>
             <div style={{display: contentStatus ? 'flex' : 'none'}} className='search-content'>
                 {
-                    props.data.list.map((htmlContent: string, index: number) => (
+                    props.data.list.map(({line, text: htmlContent}: Record<string, any>, index: number) => (
                         <div
                             className='search-content-item'
+                            onClick={() => {
+                                onLineSelect(line, htmlContent);
+                            }}
                             dangerouslySetInnerHTML={{__html: htmlContent}}
                             key={`search-${index}`}
                         ></div>
@@ -56,7 +62,12 @@ function SearchList(props: any) {
         <div className={`search-wrapper ${props.className}`}>
             {
                 props.data.map((item: ISearchResult) => (
-                    <SearchListItem onSelect={props.onSelect} key={item.filename} data={item} />
+                    <SearchListItem
+                        onSelect={props.onSelect}
+                        onLineSelect={props.onLineSelect}
+                        key={item.filename}
+                        data={item}
+                    />
                 ))
             }
         </div>

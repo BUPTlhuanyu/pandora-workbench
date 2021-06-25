@@ -179,6 +179,26 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         });
     }, [dispatch]);
 
+    const onLineSelect = React.useCallback((line: number) => {
+        try {
+            // TODO: 封装
+            editor.scrollIntoView({
+                line
+            });
+            const textMarker = editor.getDoc().markText(
+                {line: line - 1},
+                {line},
+                {
+                    css: 'background-color: #FFFAAA',
+                    atomic: true
+                }
+            );
+            setTimeout(() => {
+                textMarker.clear();
+            }, 1000);
+        } catch (e) {}
+    }, [editor]);
+
     const onSelect = React.useCallback(
         (keys: Array<string | number>, {node}: Record<string, any>) => {
             if (isFilePath(selectedFilePath)) {
@@ -493,6 +513,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                                 data={searchResult}
                                 className="sider-panel-content"
                                 onSelect={onSearchSelect}
+                                onLineSelect={onLineSelect}
                             />
                         }
                     </div>
