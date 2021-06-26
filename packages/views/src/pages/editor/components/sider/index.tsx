@@ -3,12 +3,15 @@ import './index.scss';
 import getClassname from 'views/src/utils/classMaker';
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import SearchList, {ISearchResult} from 'views/src/components/search-list';
+import TocList, {ITocItem} from 'views/src/components/toc-list';
+
 import Icon from 'views/src/components/icon';
 import {pandora} from 'views/src/services/pandora';
 import {revealFileInOs, moveFileToTrash} from 'views/src/services/messageCenter';
 import {FS_CREATE_FILE, FS_CREATE_DIR, FS_EDIT, FS_DELETE, fileEvent, FS_REVEAL} from 'views/src/utils/event';
 import {Input} from 'antd';
 import produce from 'immer';
+import {getMdOutline} from 'views/src/utils/markdown-helper';
 
 import {FileContext} from 'views/src/pages/editor/store/sidbar';
 import {EditorContext} from 'views/src/pages/editor/store/editor';
@@ -164,68 +167,89 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const contextRef = React.useRef<boolean>(false);
     const [{editor}] = React.useContext(EditorContext);
     const [{selectedFilePath}, dispatch] = React.useContext(FileContext);
-    const [searchResult, setSearchResult] = React.useState<ISearchResult[]>([]);
     const [renameKey, setRenameKey] = React.useState<string>('');
     const [treeData, setTreeData] = React.useState<ItreeData>([]);
     const [mouseEnter, setMouseEnter] = React.useState<boolean>(false);
+
     const [showPanel, setShowPanel] = React.useState<boolean>(false);
     const [caseSensitive, setCaseSensitive] = React.useState<boolean>(false);
     const [wholeWord, setWholeWord] = React.useState<boolean>(false);
     const inputRef = React.useRef<Input>(null);
+    const [searchResult, setSearchResult] = React.useState<ISearchResult[]>([]);
+
+    const [showToc, setShowToc] = React.useState<boolean>(false);
+    const [tocList, setTocList] = React.useState<ITocItem[]>([]);
 
     // TODO: 放到 useCodeMirror
-    const scrollEditor = React.useCallback((line: number) => {
-        // TODO: 封装
-        // 1. 去掉硬编码，34 是头部高度30 + padding高度4
-        // 2. editor.charCoords({line}, 'line') 获取字符相对于行的top值
-        // 3. editor.charCoords({line}).top 获取字符相对于page的top
-        editor.scrollTo(0, editor.charCoords({line}, 'local').top - editor.charCoords({line}, 'line').top);
-        const textMarker = editor.getDoc().markText(
-            {line: line - 1},
-            {line},
-            {
-                css: 'background-color: #FFFAAA',
-                atomic: true
-            }
-        );
-        setTimeout(() => {
-            textMarker.clear();
-        }, 500);
+    const scrollEditor = React.useCallback(
+        (line: number) => {
+            // TODO: 封装
+            // 1. 去掉硬编码，34 是头部高度30 + padding高度4
+            // 2. editor.charCoords({line}, 'line') 获取字符相对于行的top值
+            // 3. editor.charCoords({line}).top 获取字符相对于page的top
+            editor.scrollTo(0, editor.charCoords({line}, 'local').top - editor.charCoords({line}, 'line').top);
+            const textMarker = editor.getDoc().markText(
+                {line: line - 1},
+                {line},
+                {
+                    css: 'background-color: #FFFAAA',
+                    atomic: true
+                }
+            );
+            setTimeout(() => {
+                textMarker.clear();
+            }, 500);
+        },
+        [editor]
+    );
+
+    const onTocSelect = React.useCallback((item: ITocItem) => {
+        scrollEditor(item.line);
     }, [editor]);
 
-    const onSearchSelect = React.useCallback(filename => {
-        dispatch({
-            type: 'selectedFile',
-            payload: filename
-        });
-    }, [dispatch]);
+    const onSearchSelect = React.useCallback(
+        filename => {
+            dispatch({
+                type: 'selectedFile',
+                payload: filename
+            });
+        },
+        [dispatch]
+    );
 
-    const onLineSelect = React.useCallback((line: number, _, filename: string) => {
-        try {
-            if (filename !== selectedFilePath) {
-                dispatch({
-                    type: 'selectedFile',
-                    payload: filename
-                });
-                // TODO: 中间存在一个读取的操纵，因此这里会存在bug
-                setTimeout(() => {
+    const onLineSelect = React.useCallback(
+        (line: number, _, filename: string) => {
+            try {
+                if (filename !== selectedFilePath) {
+                    dispatch({
+                        type: 'selectedFile',
+                        payload: filename
+                    });
+                    // TODO: 中间存在一个读取的操纵，因此这里会存在bug
+                    setTimeout(() => {
+                        scrollEditor(line);
+                    }, 200);
+                } else {
                     scrollEditor(line);
-                }, 200);
-            } else {
-                scrollEditor(line);
-            }
-        } catch (e) {}
-    }, [editor, selectedFilePath, dispatch]);
+                }
+            } catch (e) {}
+        },
+        [editor, selectedFilePath, dispatch]
+    );
 
     const onSelect = React.useCallback(
         (keys: Array<string | number>, {node}: Record<string, any>) => {
             if (isFilePath(selectedFilePath)) {
                 const content = editor?.getDoc().getValue() || '';
-                pandora && pandora.ipcRenderer.invoke('pandora:writeFile', selectedFilePath, content).then(() => {
-                    // TODO: 编辑状态
-                }).catch(err => {
-                    console.log(err);
-                });
+                pandora &&
+                    pandora.ipcRenderer
+                        .invoke('pandora:writeFile', selectedFilePath, content)
+                        .then(() => {
+                            // TODO: 编辑状态
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
             }
             dispatch({
                 type: 'selectedFile',
@@ -275,34 +299,39 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         showPanel && inputRef.current && inputRef.current?.focus();
     }, [showPanel]);
 
-    const onStartSearch = React.useCallback(e => {
-        if (!e || !e.target) {
-            return;
-        }
-        const value = e.target.value;
-        if (!value) {
-            setSearchResult([]);
-        } else if (treeData[0]) {
-            pandora && pandora.ipcRenderer.invoke(
-                'pandora:fileSearch',
-                treeData[0].path,
-                {
-                    value,
-                    caseSensitive,
-                    wholeWord
-                }
-            ).then(data => {
-                if (data.status === 0) {
-                    setSearchResult(data.data);
-                }
-            });
-        }
-        setShowPanel(true);
-    }, [setShowPanel, treeData, caseSensitive, wholeWord]);
+    const onStartSearch = React.useCallback(
+        e => {
+            if (!e || !e.target) {
+                return;
+            }
+            const value = e.target.value;
+            if (!value) {
+                setSearchResult([]);
+            } else if (treeData[0]) {
+                pandora &&
+                    pandora.ipcRenderer
+                        .invoke('pandora:fileSearch', treeData[0].path, {
+                            value,
+                            caseSensitive,
+                            wholeWord
+                        })
+                        .then(data => {
+                            if (data.status === 0) {
+                                setSearchResult(data.data);
+                            }
+                        });
+            }
+            setShowPanel(true);
+        },
+        [setShowPanel, treeData, caseSensitive, wholeWord]
+    );
 
-    const onContentMode = React.useCallback(() => {
+    const onToc = React.useCallback(() => {
+        const tocList = getMdOutline(editor);
+        setTocList(tocList);
         // 用于切换大纲和文件列表
-    }, []);
+        setShowToc(!showToc);
+    }, [showToc, editor, setTocList]);
 
     const getTreeData = React.useCallback(() => {
         pandora &&
@@ -375,22 +404,26 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
             moveFileToTrash(path);
             const {selectedFile, nextTree} = deleteToTreeData(treeData, path);
             if (nextTree) {
-                selectedFilePath === path && dispatch({
-                    type: 'selectedFile',
-                    payload: selectedFile
-                });
+                selectedFilePath === path &&
+                    dispatch({
+                        type: 'selectedFile',
+                        payload: selectedFile
+                    });
                 setTreeData(nextTree as any);
             }
         });
     }, [treeData, selectedFilePath]);
 
-    const fsRename = React.useCallback((key: string) => {
-        dispatch({
-            type: 'selectedFile',
-            payload: key
-        });
-        setRenameKey(key);
-    }, [setRenameKey]);
+    const fsRename = React.useCallback(
+        (key: string) => {
+            dispatch({
+                type: 'selectedFile',
+                payload: key
+            });
+            setRenameKey(key);
+        },
+        [setRenameKey]
+    );
 
     React.useEffect(() => {
         fileEvent.on(FS_EDIT, fsRename);
@@ -399,80 +432,85 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         };
     }, []);
 
-    const immerTreeData = React.useCallback((nodeKey: string, name: string) => {
-        if (treeData.length > 0) {
-            setTreeData(produce(treeData, draftTreeData => {
-                let root = draftTreeData[0];
-                if (root) {
-                    let stack: Record<string, any> = [root];
-                    while (stack.length > 0) {
-                        let node = stack.pop();
-                        if (node.key === nodeKey) {
-                            updateNodeData(node, name);
-                            stack.length = 0;
-                            break;
-                        }
-                        if (node.children && node.children.length > 0) {
-                            let len = node.children.length;
-                            for (let i = 0; i < len; i++) {
-                                stack.push(node.children[i]);
+    const immerTreeData = React.useCallback(
+        (nodeKey: string, name: string) => {
+            if (treeData.length > 0) {
+                setTreeData(
+                    produce(treeData, draftTreeData => {
+                        let root = draftTreeData[0];
+                        if (root) {
+                            let stack: Record<string, any> = [root];
+                            while (stack.length > 0) {
+                                let node = stack.pop();
+                                if (node.key === nodeKey) {
+                                    updateNodeData(node, name);
+                                    stack.length = 0;
+                                    break;
+                                }
+                                if (node.children && node.children.length > 0) {
+                                    let len = node.children.length;
+                                    for (let i = 0; i < len; i++) {
+                                        stack.push(node.children[i]);
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-            }));
-        }
-    }, [treeData, setTreeData]);
+                    })
+                );
+            }
+        },
+        [treeData, setTreeData]
+    );
 
     // useCallback 嵌套：内部的callback的依赖是从外层callback获取的，所以这里需要声明treeData
-    const onRename = React.useCallback((oldPath: string, newName: string, nodeData: Record<string, any>) => {
-        if (!pandora) {
-            return Promise.reject();
-        }
-        if (nodeData.type === 'file') {
-            const content = editor?.getDoc().getValue() || '';
-            return pandora.ipcRenderer.invoke(
-                'pandora:renameFile',
-                oldPath,
-                newName,
-                content
-            ).then(res => {
-                // TODO: 数据格式
-                if (res.success) {
-                    dispatch({
-                        type: 'selectedFile',
-                        payload: res.data
+    const onRename = React.useCallback(
+        (oldPath: string, newName: string, nodeData: Record<string, any>) => {
+            if (!pandora) {
+                return Promise.reject();
+            }
+            if (nodeData.type === 'file') {
+                const content = editor?.getDoc().getValue() || '';
+                return pandora.ipcRenderer
+                    .invoke('pandora:renameFile', oldPath, newName, content)
+                    .then(res => {
+                        // TODO: 数据格式
+                        if (res.success) {
+                            dispatch({
+                                type: 'selectedFile',
+                                payload: res.data
+                            });
+                            immerTreeData(oldPath, newName);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
                     });
-                    immerTreeData(oldPath, newName);
-                    return true;
-                } else {
-                    return false;
-                }
-            }).catch(err => {
-                console.log(err);
-            });
-        } else if (nodeData.type === 'directory') {
-            return pandora.ipcRenderer.invoke(
-                'pandora:renameDir',
-                oldPath,
-                newName
-            ).then(res => {
-                // TODO: 数据格式
-                if (res.success) {
-                    dispatch({
-                        type: 'selectedFile',
-                        payload: res.data
+            } else if (nodeData.type === 'directory') {
+                return pandora.ipcRenderer
+                    .invoke('pandora:renameDir', oldPath, newName)
+                    .then(res => {
+                        // TODO: 数据格式
+                        if (res.success) {
+                            dispatch({
+                                type: 'selectedFile',
+                                payload: res.data
+                            });
+                            immerTreeData(oldPath, newName);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
                     });
-                    immerTreeData(oldPath, newName);
-                    return true;
-                } else {
-                    return false;
-                }
-            }).catch(err => {
-                console.log(err);
-            });
-        }
-    }, [treeData, dispatch]);
+            }
+        },
+        [treeData, dispatch]
+    );
 
     return (
         <div
@@ -485,11 +523,11 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
             <div className="pandora-sider-container" data-context="sider">
                 <div className="sider-title">
                     {mouseEnter && (
-                        <span onClick={onContentMode} className="sider-title-icon sider-title-list" title="大纲/列表">
+                        <span onClick={onToc} className="sider-title-icon sider-title-list" title="大纲/列表">
                             <Icon type="list" style={{fontSize: '20px'}} />
                         </span>
                     )}
-                    <div className="sider-title-text">文件</div>
+                    <div className="sider-title-text">{showToc ? '大纲' : '文件'}</div>
                     {mouseEnter && (
                         <span onClick={onShowPanel} className="sider-title-icon sider-title-search" title="查找">
                             <Icon type="search" style={{fontSize: '20px'}} />
@@ -531,19 +569,28 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                                 }
                             />
                         </div>
-                        {
-                            searchResult.length > 0 && <SearchList
+                        {searchResult.length > 0 && (
+                            <SearchList
                                 data={searchResult}
                                 className="sider-panel-content"
                                 onSelect={onSearchSelect}
                                 onLineSelect={onLineSelect}
                             />
+                        )}
+                    </div>
+                )}
+                {showToc && (
+                    <div className="sider-toc">
+                        {
+                            tocList.length > 0
+                                ? <TocList data={tocList} onSelect={onTocSelect} />
+                                : <div className="sider-toc-empty">没有大纲</div>
                         }
                     </div>
                 )}
-                {
-                    treeData.length > 0 && <FileFolder
-                        className="sider-file-folder"
+                {treeData.length > 0 && (
+                    <FileFolder
+                        className={`sider-file-folder ${showToc ? 'sider-file-folder-hide' : ''}`}
                         treeData={treeData}
                         onRename={onRename}
                         onSelect={onSelect}
@@ -552,8 +599,8 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                         expandAction="click"
                         defaultExpandedKeys={[treeData[0].path]}
                     />
-                }
-                {mouseEnter && (
+                )}
+                {mouseEnter && !showToc && (
                     <div className="sider-footer" onClick={getTreeData}>
                         打开文件夹...
                     </div>
