@@ -4,6 +4,7 @@
     "description": "core",
     "private": true,
     "dependencies": {
+        "find": "^0.3.0",
         "highlight.js": "^10.6.0",
         "shared": "^0.0.0"
     },

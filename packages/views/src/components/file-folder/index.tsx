@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {EditorContext} from '../../pages/editor/editor-store';
 
 import Title from './title';
 import {Tree} from 'antd';
@@ -9,11 +8,13 @@ export interface IFileData {
     title: React.ReactNode;
     key: string | number;
     isLeaf: boolean;
+    exist?: boolean;
     path?: string;
     [key: string]: any;
 }
 export interface IDirData {
     title: React.ReactNode;
+    exist?: boolean;
     key: string | number;
     path?: string;
     children: IFileData[] | IDirData[];
@@ -21,42 +22,29 @@ export interface IDirData {
 }
 export type ItreeData = Array<IDirData | IFileData> | [];
 
-// const treeData: ItreeData = [
-//     {
-//         title: 'parent 0',
-//         key: '0-0',
-//         children: [
-//             {title: 'leaf 0-0', key: '0-0-0', isLeaf: true}
-//         ]
-//     }
-// ];
-
 function FileFolder(props: any) {
-    const [, dispatch] = React.useContext(EditorContext);
-    const onSelect = React.useCallback((keys: Array<string | number>, {node}: Record<string, any>) => {
-        console.log();
-        if (node.type === 'file' && node.path) {
-            dispatch({
-                type: 'selectedFile',
-                payload: node.path
-            });
-        }
-    }, []);
+    // const ref = React.useRef<HTMLElement>(null);
+    // React.useEffect(() => {
+    //     if (!props.selectedFilePath) {
+    //         console.log('ref', ref);
+    //     }
+    // }, [props.selectedFilePath]);
     return (
         <DirectoryTree
             className={props.className}
             multiple
-            expandAction="doubleClick"
-            defaultExpandAll
             titleRender={
                 node =>
                     (<Title
                         nodeData={node}
+                        rename={props.renameKey === node.key && props.selectedFilePath === props.renameKey}
                         key={node.key}
                         onRename={props.onRename}
+                        onBlur={props.onBlur}
+                        onKeyPress={props.onKeyPress}
                     />)
             }
-            onSelect={onSelect}
+            selectedKeys={[props.selectedFilePath]}
             {...props}
         />
     );
@@ -66,4 +54,4 @@ FileFolder.defaultProps = {
     treeData: []
 };
 
-export default FileFolder;
+export default React.memo(FileFolder);

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import './title.scss';
 
-// 注册菜单点击事件
-import {fileEvent, FS_EDIT, renameFile} from '../../node/file';
+function noop() {}
 
 interface ITitileProps {
     nodeData: {
@@ -11,8 +10,12 @@ interface ITitileProps {
         key: string | number;
         path?: string;
         name?: string;
+        exist?: boolean;
     };
-    onRename: (data: Record<string, any>) => void;
+    rename: boolean;
+    onRename?: (oldPath: string, newPath: string, nodeData: Record<string, any>) => Promise<any>;
+    onBlur?: (data: string) => Promise<any>;
+    onKeyPress?: (data: string) => Promise<any>;
 }
 
 function Title(props: ITitileProps) {
@@ -21,25 +24,35 @@ function Title(props: ITitileProps) {
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const isMouted = React.useRef<boolean>(false);
 
-    // 重命名
-    const fsRename = React.useCallback((key: string | number) => {
-        if (props.nodeData.key === key && isMouted.current) {
-            setInputShow(true);
-            if (inputRef.current) {
-                inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
-                inputRef.current.focus();
-            }
-        }
-    }, [setInputShow]);
-
     React.useEffect(() => {
         isMouted.current = true;
-        fileEvent.on(FS_EDIT, fsRename);
+        if (props.rename) {
+            setInputShow(true);
+            setTimeout(() => {
+                if (inputRef.current) {
+                    inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
+                    inputRef.current.focus();
+                }
+            }, 0);
+        } else {
+            setInputShow(false);
+        }
         return () => {
             isMouted.current = false;
-            fileEvent.off.bind(null, FS_EDIT, fsRename);
         };
-    }, []);
+    }, [props.rename]);
+
+    React.useEffect(() => {
+        if (!props.nodeData.exist) {
+            setInputShow(true);
+            setTimeout(() => {
+                if (inputRef.current) {
+                    inputRef.current.value = typeof props.nodeData.title === 'string' ? props.nodeData.title : '';
+                    inputRef.current.focus();
+                }
+            }, 60);
+        }
+    }, [props.nodeData.exist]);
 
     const onKeyPress = React.useCallback((e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -47,11 +60,21 @@ function Title(props: ITitileProps) {
             // 成功之后需要将文字设置一下，失败了则不设置
             // setInputShow(false);
             const newName = inputRef.current && inputRef.current.value.trim();
-            if (newName && props.nodeData.path) {
-                renameFile(props.nodeData.path, newName).then(() => {
-                    setTitle(newName);
+            if (!newName) {
+                return;
+            }
+            if (props.nodeData.path) {
+                typeof props.onRename === 'function' && props.onRename(
+                    props.nodeData.path,
+                    newName,
+                    props.nodeData
+                ).then((res: string) => {
+                    if (!res) {
+                        setTitle(props.nodeData.title);
+                    } else {
+                        setTitle(newName);
+                    }
                     setInputShow(false);
-                    props.onRename && props.onRename(props.nodeData);
                 }).catch(err => {
                     console.log(err);
                 });
@@ -60,9 +83,25 @@ function Title(props: ITitileProps) {
     }, [setInputShow, setTitle, inputRef.current]);
 
     const onBlur = React.useCallback(() => {
-        setInputShow(false);
-        if (inputRef.current && inputRef.current.value.trim()) {
-            setTitle(inputRef.current.value);
+        const newName = inputRef.current && inputRef.current.value.trim();
+        if (!newName) {
+            return;
+        }
+        if (props.nodeData.path) {
+            typeof props.onRename === 'function' && props.onRename(
+                props.nodeData.path,
+                newName,
+                props.nodeData
+            ).then((res: string) => {
+                if (!res) {
+                    setTitle(props.nodeData.title);
+                } else {
+                    setTitle(newName);
+                }
+                setInputShow(false);
+            }).catch(err => {
+                console.log(err);
+            });
         }
     }, [setInputShow, setTitle, inputRef.current]);
 
@@ -87,4 +126,10 @@ function Title(props: ITitileProps) {
     );
 }
 
-export default Title;
+Title.defaultProps = {
+    onRename: noop,
+    onBlur: noop,
+    onKeyPress: noop
+};
+
+export default React.memo(Title);

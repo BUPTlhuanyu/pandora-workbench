@@ -69,7 +69,6 @@ export function directoryTree(
     path = options && options.normalizePath ? normalizePath(path) : path;
     const item: Iterm = {path, name, size: 0};
     let stats: FS.Stats;
-
     try {
         stats = FS.statSync(path);
     } catch (e) {

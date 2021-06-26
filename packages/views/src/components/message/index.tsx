@@ -82,7 +82,7 @@ export default function Tip(props: TipProps) {
             {list.length > 0
                 ? list.map((item: IAction['payload']) => {
                     return (
-                        item ? <div className="taotie-message-wrapper taotie-message-animation-begin" key={item.key}>
+                        item ? <div className="pandora-message-wrapper pandora-message-animation-begin" key={item.key}>
                             {item.message.text}
                         </div> : null
                     );

@@ -3,7 +3,8 @@ import './index.scss';
 import React, {useRef, useEffect, useCallback, useState, useContext} from 'react';
 import {useMount} from 'ahooks';
 import useCodemirror from '../../components/useCodemirror';
-import {EditorContext} from './editor-store';
+import {FileContext} from './store/sidbar';
+import {EditorContext} from 'views/src/pages/editor/store/editor';
 
 import SplitPane, {Pane} from 'react-split-pane';
 import Sider from './components/sider';
@@ -11,12 +12,15 @@ import MdView from '../../components/md-view';
 import ToolBar from './components/tool-bar';
 import Footer from './components/footer';
 
-import {message} from 'antd';
+import {success, error} from '../../utils/message';
+import {isFilePath} from 'views/src/utils/tools';
 
-import {getFileString, saveFile, fileEvent, FS_SAVE} from '../../node/file';
+import {fileEvent, FS_SAVE} from '../../utils/event';
+import {pandora} from 'views/src/services/pandora';
 
 function Editor() {
-    const [storeState] = useContext(EditorContext);
+    const [storeState] = useContext(FileContext);
+    const [, dispatch] = useContext(EditorContext);
     const editorRef: React.RefObject<HTMLDivElement> = useRef(null);
     let {
         code,
@@ -34,6 +38,14 @@ function Editor() {
         scrollTop: 0,
         scrollHeight: 0
     });
+
+    useEffect(() => {
+        dispatch({
+            type: 'storeeditor',
+            payload: editor
+        });
+    }, [editor]);
+
     useEffect(() => {
         if (sideRef && sideRef.current) {
             sideRef.current.style.width = storeState.sidbarOpened ? '30%' : '0px';
@@ -42,13 +54,17 @@ function Editor() {
 
     // 获取文件code.TODO: 确保组件没有卸载
     useEffect(() => {
-        getFileString(storeState.selectedFilePath).then((resStr: string) => {
-            console.log('resStr', resStr, editor);
-            setCode(resStr);
-            editor?.getDoc().setValue(resStr);
-        }).catch(err => {
-            console.warn(err);
-        });
+        if (isFilePath(storeState.selectedFilePath) && pandora) {
+            pandora.ipcRenderer.invoke('pandora:readFile', storeState.selectedFilePath).then((resStr: string) => {
+                setCode(resStr);
+                editor?.getDoc().setValue(resStr);
+            }).catch(err => {
+                console.warn(err);
+            });
+        } else {
+            setCode('');
+            editor?.getDoc().setValue('');
+        }
     }, [storeState.selectedFilePath, setCode, editor]);
 
     // 保存文件内容
@@ -56,17 +72,15 @@ function Editor() {
         const content = editor?.getDoc().getValue() || '';
         if (!storeState.selectedFilePath) {
             // TODO：保存文件弹窗
-            message.error({
-                content: '保存文件失败',
-                duration: 1,
-                className: 'taotie-message-error'
-            });
+            error('保存文件失败');
             return;
         }
-        console.log(storeState.selectedFilePath, content);
         // TODO:错误处理
-        const res = await saveFile(storeState.selectedFilePath, content);
-        console.log('saveFileCb', res);
+        pandora && pandora.ipcRenderer.invoke('pandora:writeFile', storeState.selectedFilePath, content).then(() => {
+            success('保存文件成功');
+        }).catch(err => {
+            console.log(err);
+        });
     }, [storeState.selectedFilePath]);
 
     // 监听保存文件内容的事件 TODO: saveFileCb 会一直变化
@@ -120,11 +134,13 @@ function Editor() {
         []
     );
     return (
-        <div className="taotie-editor">
-            <Sider
-                className="editor-file-folder"
-                ref={sideRef}
-            />
+        <div className="pandora-editor">
+            {
+                pandora && <Sider
+                    className="editor-file-folder"
+                    ref={sideRef}
+                />
+            }
             <div className="editor-container">
                 <ToolBar />
                 <div className="editor-wrapper">

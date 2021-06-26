@@ -1,0 +1,13 @@
+.toc-wrapper {
+    padding: 0 10px;
+    .toc-link {
+        color: #111;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        word-break: break-all;
+        &-selected {
+            font-weight: 600;
+        }
+    }
+}

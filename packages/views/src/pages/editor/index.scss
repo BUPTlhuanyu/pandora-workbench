@@ -1,4 +1,4 @@
-.taotie-editor {
+.pandora-editor {
     display: flex;
     height: 100%;
     width: 100%;
@@ -6,12 +6,12 @@
     .editor-file-folder {
         width:30%;
         transition: all .5s;
-        border-right: 1px solid;
-        background-color: #1a1a1b0f;
+        background-color: #f3f3f7;
         max-width: 400px;
         overflow: auto;
     }
     .editor-container {
+        overflow: hidden;
         width:100%;
         transition: all .5s;
         .editor-wrapper {
@@ -20,7 +20,7 @@
             justify-content: center;
             position: relative;
             width: 100%;
-            height: calc(100% - 60px);
+            height: calc(100% - 50px);
             .md-view-wrapper {
                 flex: 1;
                 margin: 10px auto;
@@ -94,9 +94,9 @@
     }
 }
 
-.taotie-message-success,
-.taotie-message-loading,
-.taotie-message-error
+.pandora-message-success,
+.pandora-message-loading,
+.pandora-message-error
 {
     .ant-message-notice-content {
         padding: 5px 16px;

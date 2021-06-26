@@ -1,14 +1,31 @@
+/**
+ * @file app
+ */
 import path from 'path';
 import {app, BrowserWindow} from 'electron';
 import logoIcon from '../assets/png/logo.svg';
 import pkg from '../package.json';
 import {DEVELOP_PORT} from '../../shared/common/constant';
+
 import {registerContextMenuListener} from './contextmenu/electron-main/contextmenu';
+import {Menubar} from './menu/menubar';
+
+import {Injector} from 'core/base/dependency-inject';
+import CodeApplication from './initService';
+import {IFileService} from 'services/files/files';
+import {FileService} from 'services/files/fileService';
+import {IDialogService, DialogService} from 'services/dialog/dialog';
+import {INativeService, NativeService} from 'services/native/native';
+import {ICommandService, CommandService} from 'services/command';
+
+// single service
+import 'services/search/electron-browser/searchServices';
 
 let splashWindow: BrowserWindow | null = null;
 
 const MODE = process.env.NODE_ENV === 'production';
 
+// eslint-disable-next-line
 function createSplashWindow() {
     return new Promise(resolve => {
         const html = `
@@ -17,6 +34,9 @@ function createSplashWindow() {
                 <head>
                     <meta charset="utf-8">
                     <style>
+                        html {
+                            background-color: rgb(24,24,24,0.9);
+                        }
                         body,
                         html {
                             width: 100%;
@@ -24,7 +44,6 @@ function createSplashWindow() {
                             margin: 0;
                             overflow: hidden;
                             position: relative;
-                            background: #3e7bd2;
                             background-repeat: no-repeat;
                             -webkit-user-select: none;
                         }
@@ -132,7 +151,8 @@ function createSplashWindow() {
             frame: false,
             movable: true,
             resizable: false,
-            autoHideMenuBar: true
+            autoHideMenuBar: true,
+            transparent: true
         });
         splashWindow
             .loadURL('data:text/html;charset=UTF-8,' + encodeURIComponent(html))
@@ -142,7 +162,6 @@ function createSplashWindow() {
                 resolve('');
             }, 1500);
         });
-        console.log(splashWindow);
     });
 }
 
@@ -150,9 +169,23 @@ function createWindow() {
     const html = MODE
         ? `file://${path.resolve(app.getAppPath(), './dist/index.html')}`
         : `http://localhost:${DEVELOP_PORT}/index.html`;
+    const preload = MODE
+        ? path.resolve(app.getAppPath(), './dist/preload.js')
+        : path.resolve(app.getAppPath(), './preload.js');
     const win = new BrowserWindow({
-        fullscreen: true,
+        minWidth: 800,
+        minHeight: 600,
+        width: 1200,
+        height: 800,
+        title: '',
+        backgroundColor: '#262626',
+        // titleBarStyle: 'hidden',
+        // trafficLightPosition: {
+        //     x: 0,
+        //     y: 0
+        // },
         webPreferences: {
+            preload,
             nodeIntegration: true,
             enableRemoteModule: true
         }
@@ -162,24 +195,77 @@ function createWindow() {
 
     win.webContents.on('did-finish-load', () => {
         splashWindow?.destroy();
-        win.webContents.openDevTools();
     });
 }
 
-app.whenReady().then(async () => {
-    await createSplashWindow();
-    await createWindow();
-    registerContextMenuListener();
-});
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
+class CodeMain {
+    constructor() {
+        this.registerListeners();
     }
-});
-
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
+    async startUp(): Promise<void> {
+        this.initServices();
     }
-});
+    private registerListeners() {
+        process.on('uncaughtException', err => this.onUnexpectedError(err));
+        // TODO: 如何处理promise的错误
+        // process.on('unhandledRejection', (reason: unknown) => onUnexpectedError(reason));
+
+        app.whenReady().then(async () => {
+            // await createSplashWindow();
+            await createWindow();
+            registerContextMenuListener();
+        });
+
+        app.on('window-all-closed', () => {
+            if (process.platform !== 'darwin') {
+                app.quit();
+            }
+        });
+
+        app.on('activate', () => {
+            if (BrowserWindow.getAllWindows().length === 0) {
+                createWindow();
+            }
+        });
+    }
+    private onUnexpectedError(err: Error): void {
+        if (err) {
+            // take only the message and stack property
+            // const friendlyError = {
+            //     message: `[uncaught exception in main]: ${err.message}`,
+            //     stack: err.stack
+            // };
+
+            // TODO: handle on client side
+            // this.windowsMainService?.sendToFocused('vscode:reportError', JSON.stringify(friendlyError));
+        }
+
+        // TODO: logService
+    }
+
+    private initServices() {
+        const injector = new Injector();
+
+        injector.add(IFileService, {
+            useClass: FileService
+        });
+
+        injector.add(IDialogService, {
+            useClass: DialogService
+        });
+
+        injector.add(INativeService, {
+            useClass: NativeService
+        });
+
+        injector.add(ICommandService, {
+            useClass: CommandService
+        });
+
+        injector.createInstance(CodeApplication);
+        injector.createInstance(Menubar);
+    }
+}
+
+const main = new CodeMain();
+main.startUp();

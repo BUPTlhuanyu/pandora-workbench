@@ -62,6 +62,14 @@ export default function useCodemirror(): CodemirrorObj {
                     scrollHeight: docHeight
                 });
             });
+            // 自定义事件
+            // Object.defineProperty(editor, 'codeSettedEmitter', {
+            //     value: () => {
+            //         codemirror.signal(editor, 'codeSetted');
+            //     }
+            // });
+            // (editor as any).codeSettedEmitter(editor, 'codeSetted'); // 触发
+            // editor.on('codeSetted', ()=>{}); // 监听
             setEditor(editor);
         }
     }, [ele]);
