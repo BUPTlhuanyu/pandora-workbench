@@ -22,15 +22,35 @@
             width: 100%;
             height: calc(100% - 50px);
             .md-view-wrapper {
+                position: relative;
                 flex: 1;
-                margin: 10px auto;
+                margin: auto;
                 width: 368px;
-                padding: 0px 16px 12px;
-                box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;
-                min-height: 95%;
-                .md-view-container {
+                padding-left: 28px;
+                padding-right: 22px;
+                height: 100%;
+                overflow: auto;
+                .md-view-layer {
+                    height: 690px;
+                    position: relative;
                     overflow: auto;
-                    padding: 0 4px;
+                    top: 34px;
+                    overflow: auto;
+                    .md-view-container {
+                      overflow: auto;
+                      padding: 0 4px;
+                  }
+                }
+                .iphone-frame {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 375px;
+                    height: 758px;
+                    background: url('../../assets/img/iPhone-11.png') no-repeat;
+                    background-size: contain;
+                    background-position: center;
+                    pointer-events: none;
                 }
             }
             .code-mirror-wrapper {

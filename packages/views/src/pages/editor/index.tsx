@@ -90,7 +90,7 @@ function Editor() {
     }, [saveFileCb]);
 
     useEffect(() => {
-        let mdScrollHeight = mdRef.current!.clientHeight;
+        let mdScrollHeight = mdRef.current!.querySelector('.md-view-container')!.clientHeight;
         let coScrollHeight = editor && (editor as any).doc.height;
         // let mdVsCodemirror = mdScrollHeight / coScrollHeight; // 同样容器宽度，不同滚动条高度的比例，e.g.【2 0.5  4 0.75
         let baseHeight: number = containerHeight.current;
@@ -100,7 +100,7 @@ function Editor() {
             editor && editor.scrollTo(null, coScrollTop);
         }
         else {
-            let parentDom: any = mdRef.current!.parentNode;
+            let parentDom: any = mdRef.current!.querySelector('.md-view-layer');
             let mdScrollTop = coScroll.scrollTop * mdVsCodemirror;
             parentDom && parentDom.scrollTo(null, mdScrollTop);
         }
@@ -113,10 +113,13 @@ function Editor() {
     const getMdViewEle = useCallback(
         (ele: HTMLDivElement) => {
             mdRef.current = ele;
-            if (ele && ele.parentNode) {
-                ele.parentNode.addEventListener('scroll', (evt: any) => {
+            console.log('getMdViewEle', ele);
+            if (ele) {
+                // TODO: ref 放到 MdView 上
+                ele.querySelector('.md-view-layer')!.addEventListener('scroll', (evt: any) => {
                     let {scrollTop, scrollHeight} = evt.target;
                     setMdScroll({scrollTop, scrollHeight});
+                    console.log('asdasd', scrollTop, scrollHeight);
                 });
                 ele.addEventListener('mouseover', () => {
                     scrollTarget.current = 1;
@@ -164,10 +167,13 @@ function Editor() {
                             eleRef={getMdViewEle}
                             className="md-view-wrapper"
                         >
-                            <MdView
-                                value={code}
-                                className="md-view-container"
-                            />
+                            <div className="md-view-layer">
+                                <MdView
+                                    value={code}
+                                    className="md-view-container"
+                                />
+                            </div>
+                            <div className="iphone-frame"></div>
                         </Pane>
                     </SplitPane>
                 </div>
