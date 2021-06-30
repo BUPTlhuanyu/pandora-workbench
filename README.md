@@ -1,3 +1,9 @@
+<div align=center>
+    <img src="./doc/logo.png" width="XXX" height="XXX" />
+</div>
+
+> 基于 vscode 架构，利用 【依赖注入】【多进程】等思想实现，用于编辑 `markdown` 文件，并输出为 【微信公众号文章】
+
 1. 导入
 2. 导出 pdf,md,html
 3. doc -> md -> html
