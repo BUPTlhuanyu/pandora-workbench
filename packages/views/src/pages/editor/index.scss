@@ -25,16 +25,16 @@
                 position: relative;
                 flex: 1;
                 margin: auto;
-                width: 368px;
-                padding-left: 28px;
-                padding-right: 22px;
+                width: 400px;
+                padding-left: 35px;
+                padding-right: 55px;
                 height: 100%;
                 overflow: auto;
                 .md-view-layer {
-                    height: 690px;
+                    height: 673px;
                     position: relative;
                     overflow: auto;
-                    top: 34px;
+                    top: 36px;
                     overflow: auto;
                     .md-view-container {
                       overflow: auto;
@@ -45,11 +45,11 @@
                     position: absolute;
                     top: 0;
                     left: 0;
-                    width: 375px;
+                    width: 400px;
                     height: 758px;
                     background: url('../../assets/img/iPhone-11.png') no-repeat;
                     background-size: contain;
-                    background-position: center;
+                    background-position: top;
                     pointer-events: none;
                 }
             }
