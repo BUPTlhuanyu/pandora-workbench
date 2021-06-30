@@ -6,10 +6,11 @@ import codemirror from 'codemirror';
 interface ITocItem {
     title: string;
     line: number;
+    level: number;
 }
 
-const TAB = '\u00A0\u00A0\u00A0\u00A0';
-export function getMdOutline(editor: codemirror.Editor): ITocItem[] {
+// const TAB = '\u00A0\u00A0\u00A0\u00A0';
+export function getMdOutline(editor: codemirror.Editor, tab?: string): ITocItem[] {
     if (!editor || !editor.getDoc) {
         return [];
     }
@@ -23,8 +24,9 @@ export function getMdOutline(editor: codemirror.Editor): ITocItem[] {
             let level = 0;
             if (matched && !isNaN(level = +matched[1])) {
                 return {
-                    title: `${TAB.repeat(level - 1)}${item.replace(start.string, '')}`,
-                    line
+                    title: `${tab ? tab.repeat(level - 1) : ''}${item.replace(start.string, '')}`,
+                    line,
+                    level
                 };
             }
         }

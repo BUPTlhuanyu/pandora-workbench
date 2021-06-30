@@ -1,13 +1,19 @@
 .toc-wrapper {
-    padding: 0 10px;
-    .toc-link {
-        color: #111;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        word-break: break-all;
-        &-selected {
-            font-weight: 600;
+    padding: 10px 5px 0;
+    font-size: 12px;
+    .toc-item {
+        &:hover {
+            background-color: #e2e2e2;
+        }
+        padding: 5px 0;
+        .toc-link {
+            color: #111;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            &-selected {
+                font-weight: 600;
+            }
         }
     }
 }

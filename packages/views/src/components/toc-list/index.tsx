@@ -7,6 +7,7 @@ import './index.scss';
 export interface ITocItem {
     title: string;
     line: number;
+    level: number;
 }
 
 function TocList(props: any) {
@@ -20,10 +21,19 @@ function TocList(props: any) {
             {
                 props.data.map((item: ITocItem, index: number) => (
                     <div
-                        className={selectedId === index ? 'toc-link-selected' : ''}
+                        className="toc-item"
                         key={item.line}
                         onClick={() => {onSelect(item, index);}}
-                    ><a className="toc-link">{item.title}</a></div>
+                        style={{paddingLeft: `${item.level * 15}px`}}
+                    >
+                        <a className={
+                            selectedId === index
+                                ? 'toc-link-selected toc-link'
+                                : 'toc-link'}
+                        >
+                            {item.title}
+                        </a>
+                    </div>
                 ))
             }
         </div>
