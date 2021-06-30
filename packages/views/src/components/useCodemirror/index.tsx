@@ -7,6 +7,7 @@ interface CodemirrorObj {
     scroll: {
         scrollTop: number;
         scrollHeight: number;
+        clientHeight: number;
     };
     editor: codemirror.Editor | null;
     count: number;
@@ -55,11 +56,11 @@ export default function useCodemirror(): CodemirrorObj {
                 setCount(count);
             });
             editor.on('scroll', (editor: any) => {
-                let scrollTop = editor.doc.scrollTop;
-                let docHeight = editor.doc.height;
+                const {clientHeight, height, top} = editor.getScrollInfo();
                 setScroll({
-                    scrollTop,
-                    scrollHeight: docHeight
+                    scrollTop: top,
+                    clientHeight,
+                    scrollHeight: height
                 });
             });
             // 自定义事件

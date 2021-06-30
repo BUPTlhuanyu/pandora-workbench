@@ -90,44 +90,53 @@ function Editor() {
     }, [saveFileCb]);
 
     useEffect(() => {
-        let mdScrollHeight = mdRef.current!.querySelector('.md-view-container')!.clientHeight;
-        let coScrollHeight = editor && (editor as any).doc.height;
-        // let mdVsCodemirror = mdScrollHeight / coScrollHeight; // 同样容器宽度，不同滚动条高度的比例，e.g.【2 0.5  4 0.75
-        let baseHeight: number = containerHeight.current;
-        let mdVsCodemirror = (mdScrollHeight / baseHeight - 1) / (coScrollHeight / baseHeight - 1);
+        const layerDom = mdRef.current;
+        let mdScrollHeight = layerDom!.scrollHeight - layerDom!.clientHeight;
+        let coScrollHeight = coScroll.scrollHeight - coScroll.clientHeight;
         if (scrollTarget.current === 1) {
-            let coScrollTop = mdScroll.scrollTop / mdVsCodemirror;
+            let coScrollTop = mdScroll.scrollTop / mdScrollHeight * coScrollHeight;
             editor && editor.scrollTo(null, coScrollTop);
         }
         else {
-            let parentDom: any = mdRef.current!.querySelector('.md-view-layer');
-            let mdScrollTop = coScroll.scrollTop * mdVsCodemirror;
-            parentDom && parentDom.scrollTo(null, mdScrollTop);
+            let mdScrollTop = coScroll.scrollTop / coScrollHeight * mdScrollHeight;
+            mdRef.current && mdRef.current.scrollTo(0, mdScrollTop);
         }
-    }, [coScroll.scrollTop, coScroll.scrollHeight, mdScroll.scrollTop, mdScroll.scrollHeight, editor]);
+    }, [
+        coScroll.scrollTop,
+        coScroll.scrollHeight,
+        coScroll.clientHeight,
+        mdScroll.scrollTop,
+        mdScroll.scrollHeight,
+        editor
+    ]);
+    const mdScrollHandler = useCallback(
+        (evt: any) => {
+            let {scrollTop, scrollHeight} = evt.target;
+            setMdScroll({scrollTop, scrollHeight});
+        },
+        [],
+    );
+    const mdMouseHandler = useCallback(
+        () => {
+            scrollTarget.current = 1;
+        },
+        [scrollTarget],
+    );
     useMount(() => {
         let containerDom = document.querySelector('.editor-wrapper');
         containerHeight.current = containerDom ? containerDom.clientHeight : 0;
         setCodemirrorEle(editorRef.current as Element);
+        const ele = mdRef.current;
+        if (ele) {
+            // TODO: ref 放到 MdView 上
+            ele.addEventListener('scroll', mdScrollHandler);
+            ele.addEventListener('mouseover', mdMouseHandler);
+        }
+        return () => {
+            mdRef.current?.removeEventListener('scroll', mdScrollHandler);
+            mdRef.current?.removeEventListener('mouseover', mdMouseHandler);
+        };
     });
-    const getMdViewEle = useCallback(
-        (ele: HTMLDivElement) => {
-            mdRef.current = ele;
-            console.log('getMdViewEle', ele);
-            if (ele) {
-                // TODO: ref 放到 MdView 上
-                ele.querySelector('.md-view-layer')!.addEventListener('scroll', (evt: any) => {
-                    let {scrollTop, scrollHeight} = evt.target;
-                    setMdScroll({scrollTop, scrollHeight});
-                    console.log('asdasd', scrollTop, scrollHeight);
-                });
-                ele.addEventListener('mouseover', () => {
-                    scrollTarget.current = 1;
-                });
-            }
-        },
-        []
-    );
     const getCoViewEle = useCallback(
         (ele: HTMLDivElement) => {
             ele && ele.addEventListener('mouseover', () => {
@@ -163,11 +172,8 @@ function Editor() {
                                 className="code-mirror-container"
                             ></div>
                         </Pane>
-                        <Pane
-                            eleRef={getMdViewEle}
-                            className="md-view-wrapper"
-                        >
-                            <div className="md-view-layer">
+                        <Pane className="md-view-wrapper">
+                            <div ref={mdRef} className="md-view-layer">
                                 <MdView
                                     value={code}
                                     className="md-view-container"
