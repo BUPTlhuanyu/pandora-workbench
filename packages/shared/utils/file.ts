@@ -1,4 +1,5 @@
-// TODO: 范型
+// TODO: 
+// 1. extensions 应该是个数组，用于匹配多个类型/多个匹配成功的文件
 import FS from 'fs';
 import PATH from 'path';
 

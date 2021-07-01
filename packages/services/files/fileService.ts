@@ -13,6 +13,7 @@ export const FS_SAVE = 'fs:save';
 
 import {directoryTree, IOnEachFile, IOnEachDirectory} from 'shared/utils/file';
 
+// TODO: 封装成常用的文件服务
 export class FileService implements IFileService {
     private readonly onEachFile: IOnEachFile = (item: Record<string, any>) => {
         item.key = item.path;
@@ -32,7 +33,10 @@ export class FileService implements IFileService {
         if (dirPath) {
             const files = directoryTree(
                 dirPath,
-                {excludeHidden: true},
+                {
+                    excludeHidden: true,
+                    extensions: /\.md$/
+                },
                 this.onEachFile,
                 this.onEachDirectory
             );
