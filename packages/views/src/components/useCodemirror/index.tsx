@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import codemirror, {createCodemirror} from './code';
 
 interface CodemirrorObj {
@@ -40,9 +40,24 @@ export default function useCodemirror(): CodemirrorObj {
     const [count, setCount] = useState<number>(0);
     const [scroll, setScroll] = useState<any>({
         scrollTop: 0,
-        scrollHeight: 0
+        scrollHeight: 0,
+        clientHeight: 0
     });
     const [editor, setEditor] = useState<codemirror.Editor | null>(null);
+    const updateScrollInfo = useCallback(
+        (editor: codemirror.Editor | null) => {
+            if (editor) {
+                const {clientHeight, height, top} = editor.getScrollInfo();
+                console.log('updateScrollInfo', clientHeight, height, top);
+                setScroll({
+                    scrollTop: top,
+                    clientHeight,
+                    scrollHeight: height
+                });
+            }
+        },
+        [setScroll, editor],
+    );
     useEffect(() => {
         if (!isMounted.current || !ele) {
             isMounted.current = true;
@@ -55,14 +70,10 @@ export default function useCodemirror(): CodemirrorObj {
                 setCode(code);
                 setCount(count);
             });
-            editor.on('scroll', (editor: any) => {
-                const {clientHeight, height, top} = editor.getScrollInfo();
-                setScroll({
-                    scrollTop: top,
-                    clientHeight,
-                    scrollHeight: height
-                });
-            });
+            editor.on('update', updateScrollInfo);
+            editor.on('scroll', updateScrollInfo);
+            setEditor(editor);
+            updateScrollInfo(editor);
             // 自定义事件
             // Object.defineProperty(editor, 'codeSettedEmitter', {
             //     value: () => {
@@ -71,7 +82,6 @@ export default function useCodemirror(): CodemirrorObj {
             // });
             // (editor as any).codeSettedEmitter(editor, 'codeSetted'); // 触发
             // editor.on('codeSetted', ()=>{}); // 监听
-            setEditor(editor);
         }
     }, [ele]);
 
