@@ -20,9 +20,7 @@ import {pandora} from 'views/src/services/pandora';
 
 function Editor() {
     const [storeState] = useContext(FileContext);
-    const [, dispatch] = useContext(EditorContext);
-    const editorRef: React.RefObject<HTMLDivElement> = useRef(null);
-    let {
+    const {
         code,
         setCode,
         setCodemirrorEle,
@@ -30,15 +28,11 @@ function Editor() {
         editor,
         count
     } = useCodemirror();
-    const mdRef = useRef<HTMLDivElement | null>(null);
-    const sideRef = useRef<HTMLDivElement | null>(null);
-    const scrollTarget = useRef<number>(-1);
-    const containerHeight = useRef<number>(0);
-    const [mdScroll, setMdScroll] = useState<any>({
-        scrollTop: 0,
-        scrollHeight: 0
-    });
 
+    /* -------------------------------------------------------------------------- */
+    /*                                 store 全局状态                              */
+    /* -------------------------------------------------------------------------- */
+    const [, dispatch] = useContext(EditorContext);
     useEffect(() => {
         dispatch({
             type: 'storeeditor',
@@ -46,12 +40,24 @@ function Editor() {
         });
     }, [editor]);
 
+    /* -------------------------------------------------------------------------- */
+    /*                                    侧边栏展开                               */
+    /* -------------------------------------------------------------------------- */
+    const sideRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
         if (sideRef && sideRef.current) {
             sideRef.current.style.width = storeState.sidbarOpened ? '30%' : '0px';
         }
     }, [storeState.sidbarOpened, sideRef.current]);
 
+    /* -------------------------------------------------------------------------- */
+    /*                                    文件操作                                 */
+    /* -------------------------------------------------------------------------- */
+    const scrollTarget = useRef<number>(-1);
+    const [mdScroll, setMdScroll] = useState<any>({
+        scrollTop: 0,
+        scrollHeight: 0
+    });
     // 获取文件code.TODO: 确保组件没有卸载
     useEffect(() => {
         if (isFilePath(storeState.selectedFilePath) && pandora) {
@@ -89,6 +95,46 @@ function Editor() {
         fileEvent.on(FS_SAVE, saveFileCb);
     }, [saveFileCb]);
 
+    /* -------------------------------------------------------------------------- */
+    /*                                    滚动相关                                 */
+    /* -------------------------------------------------------------------------- */
+    const mdRef = useRef<HTMLDivElement | null>(null);
+    const editorRef: React.RefObject<HTMLDivElement> = useRef(null);
+    useMount(() => {
+        setCodemirrorEle(editorRef.current as Element);
+        const ele = mdRef.current;
+        if (ele) {
+            ele.addEventListener('scroll', mdScrollHandler);
+            ele.addEventListener('mouseover', mdMouseHandler);
+        }
+        return () => {
+            mdRef.current?.removeEventListener('scroll', mdScrollHandler);
+            mdRef.current?.removeEventListener('mouseover', mdMouseHandler);
+        };
+    });
+
+    const mdScrollHandler = useCallback(
+        (evt: any) => {
+            let {scrollTop, scrollHeight} = evt.target;
+            setMdScroll({scrollTop, scrollHeight});
+        },
+        [],
+    );
+    const mdMouseHandler = useCallback(
+        () => {
+            scrollTarget.current = 1;
+        },
+        [scrollTarget],
+    );
+    const getCoViewEle = useCallback(
+        (ele: HTMLDivElement) => {
+            ele && ele.addEventListener('mouseover', () => {
+                scrollTarget.current = 0;
+            });
+        },
+        []
+    );
+
     useEffect(() => {
         const layerDom = mdRef.current;
         let mdScrollHeight = layerDom!.scrollHeight - layerDom!.clientHeight;
@@ -109,42 +155,7 @@ function Editor() {
         mdScroll.scrollHeight,
         editor
     ]);
-    const mdScrollHandler = useCallback(
-        (evt: any) => {
-            let {scrollTop, scrollHeight} = evt.target;
-            setMdScroll({scrollTop, scrollHeight});
-        },
-        [],
-    );
-    const mdMouseHandler = useCallback(
-        () => {
-            scrollTarget.current = 1;
-        },
-        [scrollTarget],
-    );
-    useMount(() => {
-        let containerDom = document.querySelector('.editor-wrapper');
-        containerHeight.current = containerDom ? containerDom.clientHeight : 0;
-        setCodemirrorEle(editorRef.current as Element);
-        const ele = mdRef.current;
-        if (ele) {
-            // TODO: ref 放到 MdView 上
-            ele.addEventListener('scroll', mdScrollHandler);
-            ele.addEventListener('mouseover', mdMouseHandler);
-        }
-        return () => {
-            mdRef.current?.removeEventListener('scroll', mdScrollHandler);
-            mdRef.current?.removeEventListener('mouseover', mdMouseHandler);
-        };
-    });
-    const getCoViewEle = useCallback(
-        (ele: HTMLDivElement) => {
-            ele && ele.addEventListener('mouseover', () => {
-                scrollTarget.current = 0;
-            });
-        },
-        []
-    );
+
     return (
         <div className="pandora-editor">
             {
@@ -164,12 +175,12 @@ function Editor() {
                     >
                         <Pane
                             eleRef={getCoViewEle}
-                            className="code-mirror-wrapper"
+                            className="md-editor-wrapper"
                             style={{height: '100%'}}
                         >
                             <div
                                 ref={editorRef}
-                                className="code-mirror-container"
+                                className="md-editor-container"
                             ></div>
                         </Pane>
                         <Pane className="md-view-wrapper">

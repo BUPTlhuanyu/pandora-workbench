@@ -8,6 +8,11 @@ const {createConfig} = require('build-tools');
 const compiledHook = require('build-tools/plugins/compilationFinished');
 
 const isProd = process.env.NODE_ENV === 'production';
+
+const opts = {
+    IS_DEV: !isProd
+};
+
 module.exports = createConfig({
     target: 'electron-main',
     entry: {
@@ -28,7 +33,7 @@ module.exports = createConfig({
                         loader: 'babel-loader',
                         options: {
                             plugins: [
-                                ["@babel/plugin-proposal-decorators", { "legacy": true }],
+                                ['@babel/plugin-proposal-decorators', {'legacy': true}],
                                 ['@babel/plugin-proposal-class-properties'],
                                 'babel-plugin-parameter-decorator',
                                 '@babel/plugin-proposal-export-default-from',
@@ -37,9 +42,16 @@ module.exports = createConfig({
                             ],
                             presets: [
                                 require.resolve('@babel/preset-env'),
-                                [require.resolve('@babel/preset-typescript'), {allExtensions: true, onlyRemoveTypeImports: true}]
+                                [
+                                    require.resolve('@babel/preset-typescript'),
+                                    {allExtensions: true, onlyRemoveTypeImports: true}
+                                ]
                             ]
                         }
+                    },
+                    {
+                        loader: 'ifdef-loader',
+                        options: opts
                     }
                 ].filter(Boolean)
             }

@@ -18,6 +18,10 @@ import {IDialogService, DialogService} from 'services/dialog/dialog';
 import {INativeService, NativeService} from 'services/native/native';
 import {ICommandService, CommandService} from 'services/command';
 
+/// #if IS_DEV
+import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer';
+/// #endif
+
 // single service
 import 'services/search/electron-browser/searchServices';
 
@@ -211,6 +215,12 @@ class CodeMain {
         // process.on('unhandledRejection', (reason: unknown) => onUnexpectedError(reason));
 
         app.whenReady().then(async () => {
+            /// #if IS_DEV
+            installExtension(REACT_DEVELOPER_TOOLS)
+                .then(name => console.log(`Added Extension:  ${name}`))
+                .catch(err => console.log('An error occurred: ', err));
+            /// #endif
+
             // await createSplashWindow();
             await createWindow();
             registerContextMenuListener();
