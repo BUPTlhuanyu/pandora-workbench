@@ -2,7 +2,7 @@
     <img src="./doc/logo.png"/>
 </div>
 
-> 基于 vscode 架构，利用 【依赖注入】【多进程】等思想实现，用于编辑 `markdown` 文件，并输出为 【微信公众号文章】
+> 基于 vscode 架构，利用 【依赖注入】【多进程】等思想实现的一款小工具，工具还处于萌芽阶段，架构待完善，依托 vscode 现学现卖
 
 <div align=center>
     <img src="./doc/home.png" width="800px" />
