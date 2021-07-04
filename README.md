@@ -5,12 +5,24 @@
 > 基于 vscode 架构，利用 【依赖注入】【多进程】等思想实现，用于编辑 `markdown` 文件，并输出为 【微信公众号文章】
 
 <div align=center>
-    <img src="./doc/cover.png" width="800px" />
+    <img src="./doc/home.png" width="800px" />
 </div>
 
 # 工具集合
 - [ ] 插件化
 ## markdown
+
+<div align=center>
+    <img src="./doc/cover.png" width="800px" />
+</div>
+
+<div align=center>
+    <img src="./doc/toc.png" width="800px" />
+</div>
+
+<div align=center>
+    <img src="./doc/search.png" width="800px" />
+</div>
 
 ### 文件功能
 - [x] 搜索

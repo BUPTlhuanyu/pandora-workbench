@@ -93,17 +93,23 @@ function __separator__(): MenuItem {
 }
 
 export class Menubar {
+    private oldMenus: Menu[];
     // private menubarMenus: {[id: string]: IMenubarMenu};
     constructor(
         @ICommandService private readonly commandService: ICommandService
     ) {
         // this.menubarMenus = Object.create(null);
+        this.oldMenus = [];
         this.install();
     }
 
     // private addFallbackHandlers(): void {}
 
     private install(): void {
+        const oldMenu = Menu.getApplicationMenu();
+		if (oldMenu) {
+			this.oldMenus.push(oldMenu);
+		}
         // Menus
         const menubar = new Menu();
 

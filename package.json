@@ -17,7 +17,9 @@
         "release:mac": "yarn workspace workbench-electron release:mac"
     },
     "workspaces": {
-        "packages": ["packages/*"],
+        "packages": [
+            "packages/*"
+        ],
         "nohoist": [
             "electron"
         ]
