@@ -1,6 +1,6 @@
 {
   "name": "workbench-electron",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Pandora Workbench",
   "productName": "Pandora Workbench",
   "private": true,

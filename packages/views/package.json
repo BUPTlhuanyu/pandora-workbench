@@ -20,6 +20,7 @@
         "core": "0.0.0",
         "immer": "^9.0.2",
         "markdown-it": "^12.0.4",
+        "react-app-rewire-multiple-entry": "^2.2.1",
         "react-split-pane": "^0.1.92",
         "web-vitals": "^0.2.4"
     },

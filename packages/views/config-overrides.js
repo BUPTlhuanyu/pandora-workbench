@@ -37,17 +37,6 @@ const publicPathPlugin = (config) => {
     return config;
 }
 
-const electronConfig = (config) => {
-    // 关闭自动打开浏览器：node_modules/react-dev-utils/openBrowser.js
-    process.env.BROWSER = "none";
-    config.entry = path.resolve(__dirname, './src/index.tsx');
-    config.target = 'electron-renderer';
-    config.externals = {
-        electron : 'require("electron")'
-    };
-    return config;
-}
-
 //更改打包是图片加载模式，解决electron打包后图片无法加载问题
 const customizeFileLoaderOptions  = config  => {
     for (let item of config.module.rules) {
@@ -67,21 +56,57 @@ const customizeFileLoaderOptions  = config  => {
     }
 }
 
-const webConfig = config => {
-    config.devServer = {
-        open: true
+const electronConfig = (config) => {
+    // config.entry = [];
+    // 关闭自动打开浏览器：node_modules/react-dev-utils/openBrowser.js
+    process.env.BROWSER = "none";
+    // config.entry = path.resolve(__dirname, './src/index.tsx');
+    config.target = 'electron-renderer';
+    config.externals = {
+        electron : 'require("electron")'
     };
-    config.entry = path.resolve(__dirname, './src/index.web.tsx');
     return config;
 }
 
-module.exports = override(
-    building && addWebpackPlugin(compiledHook),
-    isWeb ? webConfig : electronConfig,
-    publicPathPlugin,
-    fixBabelImports("import", {
-        libraryName: "antd", libraryDirectory: "es", style: 'css' // change importing css to less
-    }),
-    craBabelBugFix,
-    buildingNotWeb && customizeFileLoaderOptions
-);
+const webConfig = config => {
+    // config.entry = [];
+    config.devServer = {
+        open: true
+    };
+    // config.entry = path.resolve(__dirname, './src/index.web.tsx');
+    return config;
+};
+
+const entry = [
+    {
+        entry: isWeb ? './src/pages/editor/index.web.tsx' : './src/pages/editor/index.tsx',
+        template: 'public/index.html',
+        outPath: '/index.html',
+    },
+    {
+        entry: './src/pages/home/index.tsx',
+        template: 'public/index.html',
+        outPath: '/home.html',
+    }
+]
+
+const multipleEntry = require('react-app-rewire-multiple-entry')(entry);
+
+const addEntry = () => config => {
+    multipleEntry.addMultiEntry(config);
+    return config;
+};
+
+module.exports = {
+    webpack: override(
+        building && addWebpackPlugin(compiledHook),
+        isWeb ? webConfig : electronConfig,
+        publicPathPlugin,
+        fixBabelImports("import", {
+            libraryName: "antd", libraryDirectory: "es", style: 'css' // change importing css to less
+        }),
+        craBabelBugFix,
+        buildingNotWeb && customizeFileLoaderOptions,
+        addEntry()
+    )
+}

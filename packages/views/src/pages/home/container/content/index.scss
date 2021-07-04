@@ -1,0 +1,89 @@
+.pandora-home-content {
+    flex: 1;
+    width: 100%;
+    padding: 40px 8vw 0;
+    color: #ffffff;
+    box-sizing: border-box;
+    overflow: auto;
+    &-banner {
+        background-color: #1C1C24;
+        border-radius: 20px;
+        width: 100%;
+        margin: 25px 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+        &-img {
+            width: 40vw;
+            height: 20vw;
+            border-radius: 20px;
+            background: #F2C9C7;
+            box-sizing: border-box;
+            background: linear-gradient(288.274deg, rgba(221, 132, 255, 0.68), rgba(255, 85, 125, 0.82));
+        }
+        &-info {
+            width: 36vw;
+            height: 20vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            &-title {
+                display: inline-block;
+                line-height: 1.5;
+                font-size: 28px;
+                word-wrap: break-word;
+                text-overflow: ellipsis;
+                font-weight: 500;
+            }
+            &-desc {
+                margin: 12px 0;
+                display: inline-block;
+                line-height: 1.2;
+                font-size: 16px;
+                overflow: auto;
+                word-wrap: break-word;
+                font-weight: 200;
+            }
+            &-time {
+                display: inline-block;
+                font-size: 12px;
+                color: #A6ADB1;
+            }
+        }
+    }
+    &-box {
+        margin: 25px 0;
+        &-item {
+            width: 240px;
+            height: 268px;
+            background-color: #1C1C24;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            padding: 10px;
+            box-sizing: border-box;
+            &:hover {
+                box-shadow: 2px 2px 6px #ffffff;
+            }
+            &-img {
+                width: 200px;
+                height: 180px;
+                border-radius: 10px;
+                background: url('../../../../assets/img/logo.png') no-repeat;
+                background-size: contain;
+                background-position: center;
+            }
+            &-info {
+                width: 200px;
+                font-size: 14px;
+                color: #A6ADB1;
+                margin-top: 20px;
+            }
+        }
+    }
+}
