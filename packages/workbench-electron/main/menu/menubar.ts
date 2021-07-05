@@ -5,6 +5,9 @@
  * src/vs/platform/actions/common/actions.ts
  * vscode 对 menu 的实现都归于 action，非常复杂
  */
+// TODO: 
+// 1. 复用
+// 2. 设置 settings 方案
 import {Menu, MenuItem} from 'electron';
 import {camelToWords} from '../../lib/utils';
 import {ICommandService} from 'services/command';
@@ -248,6 +251,119 @@ export class Menubar {
     private setEditMenu(editMenu: Menu): void {
         const roles: Role[] = ['undo', 'redo', '|', 'cut', 'copy', 'paste', 'pasteAndMatchStyle', 'delete', 'selectAll'];
         this.appendRoleMenu(editMenu, roles);
+    }
+
+    private setWindowMenu(windowMenu: Menu): void {
+        const roles: Role[] = [
+            'reload',
+            'forceReload',
+            '|',
+            'resetZoom',
+            'zoomIn',
+            'zoomOut',
+            'togglefullscreen',
+            'minimize',
+            '|',
+            'close',
+            'hide',
+            'hideOthers',
+            'unhide'
+        ];
+        this.appendRoleMenu(windowMenu, roles);
+    }
+}
+
+export class HomeMenubar {
+    constructor(
+        // @ICommandService private readonly commandService: ICommandService
+    ) {
+        this.install();
+    }
+
+    // private addFallbackHandlers(): void {}
+
+    private install(): void {
+        // Menus
+        const menubar = new Menu();
+
+        // app
+        const applicationMenu = new Menu();
+        this.setMacApplicationMenu(applicationMenu);
+        const macApplicationMenuItem = new MenuItem({label: 'Pandora', submenu: applicationMenu});
+        menubar.append(macApplicationMenuItem);
+
+        // Window
+        const windowMenu = new Menu();
+        this.setWindowMenu(windowMenu);
+        const windowItem = new MenuItem({label: 'Window', submenu: windowMenu});
+        menubar.append(windowItem);
+
+        // Help
+        const helpMenu = new Menu();
+        this.setHelpMenu(helpMenu);
+        const helpMenuItem = new MenuItem({label: 'Help', submenu: helpMenu, role: 'help'});
+        menubar.append(helpMenuItem);
+
+        // 设置成窗口顶部菜单
+        if (menubar.items && menubar.items.length > 0) {
+            Menu.setApplicationMenu(menubar);
+        } else {
+            Menu.setApplicationMenu(null);
+        }
+    }
+
+    private setMacApplicationMenu(macApplicationMenu: Menu): void {
+        // const preferences = new MenuItem({
+        //     label: 'preferences',
+        //     click() {}
+        // });
+
+        const services = new MenuItem({
+            label: 'services',
+            role: 'services'
+        });
+
+        const quit = new MenuItem({
+            label: 'quit',
+            role: 'quit'
+        });
+
+        const actions = [
+            // about,
+            // __separator__(),
+            // preferences,
+            // update,
+            __separator__(),
+            services,
+            __separator__(),
+            quit
+        ];
+        actions.forEach(i => macApplicationMenu.append(i));
+    }
+
+    private setHelpMenu(helpMenu: Menu): void {
+        // Toggle Developer Tools
+        const toggleDevtools = new MenuItem({
+            label: 'Toggle Developer Tools',
+            role: 'toggleDevTools'
+        });
+        const actions = [__separator__(), toggleDevtools];
+        actions.forEach(i => helpMenu.append(i));
+    }
+
+    private appendRoleMenu(menu: Menu, roles: Role[]) {
+        roles.forEach(role => {
+            if (role === '|') {
+                menu.append(__separator__());
+            } else {
+                menu.append(
+                    new MenuItem({
+                        label: camelToWords(role),
+                        role
+                    })
+                );
+            }
+        });
     }
 
     private setWindowMenu(windowMenu: Menu): void {

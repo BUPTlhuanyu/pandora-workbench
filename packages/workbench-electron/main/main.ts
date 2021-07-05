@@ -2,7 +2,8 @@
  * @file app
  */
 import path from 'path';
-import {app, BrowserWindow, ipcMain, Menu} from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
+import {HomeMenubar} from './menu/menubar';
 import {DEVELOP_PORT} from 'shared/common/constant';
 
 import {registerContextMenuListener} from './contextmenu/electron-main/contextmenu';
@@ -51,6 +52,7 @@ function createHome() {
 
 class Home {
     constructor () {
+        new HomeMenubar();
         this.registerListeners();
     }
     private registerListeners () {
