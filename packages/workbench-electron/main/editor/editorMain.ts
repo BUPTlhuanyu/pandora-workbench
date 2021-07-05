@@ -19,7 +19,8 @@ import {ICommandService, CommandService} from 'services/command';
 import 'services/search/electron-browser/searchServices';
 
 const MODE = process.env.NODE_ENV === 'production';
-function createWindow() {
+// TODO：封装成类，提供 close 等事件注册
+function createWindow(dispose: Function) {
     const html = MODE
         ? `file://${path.resolve(app.getAppPath(), './dist/index.html')}`
         : `http://localhost:${DEVELOP_PORT}/index.html`;
@@ -55,17 +56,27 @@ function createWindow() {
         IPC_CHANNEL.forEach((item: string) => {
             ipcMain.removeHandler(item);
         });
-        Menu.setApplicationMenu(new Menu());
+        dispose();
     });
 }
 
 export class CodeMain {
+    private oldMenus: Menu | null;
     constructor() {
         this.initServices();
+        const oldMenu = Menu.getApplicationMenu();
+        this.oldMenus = null;
+		if (oldMenu) {
+			this.oldMenus = oldMenu;
+		}
     }
     async startUp(): Promise<void> {
-        createWindow();
+        createWindow(this.resetMenu.bind(this));
         registerContextMenuListener();
+    }
+
+    private resetMenu () {
+        this.oldMenus && Menu.setApplicationMenu(this.oldMenus);
     }
 
     private initServices() {

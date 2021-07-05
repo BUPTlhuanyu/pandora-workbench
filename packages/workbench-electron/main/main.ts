@@ -51,7 +51,6 @@ function createHome() {
 
 class Home {
     constructor () {
-        Menu.setApplicationMenu(new Menu());
         this.registerListeners();
     }
     private registerListeners () {
