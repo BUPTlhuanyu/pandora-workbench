@@ -61,6 +61,14 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            &-empty {
+                display: flex;
+                flex: 1;
+                height: 100%;
+                justify-content: center;
+                align-items: center;
+                color: #7a7a7a;
+            }
             &-header {
                 line-height: 30px;
                 height: 30px;

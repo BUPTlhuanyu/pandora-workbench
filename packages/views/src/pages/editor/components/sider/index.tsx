@@ -569,14 +569,15 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                                 }
                             />
                         </div>
-                        {searchResult.length > 0 && (
+                        {searchResult.length > 0 ?
                             <SearchList
                                 data={searchResult}
                                 className="sider-panel-content"
                                 onSelect={onSearchSelect}
                                 onLineSelect={onLineSelect}
                             />
-                        )}
+                            : <div className="sider-panel-empty">没有匹配结果</div>
+                        }
                     </div>
                 )}
                 {showToc && (
