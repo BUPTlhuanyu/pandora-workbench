@@ -1,7 +1,7 @@
 /**
  * @file
  */
-import {Menubar} from '../menu/menubar';
+import {Menubar, HomeMenubar} from '../menu/menubar';
 import {registerContextMenuListener} from '../contextmenu/electron-main/contextmenu';
 
 import path from 'path';
@@ -61,14 +61,8 @@ function createWindow(dispose: Function) {
 }
 
 export class CodeMain {
-    private oldMenus: Menu | null;
     constructor() {
         this.initServices();
-        const oldMenu = Menu.getApplicationMenu();
-        this.oldMenus = null;
-		if (oldMenu) {
-			this.oldMenus = oldMenu;
-		}
     }
     async startUp(): Promise<void> {
         createWindow(this.resetMenu.bind(this));
@@ -76,7 +70,7 @@ export class CodeMain {
     }
 
     private resetMenu () {
-        this.oldMenus && Menu.setApplicationMenu(this.oldMenus);
+        new HomeMenubar();
     }
 
     private initServices() {

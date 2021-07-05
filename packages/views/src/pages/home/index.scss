@@ -3,10 +3,23 @@ body, html, #root, .pandora-home {
   margin: 0;
   height: 100%;
   font-size: 18px;
+  background: url('../../assets/img/sky.jpeg');
+  background-size: cover;
 }
 
 .pandora-home {
     display: flex;
     align-items: center;
     flex-direction: column;
+    &::before {
+        content: '';
+        background: inherit; 
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0; 
+        bottom: 0;
+        box-shadow: inset 0 0 0 3000px rgba(255,255,255,0.3);
+        filter: blur(1px);
+    }
 }
