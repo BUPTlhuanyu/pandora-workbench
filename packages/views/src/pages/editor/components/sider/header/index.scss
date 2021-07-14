@@ -1,0 +1,59 @@
+.sider-panel-header {
+    line-height: 30px;
+    height: 30px;
+    background-color: #f3f3f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 2px 4px, rgba(17, 17, 26, 0.05) 0px 4px 8px;
+    &-icon {
+        display: flex;
+        cursor: pointer;
+    }
+    &-back {
+        &:hover {
+            background: #e1e1e1;
+            border-radius: 6px;
+        }
+    }
+    .ant-input-affix-wrapper {
+        border: none;
+        width: 0%;
+        animation: widthSpread .3s ease-in forwards;
+    }
+    .ant-input-affix-wrapper :focus{
+        border-color: #FFB531;
+        box-shadow: none;
+    }
+    .ant-input-affix-wrapper-focused {
+        // border-color: #FFB531;
+        border: none;
+        box-shadow: none;
+    }
+    &-input {
+        height: 20px;
+        background: transparent;
+        padding: 0;
+        margin-right: 4px;
+        margin-left: 4px;
+        border-radius: 0;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        &:focus, &:hover {
+            border-color: #FFB531;
+            box-shadow: none;
+        }
+        &-selected {
+            background: #e1e1e1;
+            border-radius: 6px;
+        }
+        .ant-input {
+            font-size: 12px;
+            background: transparent;
+        }
+        .ant-input-suffix {
+            display: flex;
+        }
+    }
+}

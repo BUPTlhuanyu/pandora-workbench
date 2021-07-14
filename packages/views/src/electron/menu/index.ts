@@ -33,7 +33,6 @@ export function registerContextMenu() {
 
 export function registerTopMenuListener() {
     pandora.ipcRenderer.on(`pandora:${CREATE_FILE}`, () => {
-        console.log('pandora:pandora:');
         fileEvent.emit(FS_CREATE_FILE);
     });
     pandora.ipcRenderer.on(`pandora:${CREATE_DIR}`, () => {
