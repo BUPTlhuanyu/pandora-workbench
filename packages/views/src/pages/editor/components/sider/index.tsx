@@ -103,6 +103,13 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     const [renameKey, setRenameKey] = React.useState<string>('');
     const [treeData, setTreeData] = React.useState<ItreeData>([]);
 
+    // 设置 data-set
+    React.useEffect(() => {
+        if (treeData && treeData.length > 0) {
+            document.querySelector('.sider-file-folder')?.setAttribute('data-context', 'sider');
+        }
+    }, [treeData]);
+
     // 获取文件列表
     const getTreeData = React.useCallback(() => {
         pandora &&
@@ -393,7 +400,6 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                 )}
                 {treeData.length > 0 ?
                     <FileFolder
-                        data-context="sider"
                         className={`sider-file-folder ${showToc ? 'sider-file-folder-hide' : ''}`}
                         treeData={treeData}
                         onRename={onRename}
