@@ -39,6 +39,7 @@
     "author": "lhuanyu <lhuanyutot@163.com>",
     "license": "MIT",
     "devDependencies": {
+        "@huse/debug": "^1.1.0",
         "@types/classnames": "^2.2.11",
         "@types/clipboard": "^2.0.1",
         "@types/codemirror": "^0.0.107",
