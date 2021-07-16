@@ -26,6 +26,11 @@ interface ISiderProps {
     className: string;
 }
 
+interface ISelectedItem {
+    target: HTMLElement | null;
+    node: Record<string, any>;
+}
+
 export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     /* -------------------------------------------------------------------------- */
     /*                                    store                                   */
@@ -55,6 +60,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     /* -------------------------------------------------------------------------- */
     /*                             UI: show title view                            */
     /* -------------------------------------------------------------------------- */
+    const contextRef = React.useRef<boolean>(false);
     const [mouseEnter, setMouseEnter] = React.useState<boolean>(false);
     const onMouseEnter = React.useCallback(() => {
         if (!contextRef.current) {
@@ -94,7 +100,6 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     /* -------------------------------------------------------------------------- */
     /*                                    file                                    */
     /* -------------------------------------------------------------------------- */
-    const contextRef = React.useRef<boolean>(false);
     const [renameKey, setRenameKey] = React.useState<string>('');
     const [treeData, setTreeData] = React.useState<ItreeData>([]);
 
@@ -112,8 +117,17 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     }, []);
 
     // 切换文件
+    const selectedItem = React.useRef<ISelectedItem | null>({
+        target: null,
+        node: {}
+    });
     const onSelect = React.useCallback(
-        (keys: Array<string | number>, {node}: Record<string, any>) => {
+        (keys: Array<string | number>, e: Record<string, any>) => {
+            const {node} = e;
+            selectedItem.current = {
+                target: e.nativeEvent.target as HTMLElement,
+                node: e.node
+            };
             if (isFilePath(selectedFilePath)) {
                 const content = editor?.getDoc().getValue() || '';
                 pandora &&
@@ -134,6 +148,34 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         [dispatch, renameKey, editor, selectedFilePath]
     );
 
+    const createItem = React.useCallback((type: 'file' | 'directory') => {
+        if (!treeData[0]) {
+            return;
+        }
+        // 清空编辑器内容
+        editor && editor?.getDoc().setValue('');
+        let rootDir = selectedFilePath ? selectedFilePath : treeData[0].path;
+        rootDir = getRootPath(rootDir);
+        if (!rootDir) {
+            return;
+        }
+        contextRef.current = true;
+        // [ANTD BUG] node.expanded error
+        selectedItem.current
+            && selectedItem.current.node.type === 'directory'
+            && selectedItem.current.node.expanded
+            && selectedItem.current.target
+            && selectedItem.current.target.click();
+        // treeData 插入
+        const {node, nextTree} = addToTreeData(treeData, rootDir, type);
+        if (node.key && nextTree) {
+            setTreeData(nextTree as any);
+            setTimeout(() => {
+                changeSelectedFile(node.key);
+            }, 0);
+        }
+    }, [treeData, selectedFilePath, editor, contextRef.current, selectedItem.current]);
+
     // 打开文件所在目录，新建文件，新建文件夹，删除
     React.useEffect(() => {
         // 在finder中打开
@@ -144,40 +186,12 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
         });
         fileEvent.removeAllListeners(FS_CREATE_FILE);
         fileEvent.on(FS_CREATE_FILE, () => {
-            if (!treeData[0]) {
-                return;
-            }
-            // 清空编辑器内容
-            editor && editor?.getDoc().setValue('');
-            let rootDir = selectedFilePath ? selectedFilePath : treeData[0].path;
-            rootDir = getRootPath(rootDir);
-            if (!rootDir) {
-                return;
-            }
-            contextRef.current = true;
-            // treeData 插入
-            const {node, nextTree} = addToTreeData(treeData, rootDir, 'file');
-            if (node.key && nextTree) {
-                changeSelectedFile(node.key);
-                setTreeData(nextTree as any);
-            }
+            createItem('file');
         });
 
         fileEvent.removeAllListeners(FS_CREATE_DIR);
         fileEvent.on(FS_CREATE_DIR, () => {
-            if (!treeData[0]) {
-                return;
-            }
-            // 清空编辑器内容
-            let rootDir = selectedFilePath ? selectedFilePath : treeData[0].path;
-            rootDir = getRootPath(rootDir);
-            contextRef.current = true;
-            // treeData 插入
-            const {node, nextTree} = addToTreeData(treeData, rootDir, 'directory');
-            if (node.key && nextTree) {
-                changeSelectedFile(node.key);
-                setTreeData(nextTree as any);
-            }
+            createItem('directory');
         });
         fileEvent.removeAllListeners(FS_DELETE);
         fileEvent.on(FS_DELETE, path => {
@@ -189,7 +203,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                 setTreeData(nextTree as any);
             }
         });
-    }, [treeData, selectedFilePath]);
+    }, [treeData, selectedFilePath, createItem]);
 
     // 重命名成功之后的处理
     const fsRename = React.useCallback(
