@@ -119,4 +119,24 @@ export function createCodemirror(ele: any) {
     });
 }
 
+export const scrollToLine = (editor: codemirror.Editor, line: number) => {
+    if (!editor || !editor.getDoc) {
+        return;
+    }
+    // @ts-ignore
+    editor.scrollTo(0, editor.charCoords({line}, 'local').top - editor.charCoords({line}, 'line').top);
+    const textMarker = editor.getDoc().markText(
+        // @ts-ignore
+        {line: line - 1},
+        {line},
+        {
+            css: 'background-color: #FFFAAA',
+            atomic: true
+        }
+    );
+    setTimeout(() => {
+        textMarker.clear();
+    }, 500);
+};
+
 export default codemirror;
