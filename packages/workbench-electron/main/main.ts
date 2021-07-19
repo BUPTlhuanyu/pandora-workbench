@@ -2,9 +2,9 @@
  * @file app
  */
 import path from 'path';
-import {app, BrowserWindow, ipcMain} from 'electron';
+import {app, BrowserWindow, ipcMain, protocol} from 'electron';
 import {HomeMenubar} from './menu/menubar';
-import {DEVELOP_PORT} from 'shared/common/constant';
+import {DEVELOP_PORT, PROTOCOL_IMG} from 'shared/common/constant';
 
 import {registerContextMenuListener} from './contextmenu/electron-main/contextmenu';
 import {CodeMain} from './editor/editorMain';
@@ -55,9 +55,25 @@ class Home {
         new HomeMenubar();
         this.registerListeners();
     }
+
+    // webSecurity: false 加载本地图片的安全问题
+    private registImgProtocal() {
+        protocol.registerFileProtocol(PROTOCOL_IMG, (request, callback) => {
+            const url = request.url.replace(`${PROTOCOL_IMG}://`, '')
+            try {
+              return callback(url)
+            }
+            catch (error) {
+              console.error(error)
+              return callback('404')
+            }
+        })
+    }
+
     private registerListeners () {
         process.on('uncaughtException', err => this.onUnexpectedError(err));
         app.whenReady().then(async () => {
+            this.registImgProtocal();
             /// #if IS_DEV
             installExtension(REACT_DEVELOPER_TOOLS)
                 .then(name => console.log(`Added Extension:  ${name}`))

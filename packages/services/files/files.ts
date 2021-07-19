@@ -34,5 +34,7 @@ export interface IFileService {
      */
     writeFile(resource: URI, content: string): Promise<string>;
 
-    getDirTree(resource: URI): any[] | null
+    getDirTree(resource: URI): any[] | null;
+
+    storeImgFromBase64(resource: URI, content: string): Promise<string>;
 }
