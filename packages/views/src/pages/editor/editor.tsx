@@ -2,7 +2,7 @@ import './editor.scss';
 
 import React, {useRef, useEffect, useCallback, useState, useContext} from 'react';
 import {useMount} from 'ahooks';
-import useCodemirror from '../../components/useCodemirror';
+import useCodemirror, {CodemirrorObj} from '../../components/useCodemirror';
 import {FileContext} from './store/sidbar';
 import {EditorContext} from 'views/src/pages/editor/store/editor';
 
@@ -12,11 +12,14 @@ import MdView from '../../components/md-view';
 import ToolBar from './components/tool-bar';
 import Footer from './components/footer';
 
-import {success, error} from '../../utils/message';
+import {success, error} from 'views/src/utils/message';
 import {isFilePath} from 'views/src/utils/tools';
 
-import {fileEvent, FS_SAVE} from '../../utils/event';
+import {fileEvent, FS_SAVE} from 'views/src/utils/event';
 import {pandora} from 'views/src/services/pandora';
+
+import {blobToBase64, getFileName} from 'shared/utils/img';
+import {uploader} from 'shared/utils/chunk';
 
 function Editor() {
     const [storeState] = useContext(FileContext);
@@ -30,7 +33,7 @@ function Editor() {
     } = useCodemirror();
 
     /* -------------------------------------------------------------------------- */
-    /*                                 store 全局状态                              */
+    /*                                 handle pic                                 */
     /* -------------------------------------------------------------------------- */
     const [, dispatch] = useContext(EditorContext);
     useEffect(() => {
@@ -38,6 +41,48 @@ function Editor() {
             type: 'storeeditor',
             payload: editor
         });
+        if (editor) {
+            // @ts-ignore
+            editor.on('paste', (instance: CodemirrorObj['editor'], e: ClipboardEvent) => {
+                if (e.clipboardData && e.clipboardData.items) {
+                    const items = e.clipboardData.items;
+                    for (let i = 0, len = items.length; i < len; i++) {
+                        let item = items[i];
+                        if (item.kind !== 'file') {
+                            return;
+                        }
+                        let pasteFile = item.getAsFile();
+                        if (!pasteFile) {
+                            return;
+                        }
+                        if (pasteFile.size > 0 && pasteFile.type.match('^image/')) {
+                            blobToBase64(pasteFile).then(data => {
+                                const imageName = getFileName();
+                                // 拒绝压缩
+                                uploader({
+                                    send(data: any) {
+                                        pandora.ipcRenderer.invoke('pandora:storeImage', {
+                                            name: imageName,
+                                            base64: data
+                                        }).then((res: {success: boolean, data: string}) => {
+                                            const doc = editor.getDoc();
+                                            const curs = doc.getCursor();
+                                            doc.replaceRange(
+                                                `<img src="file:\/\/${res.data}" width="100%" height="100%" />`,
+                                                {line: curs.line, ch: curs.ch}
+                                            );
+                                        }).catch(err => {
+                                            console.warn(err);
+                                        });
+                                    }
+                                }, data as string);
+                            });
+                        }
+                        return;
+                    }
+                }
+            });
+        }
     }, [editor]);
 
     /* -------------------------------------------------------------------------- */

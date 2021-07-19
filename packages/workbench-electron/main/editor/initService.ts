@@ -16,7 +16,8 @@ export const IPC_CHANNEL = [
     'pandora:dialog',
     'pandora:revealFileInOs',
     'pandora:moveFileToTrash',
-    'pandora:fileSearch'
+    'pandora:fileSearch',
+    'pandora:storeImage'
 ];
 
 class CodeApplication {
@@ -105,6 +106,20 @@ class CodeApplication {
             status: res.data && res.data.length && 0,
             data: res.data
         };
+    }
+    private async storeImage (event: Electron.IpcMainInvokeEvent, data: any) {
+        let res = {
+            success: false,
+            data: ''
+        };
+        if (data && data.name && data.base64) {
+            const path = await this.fileService.storeImgFromBase64(data.name, data.base64);
+            path && (res = {
+                success: true,
+                data: path
+            });
+        }
+        return res;
     }
 }
 

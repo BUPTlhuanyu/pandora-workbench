@@ -5,6 +5,8 @@ import {IFileService} from './files';
 import EventEmitter from 'events';
 import fs from 'fs';
 import paths from 'path';
+import Jimp from 'jimp';
+import {USER_HOME, USER_DATA_FOLDER} from 'shared/common/constant';
 
 export const fileEvent = new EventEmitter();
 // 域名设计
@@ -108,6 +110,24 @@ export class FileService implements IFileService {
         }
         return await fs.promises.writeFile(path, content, {
             encoding: 'utf8'
+        });
+    }
+
+    async storeImgFromBase64(path: string, data: any): Promise<any> {
+        if (!path) {
+            return Promise.reject();
+        }
+        path = `${USER_HOME}/${USER_DATA_FOLDER}/${path}`
+        const buffer = Buffer.from(data.split(',')[1], 'base64');
+        return Jimp.read(buffer).then((res) => {
+            try {
+                res.quality(1).write(path);
+                return Promise.resolve(path);
+            } catch(err) {
+                return Promise.reject();
+            }
+        }).catch(err => {
+            console.error(err);
         });
     }
 }

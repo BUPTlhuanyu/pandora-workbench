@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import codemirror, {createCodemirror} from './code';
 
-interface CodemirrorObj {
+export interface CodemirrorObj {
     code: string;
     setCodemirrorEle: React.Dispatch<React.SetStateAction<Element | null>>;
     scroll: {
@@ -48,7 +48,6 @@ export default function useCodemirror(): CodemirrorObj {
         (editor: codemirror.Editor | null) => {
             if (editor) {
                 const {clientHeight, height, top} = editor.getScrollInfo();
-                console.log('updateScrollInfo', clientHeight, height, top);
                 setScroll({
                     scrollTop: top,
                     clientHeight,

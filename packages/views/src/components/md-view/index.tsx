@@ -10,7 +10,7 @@ interface MdViewProps {
     value: string;
 }
 
-let md = getMd('wx');
+let md = getMd('wx', {html: true});
 
 export default function MdView(props: MdViewProps) {
     const [mdString, setMdString] = useState<string>('');

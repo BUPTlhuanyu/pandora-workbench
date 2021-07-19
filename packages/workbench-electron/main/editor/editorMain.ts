@@ -42,7 +42,9 @@ function createWindow(dispose: Function) {
         webPreferences: {
             preload,
             nodeIntegration: true,
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            // TODO: 解决加载本地文件出现的安全问题
+            webSecurity: false
         }
     });
 

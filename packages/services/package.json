@@ -5,6 +5,7 @@
     "private": true,
     "dependencies": {
         "highlight.js": "^10.6.0",
+        "jimp": "^0.16.1",
         "shared": "^0.0.0"
     },
     "author": "lhuanyu <lhuanyutot@163.com>",
