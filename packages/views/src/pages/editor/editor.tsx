@@ -20,6 +20,7 @@ import {pandora} from 'views/src/services/pandora';
 
 import {blobToBase64, getFileName} from 'shared/utils/img';
 import {uploader} from 'shared/utils/chunk';
+import {PROTOCOL_IMG} from 'shared/common/constant';
 
 function Editor() {
     const [storeState] = useContext(FileContext);
@@ -68,7 +69,7 @@ function Editor() {
                                             const doc = editor.getDoc();
                                             const curs = doc.getCursor();
                                             doc.replaceRange(
-                                                `<img src="file:\/\/${res.data}" width="100%" height="100%" />`,
+                                                `<img src="${PROTOCOL_IMG}:\/\/${res.data}" width="100%" height="100%" />`,
                                                 {line: curs.line, ch: curs.ch}
                                             );
                                         }).catch(err => {

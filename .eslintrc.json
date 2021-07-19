@@ -19,6 +19,7 @@
         "@typescript-eslint/no-use-before-define": [1],
         "operator-linebreak": "off",
         "@typescript-eslint/no-parameter-properties": "off",
-        "spaced-comment": "off"
+        "spaced-comment": "off",
+        "max-len": "off"
     }
 }
