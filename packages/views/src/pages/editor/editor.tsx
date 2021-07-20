@@ -77,6 +77,8 @@ function Editor() {
                                         });
                                     }
                                 }, data as string);
+                            }).catch(error => {
+                                console.log(error);
                             });
                         }
                         return;
