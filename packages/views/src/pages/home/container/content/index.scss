@@ -58,8 +58,8 @@
     &-box {
         margin: 25px 0;
         &-item {
-            width: 240px;
-            height: 268px;
+            width: 180px;
+            height: 220px;
             background-color: #1C1C24;
             border-radius: 20px;
             display: flex;
@@ -73,18 +73,19 @@
                 transform: rotate(1deg);
             }
             &-img {
-                width: 200px;
-                height: 180px;
+                width: 100%;
+                height: 150px;
                 border-radius: 10px;
                 background: url('../../../../assets/img/logo.png') no-repeat;
                 background-size: contain;
                 background-position: center;
             }
             &-info {
-                width: 200px;
+                width: 100%;
                 font-size: 14px;
                 color: #A6ADB1;
-                margin-top: 20px;
+                margin-top: 8px;
+                word-break: break-all;
             }
         }
     }

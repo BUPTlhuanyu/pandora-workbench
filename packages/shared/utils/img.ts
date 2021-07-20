@@ -9,6 +9,14 @@ export function blobToBase64(blob: File) {
             e.target ? resolve(e.target.result) : reject(new Error('transfer base64 failed'));
         };
 
+        reader.onabort = function () {
+            reject(new Error('[pandora]: image data abort'));
+        }
+
+        reader.onerror = function () {
+            reject(new Error('[pandora]: image data error'));
+        }
+
         reader.readAsDataURL(blob);
     });
 }
