@@ -1,12 +1,13 @@
 import './index.scss';
 import * as React from 'react';
 import produce from 'immer';
+import {useSwitch} from '@huse/boolean';
 
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import SearchList, {ISearchResult} from 'views/src/components/search-list';
 import TocList, {ITocItem} from 'views/src/components/toc-list';
 import Icon from 'views/src/components/icon';
-import Header from './header';
+import Header from 'views/src/pages/editor/components/sider/header';
 
 import {pandora} from 'views/src/services/pandora';
 import {revealFileInOs, moveFileToTrash} from 'views/src/services/messageCenter';
@@ -15,7 +16,7 @@ import {FS_CREATE_FILE, FS_CREATE_DIR, FS_EDIT, FS_DELETE, fileEvent, FS_REVEAL}
 import {isFilePath} from 'views/src/utils/tools';
 import {getMdOutline} from 'views/src/utils/markdown-helper';
 import getClassname from 'views/src/utils/classMaker';
-import {addToTreeData, deleteToTreeData, getRootPath, updateNodeData} from './utils';
+import {addToTreeData, deleteToTreeData, getRootPath, updateNodeData} from 'views/src/pages/editor/components/sider/utils';
 
 import {FileContext} from 'views/src/pages/editor/store/sidbar';
 import {EditorContext} from 'views/src/pages/editor/store/editor';
@@ -79,10 +80,8 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     /* -------------------------------------------------------------------------- */
     /*                            UI: show search view                            */
     /* -------------------------------------------------------------------------- */
-    const [showPanel, setShowPanel] = React.useState<boolean>(false);
-    const onShowPanel = React.useCallback(() => {
-        setShowPanel(!showPanel);
-    }, [showPanel, setShowPanel]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [showPanel, setShowPanelTrue, _, toggleShowPanel] = useSwitch(false);
 
     /* -------------------------------------------------------------------------- */
     /*                              UI: show toc view                             */
@@ -349,9 +348,9 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                             }
                         });
             }
-            setShowPanel(true);
+            setShowPanelTrue();
         },
-        [setShowPanel, treeData]
+        [setShowPanelTrue, treeData]
     );
 
     return (
@@ -370,14 +369,14 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                     )}
                     <div className="sider-title-text">{showToc ? '大纲' : '文件'}</div>
                     {mouseEnter && (
-                        <span onClick={onShowPanel} className="sider-title-icon sider-title-search" title="查找">
+                        <span onClick={toggleShowPanel} className="sider-title-icon sider-title-search" title="查找">
                             <Icon type="search" style={{fontSize: '20px'}} />
                         </span>
                     )}
                 </div>
                 {showPanel && (
                     <div className="sider-panel">
-                        <Header focused={showPanel} onPressEnter={onStartSearch} onBack={onShowPanel} />
+                        <Header focused={showPanel} onPressEnter={onStartSearch} onBack={toggleShowPanel} />
                         {searchResult.length > 0 ?
                             <SearchList
                                 data={searchResult}
