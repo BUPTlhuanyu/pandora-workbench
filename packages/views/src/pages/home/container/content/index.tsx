@@ -17,7 +17,8 @@ function Content() {
     }, []);
     return (
         <div className={`${prefix}`}>
-            <span>Most popular</span>
+            {/* TODO: search */}
+            {/* <span>Most popular</span>
             <div className={`${prefix}-banner`}>
                 <div className={`${prefix}-banner-img`}></div>
                 <div className={`${prefix}-banner-info`}>
@@ -42,7 +43,7 @@ function Content() {
                         唐代李白诗作
                     </div>
                 </div>
-            </div>
+            </div> */}
             <span>Toolkits</span>
             <div className={`${prefix}-box`}>
                 <div className={`${prefix}-box-item`} onClick={edEditor}>
