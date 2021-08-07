@@ -1,7 +1,6 @@
 import './index.scss';
 import * as React from 'react';
 import produce from 'immer';
-import {useSwitch} from '@huse/boolean';
 
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import SearchList, {ISearchResult} from 'views/src/components/search-list';
@@ -22,6 +21,7 @@ import {FileContext} from 'views/src/pages/editor/store/sidbar';
 import {EditorContext} from 'views/src/pages/editor/store/editor';
 
 import {scrollToLine} from 'views/src/components/useCodemirror/code';
+import {useToggleOrSet} from 'views/src/hooks/useToggleOrSet';
 
 interface ISiderProps {
     className: string;
@@ -81,7 +81,7 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
     /*                            UI: show search view                            */
     /* -------------------------------------------------------------------------- */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [showPanel, setShowPanelTrue, _, toggleShowPanel] = useSwitch(false);
+    const [showPanel, toggleShowPanel] = useToggleOrSet(false);
 
     /* -------------------------------------------------------------------------- */
     /*                              UI: show toc view                             */
@@ -348,9 +348,9 @@ export default React.forwardRef(function Sider(props: ISiderProps, ref: any) {
                             }
                         });
             }
-            setShowPanelTrue();
+            toggleShowPanel(true);
         },
-        [setShowPanelTrue, treeData]
+        [toggleShowPanel, treeData]
     );
 
     return (
