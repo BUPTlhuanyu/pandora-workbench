@@ -1,5 +1,4 @@
 # Referenced from https://github.com/github/gitignore/blob/master/Node.gitignore
-yarn.lock
 temp
 output
 # Logs
@@ -14,7 +13,6 @@ test.*
 
 lerna-debug.log
 .vscode
-package-lock.json
 dist
 test
 # Runtime data
