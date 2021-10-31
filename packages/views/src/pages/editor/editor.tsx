@@ -2,7 +2,7 @@ import './editor.scss';
 
 import React, {useRef, useEffect, useCallback, useState, useContext} from 'react';
 import {useMount} from 'ahooks';
-import useCodemirror, {CodemirrorObj} from '../../components/useCodemirror';
+import useCodemirror, {CodemirrorObj} from '../../hooks/useCodemirror';
 import {FileContext} from './store/sidbar';
 import {EditorContext} from 'views/src/pages/editor/store/editor';
 

@@ -1,7 +1,7 @@
 // 非受控，减少外层代码量
 import * as React from 'react';
 import './index.scss';
-import getClassname from 'views/src/utils/classMaker';
+import getClassname from '../../../../../utils/class-maker';
 
 import Icon from 'views/src/components/icon';
 import {Input} from 'antd';

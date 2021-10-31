@@ -9,18 +9,18 @@ import Icon from 'views/src/components/icon';
 import Header from 'views/src/pages/editor/components/sider/header';
 
 import {pandora} from 'views/src/services/pandora';
-import {revealFileInOs, moveFileToTrash} from 'views/src/services/messageCenter';
+import {revealFileInOs, moveFileToTrash} from 'views/src/services/message-center';
 
 import {FS_CREATE_FILE, FS_CREATE_DIR, FS_EDIT, FS_DELETE, fileEvent, FS_REVEAL} from 'views/src/utils/event';
 import {isFilePath} from 'views/src/utils/tools';
 import {getMdOutline} from 'views/src/utils/markdown-helper';
-import getClassname from 'views/src/utils/classMaker';
+import getClassname from '../../../../utils/class-maker';
 import {addToTreeData, deleteToTreeData, getRootPath, updateNodeData} from 'views/src/pages/editor/components/sider/utils';
 
 import {FileContext} from 'views/src/pages/editor/store/sidbar';
 import {EditorContext} from 'views/src/pages/editor/store/editor';
 
-import {scrollToLine} from 'views/src/components/useCodemirror/code';
+import {scrollToLine} from 'views/src/hooks/useCodemirror/code';
 import {useToggleOrSet} from 'views/src/hooks/useToggleOrSet';
 
 interface ISiderProps {

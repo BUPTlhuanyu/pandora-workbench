@@ -4,7 +4,8 @@ import './index.scss';
 import Editor from './editor';
 import EditorStore from './store';
 
-import {registerContextMenu, registerTopMenuListener} from 'views/src/electron/menu';
+// TODO: 去耦合
+import {registerContextMenu, registerTopMenuListener} from 'views/src/services/menu/electron';
 
 ReactDOM.render(
     <React.StrictMode>
