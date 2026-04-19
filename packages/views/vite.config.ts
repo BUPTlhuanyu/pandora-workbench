@@ -1,14 +1,12 @@
 import {defineConfig, Plugin} from 'vite';
-import react from '@vitejs/plugin-react';
+import vue from '@vitejs/plugin-vue';
 import path from 'path';
 
 const isWeb = process.env.BUILD_TARGET === 'web';
 
 /**
- * Vite plugin to externalize Node.js / Electron built-in modules so that
- * they are kept as `require()` calls at runtime instead of being bundled.
- * This is needed because the Electron renderer runs with nodeIntegration
- * and can resolve these modules natively.
+ * Vite plugin to externalize Electron built-in modules so that
+ * they are kept as require() calls at runtime.
  */
 function electronRendererPlugin(): Plugin {
     return {
@@ -37,7 +35,7 @@ function electronRendererPlugin(): Plugin {
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        react(),
+        vue(),
         ...(!isWeb ? [electronRendererPlugin()] : []),
     ],
     resolve: {

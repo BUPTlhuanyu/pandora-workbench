@@ -1,14 +1,14 @@
 /**
  * @file
  */
-import {useMethodsNative} from '@huse/methods';
-const reducers = {
-    toggleOrSet(prevState: boolean, arg: any) {
-        return typeof arg === 'boolean' ? arg : !prevState;
-    }
-};
+import {ref} from 'vue';
 
 export function useToggleOrSet(initialValue: boolean = false) {
-    const [value, {toggleOrSet}] = useMethodsNative(reducers, initialValue);
+    const value = ref(initialValue);
+
+    function toggleOrSet(arg?: boolean) {
+        value.value = typeof arg === 'boolean' ? arg : !value.value;
+    }
+
     return [value, toggleOrSet] as const;
 }
