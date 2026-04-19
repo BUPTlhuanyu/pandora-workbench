@@ -3,15 +3,12 @@
     "version": "0.0.0",
     "description": "shared",
     "private": true,
-    "scripts": {
-        "start": ""
-    },
     "author": "lhuanyu <lhuanyutot@163.com>",
     "license": "MIT",
     "dependencies": {
-        "fs-extra": "^9.1.0"
+        "fs-extra": "^11.2.0"
     },
     "devDependencies": {
-        "@types/fs-extra": "^9.0.8"
+        "@types/fs-extra": "^11.0.0"
     }
 }

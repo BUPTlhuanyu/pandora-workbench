@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './title.scss';
+import './title.less';
 
 function noop() {}
 

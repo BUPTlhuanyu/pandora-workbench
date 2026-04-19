@@ -1,7 +1,7 @@
 /**
  * @file
  */
-import produce from 'immer';
+import {produce} from 'immer';
 
 export function getRootPath(path: string) {
     if (typeof path !== 'string') {

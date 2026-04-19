@@ -1,25 +1,37 @@
 {
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "parser": "babel-eslint"
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
     },
     "extends": [
-        "@ecomfe/eslint-config",
-        "@ecomfe/eslint-config/typescript",
-        "@ecomfe/eslint-config/react",
-        "plugin:jest/recommended"
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:react/jsx-runtime"
     ],
+    "plugins": ["@typescript-eslint", "react", "react-hooks"],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
     "rules": {
         "@typescript-eslint/no-empty-function": "off",
-        "@typescript-eslint/camelcase": "off",
-        "@typescript-eslint/class-name-casing": "off",
-        "@typescript-eslint/generic-type-naming": "off",
+        "@typescript-eslint/no-explicit-any": "off",
         "react/no-array-index-key": "off",
         "comma-dangle": "off",
-        "no-use-before-define": [0],
-        "@typescript-eslint/no-use-before-define": [1],
-        "operator-linebreak": "off",
-        "@typescript-eslint/no-parameter-properties": "off",
-        "spaced-comment": "off",
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "warn",
         "max-len": "off"
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "es2021": true
     }
 }

@@ -1,6 +1,6 @@
-import './index.scss';
+import './index.less';
 import * as React from 'react';
-import produce from 'immer';
+import {produce} from 'immer';
 
 import FileFolder, {ItreeData} from 'views/src/components/file-folder';
 import SearchList, {ISearchResult} from 'views/src/components/search-list';

@@ -3,7 +3,7 @@
  */
 import React, {useEffect, useState} from 'react';
 import {getMd} from 'core/md';
-import './index.scss';
+import './index.less';
 
 interface MdViewProps {
     className?: string;

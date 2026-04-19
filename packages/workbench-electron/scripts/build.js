@@ -8,7 +8,7 @@ const piplineEvent = new Event();
 function buildViews() {
     // build views
     const viewsChild = spawn(
-        'yarn workspace views build',
+        'pnpm --filter views build',
         {
             shell: true
         },
@@ -28,7 +28,7 @@ function buildViews() {
 function buildWorkbench() {
     // build workbench-electron
     const workbenchChild = spawn(
-        'yarn workspace workbench-electron build',
+        'pnpm --filter workbench-electron build',
         {
             shell: true
         },
@@ -47,7 +47,7 @@ function buildWorkbench() {
 
 function copyViews() {
     exec(
-        'yarn cp:dist',
+        'pnpm cp:dist',
         {
             cwd: '../../'
         },
@@ -63,7 +63,7 @@ function copyViews() {
 function buildMac() {
     // build workbench-electron
     const buildChild = spawn(
-        'yarn workspace workbench-electron build:mac',
+        'pnpm --filter workbench-electron build:mac',
         {
             shell: true
         },

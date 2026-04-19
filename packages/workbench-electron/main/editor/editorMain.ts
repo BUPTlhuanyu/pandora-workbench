@@ -42,7 +42,7 @@ function createWindow(dispose: Function) {
         webPreferences: {
             preload,
             nodeIntegration: true,
-            enableRemoteModule: true
+            contextIsolation: false
         }
     });
 

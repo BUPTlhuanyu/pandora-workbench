@@ -4,9 +4,9 @@
     "description": "services",
     "private": true,
     "dependencies": {
-        "highlight.js": "^10.6.0",
-        "jimp": "^0.16.1",
-        "shared": "^0.0.0"
+        "highlight.js": "^11.10.0",
+        "jimp": "^0.22.12",
+        "shared": "workspace:*"
     },
     "author": "lhuanyu <lhuanyutot@163.com>",
     "license": "MIT"

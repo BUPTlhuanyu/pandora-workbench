@@ -2,7 +2,7 @@
  * @file
  */
 import * as React from 'react';
-import './index.scss';
+import './index.less';
 
 export interface ITocItem {
     title: string;

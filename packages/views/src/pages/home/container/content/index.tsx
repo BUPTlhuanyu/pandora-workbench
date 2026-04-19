@@ -1,7 +1,7 @@
 /**
  * @file
  */
-import './index.scss';
+import './index.less';
 import * as React from 'react';
 import {pandora} from 'views/src/services/pandora';
 

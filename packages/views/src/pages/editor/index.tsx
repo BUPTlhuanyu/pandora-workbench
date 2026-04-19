@@ -1,19 +1,19 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.scss';
+import {createRoot} from 'react-dom/client';
+import './index.less';
 import Editor from './editor';
 import EditorStore from './store';
 
 // TODO: 去耦合
 import {registerContextMenu, registerTopMenuListener} from 'views/src/services/menu/electron';
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root')!);
+root.render(
     <React.StrictMode>
         <EditorStore>
             <Editor />
         </EditorStore>
-    </React.StrictMode>,
-    document.getElementById('root')
+    </React.StrictMode>
 );
 
 // 设置electron上下文菜单

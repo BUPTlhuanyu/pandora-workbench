@@ -2,7 +2,7 @@
  * @file
  */
 import * as React from 'react';
-import './index.scss';
+import './index.less';
 import Icon from 'views/src/components/icon';
 
 export interface ISearchResult {

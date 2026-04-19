@@ -2,7 +2,7 @@
  * @file
  */
 import React, {useReducer, useRef} from 'react';
-import './index.scss';
+import './index.less';
 
 import {useUpdateEffect} from 'ahooks';
 

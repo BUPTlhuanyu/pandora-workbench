@@ -1,15 +1,13 @@
 /**
  * @file
  */
-import './index.scss';
+import './index.less';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client';
 
 import Header from 'views/src/pages/home/container/header';
 import Content from 'views/src/pages/home/container/content';
 import Footer from 'views/src/pages/home/container/footer';
-
-// import React, {useRef, useEffect, useCallback, useState, useContext} from 'react';
 
 function Home() {
     return (
@@ -21,9 +19,7 @@ function Home() {
     );
 }
 
-ReactDOM.render(
-    <Home />,
-    document.getElementById('root')
-);
+const root = createRoot(document.getElementById('root')!);
+root.render(<Home />);
 
 export default Home;

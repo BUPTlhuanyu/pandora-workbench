@@ -2,7 +2,7 @@
  * @file
  */
 import React from 'react';
-import './index.scss';
+import './index.less';
 
 interface FooterProps {
     count: number;

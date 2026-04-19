@@ -1,7 +1,7 @@
 /**
  * @file
  */
-import './index.scss';
+import './index.less';
 import * as React from 'react';
 
 function Footer() {

@@ -47,17 +47,17 @@
 - 安装依赖
 1. 设置electron镜像
     ```
-    yarn config set electron_mirror https://npm.taobao.org/mirrors/electron/
+    pnpm config set electron_mirror https://npmmirror.com/mirrors/electron/
     ```
 2. 安装依赖
     ```
-    yarn
+    pnpm install
     ```
 
 - 开发
-1. yarn start:views
-2. yarn start:workbench
+1. pnpm start:views
+2. pnpm start:workbench
 
 
 - 打包成 mac:
-yarn release:mac
+pnpm release:mac

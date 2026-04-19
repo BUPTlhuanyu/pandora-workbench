@@ -1,6 +1,6 @@
 // 非受控，减少外层代码量
 import * as React from 'react';
-import './index.scss';
+import './index.less';
 import getClassname from '../../../../../utils/class-maker';
 
 import Icon from 'views/src/components/icon';

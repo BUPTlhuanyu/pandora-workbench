@@ -1,60 +1,50 @@
 {
-  "name": "workbench-electron",
-  "version": "0.0.13",
-  "description": "Pandora Workbench",
-  "productName": "Pandora Workbench",
-  "private": true,
-  "main": "./dist/index.js",
-  "scripts": {
-    "start": "cross-env NODE_ENV=development webpack && electron ./app/dist/index.js",
-    "build": "cross-env NODE_ENV=production webpack --mode production --progress",
-    "build:mac": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac --x64",
-    "build:icon": "cross-env node ./scripts/png2icns.js",
-    "release:mac": "node ./scripts/build.js"
-  },
-  "dependencies": {
-    "core": "^0.0.0",
-    "shared": "^0.0.0"
-  },
-  "author": "lhuanyu <lhuanyutot@163.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "@babel/core": "^7.13.14",
-    "@babel/plugin-proposal-decorators": "^7.13.5",
-    "@babel/preset-env": "^7.13.12",
-    "@babel/preset-typescript": "^7.13.0",
-    "babel-loader": "8.1.0",
-    "babel-plugin-parameter-decorator": "^1.0.16",
-    "copy-webpack-plugin": "6.3.2",
-    "cross-env": "^7.0.3",
-    "electron": "^11.2.0",
-    "electron-builder": "^22.10.5",
-    "electron-devtools-installer": "^3.2.0",
-    "ifdef-loader": "^2.3.0",
-    "png2icons": "^2.0.1",
-    "ts-loader": "^8.1.0",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^4.3.1"
-  },
-  "build": {
-    "appId": "org.taotieworkbench",
-    "electronVersion": "11.2.1",
-    "mac": {
-      "category": "",
-      "asar": false,
-      "icon": "./assets/png/logo.icns"
+    "name": "workbench-electron",
+    "version": "0.0.13",
+    "description": "Pandora Workbench",
+    "productName": "Pandora Workbench",
+    "private": true,
+    "main": "./app/dist/index.js",
+    "scripts": {
+        "start": "cross-env NODE_ENV=development tsup && electron ./app/dist/index.js",
+        "build": "cross-env NODE_ENV=production tsup",
+        "build:mac": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac --x64",
+        "build:icon": "cross-env node ./scripts/png2icns.js",
+        "release:mac": "node ./scripts/build.js"
     },
-    "win": {
-      "target": "nsis",
-      "icon": "./assets/png/logo.ico"
+    "dependencies": {
+        "core": "workspace:*",
+        "shared": "workspace:*"
     },
-    "files": [
-      "dist/**/*",
-      "package.json",
-      "index.js"
-    ],
-    "directories": {
-      "output": "release"
+    "author": "lhuanyu <lhuanyutot@163.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "copy-webpack-plugin": "^12.0.0",
+        "cross-env": "^7.0.3",
+        "electron": "^33.0.0",
+        "electron-builder": "^25.1.0",
+        "electron-devtools-installer": "^3.2.0",
+        "png2icons": "^2.0.1",
+        "tsup": "^8.3.0"
+    },
+    "build": {
+        "appId": "org.taotieworkbench",
+        "mac": {
+            "category": "",
+            "asar": false,
+            "icon": "./assets/png/logo.icns"
+        },
+        "win": {
+            "target": "nsis",
+            "icon": "./assets/png/logo.ico"
+        },
+        "files": [
+            "dist/**/*",
+            "package.json",
+            "index.js"
+        ],
+        "directories": {
+            "output": "release"
+        }
     }
-  }
 }

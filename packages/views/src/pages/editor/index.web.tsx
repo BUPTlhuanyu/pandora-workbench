@@ -1,14 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.scss';
+import {createRoot} from 'react-dom/client';
+import './index.less';
 import Editor from './editor';
 import EditorStore from './store';
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root')!);
+root.render(
     <React.StrictMode>
         <EditorStore>
             <Editor />
         </EditorStore>
-    </React.StrictMode>,
-    document.getElementById('root')
+    </React.StrictMode>
 );

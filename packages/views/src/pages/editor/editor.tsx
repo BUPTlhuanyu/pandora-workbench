@@ -1,4 +1,4 @@
-import './editor.scss';
+import './editor.less';
 
 import React, {useRef, useEffect, useCallback, useState, useContext} from 'react';
 import {useMount} from 'ahooks';

@@ -9,9 +9,7 @@ import {DEVELOP_PORT, PROTOCOL_IMG} from 'shared/common/constant';
 import {registerContextMenuListener} from './contextmenu/electron-main/contextmenu';
 import {CodeMain} from './editor/editorMain';
 
-/// #if IS_DEV
 import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer';
-/// #endif
 
 let splashWindow: BrowserWindow | null = null;
 
@@ -39,7 +37,7 @@ function createHome() {
         webPreferences: {
             preload,
             nodeIntegration: true,
-            enableRemoteModule: true
+            contextIsolation: false
         }
     });
 
@@ -74,11 +72,11 @@ class Home {
         process.on('uncaughtException', err => this.onUnexpectedError(err));
         app.whenReady().then(async () => {
             this.registImgProtocal();
-            /// #if IS_DEV
-            installExtension(REACT_DEVELOPER_TOOLS)
-                .then(name => console.log(`Added Extension:  ${name}`))
-                .catch(err => console.log('An error occurred: ', err));
-            /// #endif
+            if (!MODE) {
+                installExtension(REACT_DEVELOPER_TOOLS)
+                    .then(name => console.log(`Added Extension:  ${name}`))
+                    .catch(err => console.log('An error occurred: ', err));
+            }
 
             // await createSplashWindow();
             await createHome();

@@ -2,7 +2,7 @@
  * @file
  */
 import React, {useRef, useEffect, useCallback, useContext} from 'react';
-import './index.scss';
+import './index.less';
 import ClipboardJS from 'clipboard-web';
 import {FileContext} from '../../store/sidbar';
 
